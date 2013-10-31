@@ -7,6 +7,19 @@ var express = require('express'),
 var env    = process.env.NODE_ENV || 'development',
     config = require('./config/config')[env];
 
+// Connect DB
+var mongoose = require('mongoose');
+mongoose.connect(config.db);
+
+// Load models
+var modelsPath = __dirname + '/app/models',
+    fs         = require('fs');
+fs.readdirSync(modelsPath).forEach(function(file) {
+    if (~file.indexOf('.js')) {
+        require(modelsPath + '/' + file);
+    }
+});
+
 // Express settings
 require('./config/express')(app, config);
 

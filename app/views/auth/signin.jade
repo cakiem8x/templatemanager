@@ -1,0 +1,14 @@
+extends ../layouts/default
+
+block content
+    div.col-lg-4.col-lg-offset-4
+        div.panel.panel-default
+            div.panel-heading
+                h3.panel-title Sign in
+            div.panel-body
+                form(method="post", action="/signin")
+                    div.form-group
+                        input.form-control(type="text", name="user_name", placeholder="Username")
+                    div.form-group
+                        input.form-control(type="password", name="password", placeholder="Password")
+                    button.btn.btn-success(type="submit") Sign in

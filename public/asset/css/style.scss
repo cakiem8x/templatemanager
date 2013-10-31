@@ -1,1 +1,31 @@
+// Variables
+$footerHeight: 80px;
 
+// Sticky footer
+html, body {
+  height: 100%;
+}
+.wrapper {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin: 0 auto -#{$footerHeight} auto;
+}
+.main {
+  padding-top: $footerHeight;
+}
+.push {
+  height: $footerHeight;
+}
+footer {
+  border-top: 1px solid #c0c0c0;
+  height: $footerHeight - 1;
+
+  .container {
+    padding-top: 8px;
+  }
+}
+
+.main-content {
+  margin: 15px 0;
+}
