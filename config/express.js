@@ -1,4 +1,5 @@
-var express = require('express');
+var express    = require('express'),
+    mongoStore = require('connect-mongo')(express);
 
 module.exports = function(app, config) {
     app.set('showStackError', true);
@@ -31,7 +32,11 @@ module.exports = function(app, config) {
         app.use(express.methodOverride());
 
         app.use(express.session({
-            secret: config.sessionSecret
+            secret: config.sessionSecret,
+            store: new mongoStore({
+                url: config.db,
+                collection : 'sessions'
+            })
         }));
 
         app.use(app.router);
