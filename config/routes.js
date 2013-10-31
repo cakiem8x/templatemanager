@@ -1,5 +1,6 @@
-var index = require('../app/controllers/index'),
-    auth  = require('../app/controllers/auth');
+var auth      = require('../app/controllers/auth'),
+    dashboard = require('../app/controllers/dashboard'),
+    index     = require('../app/controllers/index');
 
 module.exports = function(app) {
     // Routes
@@ -7,4 +8,7 @@ module.exports = function(app) {
 
     // Sign in
     app.all('/signin', auth.signin);
+
+    // Back-end
+    app.get('/admin', dashboard.index);
 };
