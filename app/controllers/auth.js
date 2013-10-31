@@ -19,11 +19,20 @@ exports.signin = function(req, res) {
             }
 
             req.session.user_name = user.username;
-            res.redirect('/');
+            res.redirect('/admin');
         });
     } else {
         res.render('auth/signin', {
             title: 'Sign in'
         });
+    }
+};
+
+exports.signout = function(req, res) {
+    if (req.session.user_name) {
+        delete req.session.user_name;
+        res.redirect('/signin');
+    } else {
+        res.redirect('/');
     }
 };
