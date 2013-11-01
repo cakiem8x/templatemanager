@@ -1,0 +1,76 @@
+extends ../layouts/backend
+
+block head
+    link(rel="stylesheet", href="/vendor/fileupload/css/jquery.fileupload-ui.css")
+
+block content
+    div.page-header
+        h2
+            a(href="/admin/template") Templates
+            |  / Add new template
+
+
+    ul.nav.nav-tabs
+        li
+            a(href="#general", data-toggle="tab") General
+        li.active
+            a(href="#files", data-toggle="tab") Files
+
+    div.tab-content
+        div#general.tab-pane
+            form.form-horizontal(action="/admin/template/add", method="post", enctype="multipart/form-data")
+                div.form-group
+                    label.control-label.col-lg-2 Name
+                    div.col-lg-6
+                        input.form-control(type="text", name="name")
+
+                div.form-group
+                    label.control-label.col-lg-2 Demo URL
+                    div.col-lg-8
+                        input.form-control(type="text", name="demo_url", placeholder="http://")
+
+                div.form-group
+                    label.control-label.col-lg-2 Description
+                    div.col-lg-6
+                        textarea.form-control(name="description", rows=5)
+
+                div.form-group
+                    label.control-label.col-lg-2 Year
+                    div.col-lg-2
+                        input.form-control(type="text", name="year")
+
+                div.form-group
+                    div.col-lg-10.col-lg-offset-2
+                        div.checkbox
+                            label
+                                input(type="checkbox")
+                                | Support responsive
+
+        div#files.tab-pane.active
+            div.text-center
+                p You can choose many files at the same time
+                div.btn.btn-default.fileinput-button
+                    span Upload files
+                    input#uploader(type="file", name="files[]", data-url="/admin/upload", multiple)
+
+block footerScript
+    script(type="text/javascript", src="/vendor/fileupload/js/vendor/jquery.ui.widget.js")
+    script(type="text/javascript", src="/vendor/fileupload/js/jquery.iframe-transport.js")
+    script(type="text/javascript", src="/vendor/fileupload/js/jquery.fileupload.js")
+    script(type="text/javascript", src="/vendor/fileupload/js/jquery.fileupload-process.js")
+    script(type="text/javascript").
+        $(document).ready(function() {
+            //var uploaderHeight = $(document).height() - $('.tb-uploader').offset().top - $('footer').outerHeight(true) - 30;
+            //$('.tb-uploader').height(uploaderHeight);
+            //$('.tb-uploader-help').css('margin-top', (uploaderHeight - $('.tb-uploader-help').height()) / 2);
+
+            // Uploader handler
+            $('#uploader').fileupload({
+                dataType: 'json',
+                autoUpload: true,
+                url: '/admin/upload',
+                done: function(e, data) {
+
+                }
+            });
+        });

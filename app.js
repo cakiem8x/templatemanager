@@ -24,7 +24,7 @@ fs.readdirSync(modelsPath).forEach(function(file) {
 require('./config/express')(app, config);
 
 // Load routes
-require('./config/routes')(app);
+require('./config/routes')(app, config);
 
 // Listening
 var port = process.env.PORT || 3000;

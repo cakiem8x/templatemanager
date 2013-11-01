@@ -27,8 +27,11 @@ module.exports = function(app, config) {
         // cookieParser should be above session
         app.use(express.cookieParser());
 
+        app.use(express.limit(config.upload.maxSize / 1024 + 'mb'));
+
         // bodyParser should be above methodOverride
         app.use(express.bodyParser());
+
         app.use(express.methodOverride());
 
         app.use(express.session({
@@ -43,6 +46,9 @@ module.exports = function(app, config) {
     });
 
     app.configure('development', function() {
-
+//        app.use(express.errorHandler({
+//            dumpExceptions: true,
+//            howStack: true
+//        }));
     });
 };

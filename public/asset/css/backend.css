@@ -1,3 +1,9 @@
+.page-header {
+  margin-top: 20px; }
+
+.tab-content {
+  margin-top: 20px; }
+
 html, body {
   height: 100%; }
 
@@ -21,3 +27,11 @@ footer {
 
 .main-content {
   margin: 15px 0; }
+
+.tb-uploader {
+  border: 2px dashed #c0c0c0;
+  width: 100%;
+  height: 100%; }
+  .tb-uploader .tb-uploader-help {
+    margin: 0 auto;
+    text-align: center; }
