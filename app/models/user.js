@@ -12,8 +12,9 @@ userSchema
     .virtual('password')
     .set(function(password) {
         this._password       = password;
-        this._salt           = this.createSalt();
+        this.salt            = this.createSalt();
         this.hashed_password = this.encryptPassword(password);
+        console.log(password, this.salt, this.hashed_password);
     })
     .get(function() {
         return this._password;
@@ -29,7 +30,7 @@ userSchema.methods = {
             return '';
         }
         try {
-            return crypto.createHmac('sha1', this._salt).update(password).digest('hex');
+            return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
         } catch(err) {
             return '';
         }

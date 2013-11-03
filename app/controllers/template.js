@@ -1,8 +1,7 @@
 var mongoose   = require('mongoose'),
     Template   = mongoose.model('template'),
     fs         = require('fs'),
-    formidable = require('formidable'),
-    config     = require('../../config/config')[process.env.NODE_ENV || 'development'];
+    formidable = require('formidable');
 
 exports.index = function(req, res) {
     res.render('template/index', {
@@ -17,41 +16,35 @@ exports.add = function(req, res) {
 };
 
 exports.upload = function(req, res) {
-    var form = new formidable.IncomingForm();
+    var app    = req.app,
+        config = app.get('config');
 
-    // This does not seem to work
-    // It always upload to the temp dir
-    form.uploadDir     = config.upload.dir;
-
-    form.maxFieldsSize = config.upload.maxSize;
+    var form = new formidable.IncomingForm({
+        keepExtensions: true,
+        uploadDir: config.upload.dir,
+        maxFieldsSize: config.upload.maxSize
+    });
 
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
     res.setHeader('Content-Disposition', 'inline; filename="files.json"');
 
-//    form.on('progress', function(bytesReceived, bytesExpected) {
-//            console.log('bytesExpected:', bytesExpected);
-//            console.log('Uploaded ' + 100 * bytesReceived / bytesExpected + '%');
-//        });
-//    form.on('field', function(name, value) {
-//        res.send('----' + name + value);
-//            console.log('field:', name, value);
-//        })
-//        .on('fileBegin', function(name, file) {
-//            console.log('fileBegin:', name, file);
-//        })
-//        .on('error', function(err) {
-//            console.log(err);
-//        });
-
-    var files = [];
+    var socketConnections = app.get('socketConnections'),
+        userName          = req.session.user_name,
+        files             = [];
 
     form
+        .on('progress', function(bytesReceived, bytesExpected) {
+            if (socketConnections && socketConnections[userName]) {
+                var socket = socketConnections[userName];
+                socket.emit('uploadProgress', 100 * bytesReceived / bytesExpected + '%');
+            }
+        })
         .on('file', function(name, file) {
+            console.log(name, file);
             files.push(file);
         })
         .on('error', function(e) {
-            console.log(e);
         })
         .on('end', function() {
             res.writeHead(200, {

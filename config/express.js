@@ -2,6 +2,7 @@ var express    = require('express'),
     mongoStore = require('connect-mongo')(express);
 
 module.exports = function(app, config) {
+    app.set('config', config);
     app.set('showStackError', true);
 
     // Should be placed before express.static

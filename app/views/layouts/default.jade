@@ -1,12 +1,34 @@
 !!! 5
 html
-    include ../partial/head
+    head
+        meta(charset="utf-8")
+        meta(http-equiv="Content-type", content="text/html;charset=UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
+        title= title
+
+        //link(rel="stylesheet", href="/vendor/bootstrap/css/bootstrap.css")
+        link(rel="stylesheet", href="/vendor/bootstrap-theme/css/flatly.css")
+        link(rel="stylesheet", href="/vendor/font-awesome/css/font-awesome.min.css")
+        link(rel="stylesheet", href="/asset/css/style.css")
+
+        //if IE 7
+            link(rel="stylesheet", href="/vendor/font-awesome/css/font-awesome-ie7.min.css")
+
+        //if lt IE 9
+            script(src="/vendor/html5shiv/html5shiv.min.js")
+            script(src="/vendor/respond/respond.min.js")
     body
         .wrapper
-            include ../partial/header
             .container
                 .main
                     block content
             .push
-        include ../partial/footer
-        include ../partial/foot
+
+        //if lt IE 9
+            script(src="/vendor/jquery/jquery-1.10.2.min.js")
+
+        //[if gte IE 9]><!
+        script(src="/vendor/jquery/jquery-2.0.3.min.js")
+        //<![endif]
+
+        script(src="/vendor/bootstrap/js/bootstrap.min.js")

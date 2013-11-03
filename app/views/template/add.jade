@@ -11,13 +11,13 @@ block content
 
 
     ul.nav.nav-tabs
-        li
-            a(href="#general", data-toggle="tab") General
         li.active
+            a(href="#general", data-toggle="tab") General
+        li
             a(href="#files", data-toggle="tab") Files
 
     div.tab-content
-        div#general.tab-pane
+        div#general.tab-pane.active
             form.form-horizontal(action="/admin/template/add", method="post", enctype="multipart/form-data")
                 div.form-group
                     label.control-label.col-lg-2 Name
@@ -46,12 +46,17 @@ block content
                                 input(type="checkbox")
                                 | Support responsive
 
-        div#files.tab-pane.active
+        div#files.tab-pane
             div.text-center
                 p You can choose many files at the same time
                 div.btn.btn-default.fileinput-button
                     span Upload files
                     input#uploader(type="file", name="files[]", data-url="/admin/upload", multiple)
+
+            div.col-lg-8.col-lg-offset-2(style="margin-top: 20px;")
+                div.progress.progress-striped.active.hide
+                    div#progress.progress-bar.progress-bar-success(style="width: 0%;")
+
 
 block footerScript
     script(type="text/javascript", src="/vendor/fileupload/js/vendor/jquery.ui.widget.js")
@@ -60,17 +65,20 @@ block footerScript
     script(type="text/javascript", src="/vendor/fileupload/js/jquery.fileupload-process.js")
     script(type="text/javascript").
         $(document).ready(function() {
-            //var uploaderHeight = $(document).height() - $('.tb-uploader').offset().top - $('footer').outerHeight(true) - 30;
-            //$('.tb-uploader').height(uploaderHeight);
-            //$('.tb-uploader-help').css('margin-top', (uploaderHeight - $('.tb-uploader-help').height()) / 2);
-
             // Uploader handler
             $('#uploader').fileupload({
                 dataType: 'json',
                 autoUpload: true,
                 url: '/admin/upload',
                 done: function(e, data) {
+                }
+            });
 
+            var socket = io.connect();
+            socket.on('uploadProgress', function(progress) {
+                $('#progress').parent().addClass('progress-striped').removeClass('hide').end().css('width', progress);
+                if (progress == '100%') {
+                    $('#progress').parent().removeClass('progress-striped');
                 }
             });
         });
