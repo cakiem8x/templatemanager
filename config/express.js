@@ -30,7 +30,9 @@ module.exports = function(app, config) {
         app.use(express.limit(config.upload.maxSize / 1024 + 'mb'));
 
         // bodyParser should be above methodOverride
-        app.use(express.bodyParser());
+        // Disable bodyParser() for file upload
+        app.use(express.json())
+           .use(express.urlencoded());
 
         app.use(express.methodOverride());
 
@@ -46,9 +48,9 @@ module.exports = function(app, config) {
     });
 
     app.configure('development', function() {
-//        app.use(express.errorHandler({
-//            dumpExceptions: true,
-//            howStack: true
-//        }));
+        app.use(express.errorHandler({
+            dumpExceptions: true,
+            howStack: true
+        }));
     });
 };
