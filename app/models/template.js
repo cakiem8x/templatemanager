@@ -20,7 +20,11 @@ var mongoose       = require('mongoose'),
             original: String
         },
         files: [{
-            type: Schema.ObjectId, ref: 'file'
+            name: { type: String, default: '' },
+            path: { type: String, default: '' },
+            size: { type: Number, default: 0 },
+            last_modified: { type: Date, default: Date.now },
+            uploaded_date: { type: Date, default: Date.now }
         }],
         created_date: { type: Date, default: Date.now },
         responsive: { type: Boolean, default: true },

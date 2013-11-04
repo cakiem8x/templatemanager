@@ -25,11 +25,12 @@ exports.add = function(req, res) {
             demo_url: req.body.demo_url,
             description: req.body.description,
             tags: req.body.tags,
-            thumbs: req.body.thumbs,
+            thumbs: JSON.parse(req.body.thumbs || []),
             files: JSON.parse(req.body.uploaded_files || []),
             responsive: req.body.responsive || true,
             free: req.body.free || false
         });
+
         template.save(function(err) {
             if (err) {
                 req.flash('error', 'Could not add template');
@@ -40,11 +41,13 @@ exports.add = function(req, res) {
             }
         });
     } else {
+        var config = req.app.get('config');
         res.render('template/add', {
             messages: {
                 warning: req.flash('error'),
                 success: req.flash('success')
             },
+            thumbPrefixUrl: config.thumbs.url,
             title: 'Add new template',
             year: new Date().getFullYear()
         });
@@ -63,7 +66,7 @@ exports.thumb = function(req, res) {
         uploadDir: config.thumbs.dir
     });
 
-    var files = [];
+    var files = {};
     form
         .on('file', function(name, file) {
             var now   = new Date(),
@@ -83,60 +86,55 @@ exports.thumb = function(req, res) {
             }
 
             var finish = function() {
-                var done = true;
                 for (var type in config.thumbs.versions) {
                     if (!files[type]) {
-                        done = false;
+                        return;
                     }
                 }
-                if (!done) {
-                    return;
-                }
 
-                // Ok, all thumbnails are generated
-                // Store the original thumb
-                fs.rename(file.path, path.join(dir, fileName), function(err) {
-                    if (!err) {
-                        files['original'] = '/' + [year, month, fileName].join('/');
-
-                        res.writeHead(200, {
-                            'Content-Type': req.headers.accept.indexOf('application/json') !== -1 ? 'application/json' : 'text/plain'
-                        });
-                        res.end(JSON.stringify({
-                            files: files
-                        }));
-                    }
+                res.json({
+                    files: files
                 });
             };
 
             // Generate thumbnails
-            var fileNameWithoutExt = fileName.substring(0, fileName.length - ext.length);
-            for (var type in config.thumbs.versions) {
-                var method    = config.thumbs.versions[type][0],
-                    width     = config.thumbs.versions[type][1],
-                    thumbFile = fileNameWithoutExt + '_' + type + ext;
+            var fileNameWithoutExt = fileName.substring(0, fileName.length - ext.length),
+                originalFilePath   = path.join(dir, fileName);
+            fs.rename(file.path, originalFilePath, function(err) {
+                if (!err) {
+                    // Store the original thumb
+                    files['original'] = '/' + [year, month, fileName].join('/');
 
-                if ('crop' == method) {
-                    imageMagick.crop({
-                        width: width,
-                        height: width,
-                        srcPath: file.path,
-                        dstPath: path.join(dir, thumbFile)
-                    }, function() {
-                        files[type] = '/' + [year, month, thumbFile].join('/');
-                        finish();
-                    });
-                } else if ('resize' == method) {
-                    imageMagick.resize({
-                        width: width,
-                        srcPath: file.path,
-                        dstPath: path.join(dir, thumbFile)
-                    }, function() {
-                        files[type] = '/' + [year, month, thumbFile].join('/');
-                        finish();
-                    });
+                    for (var type in config.thumbs.versions) {
+                        (function(type) {
+                            var method    = config.thumbs.versions[type][0],
+                                width     = config.thumbs.versions[type][1],
+                                thumbFile = fileNameWithoutExt + '_' + type + ext;
+
+                            if ('crop' == method) {
+                                imageMagick.crop({
+                                    width: width,
+                                    height: width,
+                                    srcPath: originalFilePath,
+                                    dstPath: path.join(dir, thumbFile)
+                                }, function() {
+                                    files[type] = '/' + [year, month, thumbFile].join('/');
+                                    finish();
+                                });
+                            } else if ('resize' == method) {
+                                imageMagick.resize({
+                                    width: width,
+                                    srcPath: originalFilePath,
+                                    dstPath: path.join(dir, thumbFile)
+                                }, function() {
+                                    files[type] = '/' + [year, month, thumbFile].join('/');
+                                    finish();
+                                });
+                            }
+                        }(type));
+                    }
                 }
-            }
+            });
         })
         .parse(req);
 };
