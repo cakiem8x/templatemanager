@@ -37,13 +37,9 @@ footer {
   margin: 15px 0;
 }
 
-.tb-uploader {
+.tb-thumbnail {
   border: 2px dashed #c0c0c0;
-  width: 100%;
-  height: 100%;
-
-  .tb-uploader-help {
-    margin: 0 auto;
-    text-align: center;
-  }
+  margin-top: 20px;
+  width: 240px;
+  height: 180px;
 }

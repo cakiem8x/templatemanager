@@ -9,6 +9,7 @@ block content
             a(href="/admin/template") Templates
             |  / Add new template
 
+    include ../partial/flash
 
     ul.nav.nav-tabs
         li.active
@@ -18,7 +19,7 @@ block content
 
     div.tab-content
         div#general.tab-pane.active
-            form.form-horizontal(action="/admin/template/add", method="post", enctype="multipart/form-data")
+            form#addTemplateForm.form-horizontal(action="/admin/template/add", method="post")
                 div.form-group
                     label.control-label.col-lg-2 Name
                     div.col-lg-6
@@ -35,18 +36,56 @@ block content
                         textarea.form-control(name="description", rows=5)
 
                 div.form-group
+                    label.control-label.col-lg-2 Tags
+                    div.col-lg-8
+                        input.form-control(type="text", name="tags")
+                        small.help-block Separate tags by a comma
+
+                div.form-group
                     label.control-label.col-lg-2 Year
                     div.col-lg-2
-                        input.form-control(type="text", name="year")
+                        input.form-control(type="text", name="year", value="#{year}")
 
                 div.form-group
                     div.col-lg-10.col-lg-offset-2
                         div.checkbox
                             label
-                                input(type="checkbox")
+                                input(type="checkbox", name="free", value="1")
+                                | Free
+
+                div.form-group
+                    div.col-lg-10.col-lg-offset-2
+                        div.checkbox
+                            label
+                                input(type="checkbox", name="responsive", value="1", checked)
                                 | Support responsive
 
+                div.form-group
+                    label.control-label.col-lg-2 Thumbnail
+                    div.col-lg-10
+                        div.btn.btn-default.fileinput-button
+                            span Upload thumbnail
+                            input#thumbnailUploader(type="file", name="thumbnail", data-url="/admin/thumb")
+                        div.tb-thumbnail
+                        input(type="hidden", name="thumbs")
+
+                hr
+
+                div.form-group
+                    div.col-lg-10.col-lg-offset-2
+                        button#saveButton.btn.btn-primary(type="submit")
+                            i.fa.fa-plus
+                            |  Add new template
+                        input(name="uploaded_files", type="hidden")
+
         div#files.tab-pane
+            table.table.hide
+                thead
+                    tr
+                        th File name
+                        th File size
+                tbody#uploadedFiles
+
             div.text-center
                 p You can choose many files at the same time
                 div.btn.btn-default.fileinput-button
@@ -63,14 +102,65 @@ block footerScript
     script(type="text/javascript", src="/vendor/fileupload/js/jquery.iframe-transport.js")
     script(type="text/javascript", src="/vendor/fileupload/js/jquery.fileupload.js")
     script(type="text/javascript", src="/vendor/fileupload/js/jquery.fileupload-process.js")
+    script(type="text/javascript", src="/vendor/filesize/filesize.min.js")
+    script(type="text/javascript", src="/vendor/bootstrapvalidator/js/bootstrapValidator.min.js")
     script(type="text/javascript").
         $(document).ready(function() {
+            // Form validator
+            $('#addTemplateForm').bootstrapValidator({
+                //live: 'enabled',
+                fields: {
+                    name: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The template name is required'
+                            }
+                        }
+                    },
+                    demo_url: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The demo URL is required'
+                            },
+                            uri: {
+                                message: 'The demo URL is not a valid URL'
+                            }
+                        }
+                    },
+                    year: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The publishing year is required'
+                            },
+                            regexp: {
+                                regexp: /^\d{4}$/,
+                                message: 'The publishing year is not valid'
+                            }
+                        }
+                    }
+                }
+            });
+
+            var uploadedFiles = [];
+
             // Uploader handler
             $('#uploader').fileupload({
                 dataType: 'json',
                 autoUpload: true,
                 url: '/admin/upload',
+                start: function(e) {
+                    $('#saveButton').attr('disabled', 'disabled');
+                },
                 done: function(e, data) {
+                    $('#uploadedFiles').parent().removeClass('hide');
+                    $.each(data.result.files, function(index, file) {
+                        var $tr = $('<tr/>').appendTo('#uploadedFiles');
+                        $('<td/>').html(file.name).appendTo($tr);
+                        $('<td/>').html(filesize(file.size)).appendTo($tr);
+                        uploadedFiles.push(file);
+                    });
+
+                    $('#saveButton').removeAttr('disabled');
                 }
             });
 
@@ -80,5 +170,22 @@ block footerScript
                 if (progress == '100%') {
                     $('#progress').parent().removeClass('progress-striped');
                 }
+            });
+
+            // Upload thumbnail
+            $('#thumbnailUploader').fileupload({
+                dataType: 'json',
+                start: function(e) {
+                    $('#saveButton').attr('disabled', 'disabled');
+                },
+                done: function(e, data) {
+                    console.log(data);
+                    $('#saveButton').removeAttr('disabled');
+                }
+            });
+
+            $('#saveButton').on('click', function(e) {
+                $('input[name="uploaded_files"]').val(JSON.stringify(uploadedFiles));
+                $(this).parent('form').submit();
             });
         });

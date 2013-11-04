@@ -1,4 +1,5 @@
 var express    = require('express'),
+    flash      = require('connect-flash'),
     mongoStore = require('connect-mongo')(express);
 
 module.exports = function(app, config) {
@@ -44,6 +45,10 @@ module.exports = function(app, config) {
                 collection : 'sessions'
             })
         }));
+
+        // Connect flash for flash messages
+        // Should be declared after sessions
+        app.use(flash());
 
         app.use(app.router);
     });

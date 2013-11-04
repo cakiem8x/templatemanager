@@ -4,14 +4,27 @@ var mongoose       = require('mongoose'),
         name: { type: String, default: '' },
         demo_url: { type: String, default: '' },
         description: { type: String, default: '' },
-        thumb: String,
+        tags: {
+            type: [],
+            get: function(tags) {
+                return tags.join(',');
+            },
+            set: function(tags) {
+                return tags.split(',');
+            }
+        },
+        thumbs: {
+            square: String,
+            small: String,
+            medium: String,
+            original: String
+        },
         files: [{
-            path: { type: String, default: '' },
-            size: { type: Number, default: '' },
-            num_downloads: { type: Number, default: 0 }
+            type: Schema.ObjectId, ref: 'file'
         }],
         created_date: { type: Date, default: Date.now },
-        responsive: { type: Boolean, default: true }
+        responsive: { type: Boolean, default: true },
+        free: { type: Boolean, default: false }
     });
 
 module.exports = mongoose.model('template', templateSchema);

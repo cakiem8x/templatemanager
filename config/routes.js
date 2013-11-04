@@ -21,5 +21,6 @@ module.exports = function(app) {
     app.all('/admin/template/add', authentication.requireAuthentication, template.add);
 
     // Upload
+    app.post('/admin/thumb', authentication.requireAuthentication, template.thumb);
     app.post('/admin/upload', authentication.requireAuthentication, template.upload);
 };

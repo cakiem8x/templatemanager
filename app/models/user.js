@@ -14,7 +14,6 @@ userSchema
         this._password       = password;
         this.salt            = this.createSalt();
         this.hashed_password = this.encryptPassword(password);
-        console.log(password, this.salt, this.hashed_password);
     })
     .get(function() {
         return this._password;
