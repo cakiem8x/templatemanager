@@ -82,6 +82,33 @@ exports.thumb = function(req, res) {
                 });
             }
 
+            var finish = function() {
+                var done = true;
+                for (var type in config.thumbs.versions) {
+                    if (!files[type]) {
+                        done = false;
+                    }
+                }
+                if (!done) {
+                    return;
+                }
+
+                // Ok, all thumbnails are generated
+                // Store the original thumb
+                fs.rename(file.path, path.join(dir, fileName), function(err) {
+                    if (!err) {
+                        files['original'] = '/' + [year, month, fileName].join('/');
+
+                        res.writeHead(200, {
+                            'Content-Type': req.headers.accept.indexOf('application/json') !== -1 ? 'application/json' : 'text/plain'
+                        });
+                        res.end(JSON.stringify({
+                            files: files
+                        }));
+                    }
+                });
+            };
+
             // Generate thumbnails
             var fileNameWithoutExt = fileName.substring(0, fileName.length - ext.length);
             for (var type in config.thumbs.versions) {
@@ -90,7 +117,6 @@ exports.thumb = function(req, res) {
                     thumbFile = fileNameWithoutExt + '_' + type + ext;
 
                 if ('crop' == method) {
-                    console.log('cropping ', file.path, path.join(dir, thumbFile));
                     imageMagick.crop({
                         width: width,
                         height: width,
@@ -98,32 +124,19 @@ exports.thumb = function(req, res) {
                         dstPath: path.join(dir, thumbFile)
                     }, function() {
                         files[type] = '/' + [year, month, thumbFile].join('/');
+                        finish();
                     });
                 } else if ('resize' == method) {
-                    console.log('resizing ', file.path, path.join(dir, thumbFile));
                     imageMagick.resize({
                         width: width,
                         srcPath: file.path,
                         dstPath: path.join(dir, thumbFile)
                     }, function() {
                         files[type] = '/' + [year, month, thumbFile].join('/');
+                        finish();
                     });
                 }
             }
-
-            // Store the original thumb
-            fs.rename(file.path, path.join(dir, fileName), function(err) {
-                if (!err) {
-                    files['original'] = '/' + [year, month, fileName].join('/');
-
-                    res.writeHead(200, {
-                        'Content-Type': req.headers.accept.indexOf('application/json') !== -1 ? 'application/json' : 'text/plain'
-                    });
-                    res.end(JSON.stringify({
-                        files: files
-                    }));
-                }
-            });
         })
         .parse(req);
 };
