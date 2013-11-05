@@ -3,6 +3,52 @@ extends ../layouts/backend
 block content
     div.page-header
         h2
-            | Templates
+            a(href="/admin/template") Templates
             span.pull-right
                 a.btn.btn-default(href="/admin/template/add") Add new template
+
+    if total == 0
+        p.text-center There is no templates
+    else
+        div.row
+            div.col-lg-8 Found #{total} templates
+            div.col-lg-4.pull-right
+                form.form-inline(method="get", action="/admin/template")
+                    div.input-group
+                        input.form-control(type="text", name="q", value="#{q}")
+                        span.input-group-btn
+                            button.btn.btn-default(type="submit")
+                                i.fa.fa-search
+
+        table.table(style="margin-top: 20px;")
+            thead
+                tr
+                    th Name
+                    th URL
+                    th Publishing year
+                    th Created date
+                    th # Downloads
+            tbody
+                for template in templates
+                    tr
+                        td #{template.name}
+                        td
+                            a(href="#{template.demo_url}") #{template.demo_url}
+                        td #{template.year}
+                        td #{moment(template.created_date).format('YYYY-MM-DD HH:mm')}
+                        td #{template.num_downloads}
+
+        // Pagination
+        div.text-center
+            ul.pagination
+                li
+                    a(href="#{url(req, { page: 1 })}") &larr;
+                - for (i = startRange; i <= endRange; i++)
+                    if (i == page)
+                        li.active
+                            a(href="#{url(req, { page: i })}") #{i}
+                    else
+                        li
+                            a(href="#{url(req, { page: i })}") #{i}
+                li
+                    a(href="#{url(req, { page: numPages })}") &rarr;

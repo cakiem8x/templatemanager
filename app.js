@@ -26,6 +26,11 @@ require('./config/express')(app, config);
 // Load routes
 require('./config/routes')(app);
 
+// View helpers
+app.locals({
+    url: require('./app/helpers/url')
+});
+
 var socketConnections = {};
 io.sockets.on('connection', function(socket) {
     socket.on('userName', function(userName) {

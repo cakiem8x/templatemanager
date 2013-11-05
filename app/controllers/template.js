@@ -1,17 +1,51 @@
-var mongoose      = require('mongoose'),
-    TemplateModel = mongoose.model('template'),
-    fs            = require('fs'),
-    mkdirp        = require('mkdirp'),
-    path          = require('path'),
-    formidable    = require('formidable'),
-    imageMagick   = require('imagemagick');
+var mongoose    = require('mongoose'),
+    Template    = mongoose.model('template'),
+    fs          = require('fs'),
+    mkdirp      = require('mkdirp'),
+    moment      = require('moment'),
+    path        = require('path'),
+    formidable  = require('formidable'),
+    imageMagick = require('imagemagick');
 
 /**
  * List templates
  */
 exports.index = function(req, res) {
-    res.render('template/index', {
-        title: 'Templates'
+    var perPage   = 10,
+        pageRange = 5,
+        page      = req.param('page') || 1,
+        q         = req.param('q') || '',
+        criteria  = q ? { name: new RegExp(q, 'i') } : {};
+
+    Template.count(criteria, function(err, total) {
+        Template.find(criteria).skip((page - 1) * perPage).limit(perPage).exec(function(err, templates) {
+            if (err) {
+                templates = [];
+            }
+
+            var numPages   = Math.ceil(total / perPage),
+                startRange = (page == 1) ? 1 : pageRange * Math.floor(page / pageRange) + 1,
+                endRange   = startRange + pageRange;
+
+            if (endRange > numPages) {
+                endRange = numPages;
+            }
+
+            res.render('template/index', {
+                req: req,
+                moment: moment,
+                title: 'Templates',
+                total: total,
+                templates: templates,
+                q: q,
+
+                // Pagination
+                page: page,
+                numPages: numPages,
+                startRange: startRange,
+                endRange: endRange
+            });
+        });
     });
 };
 
@@ -20,7 +54,7 @@ exports.index = function(req, res) {
  */
 exports.add = function(req, res) {
     if ('post' == req.method.toLowerCase()) {
-        var template = new TemplateModel({
+        var template = new Template({
             name: req.body.name,
             demo_url: req.body.demo_url,
             description: req.body.description,
@@ -28,7 +62,8 @@ exports.add = function(req, res) {
             thumbs: JSON.parse(req.body.thumbs || []),
             files: JSON.parse(req.body.uploaded_files || []),
             responsive: req.body.responsive || true,
-            free: req.body.free || false
+            free: req.body.free || false,
+            year: req.body.year || new Date().getFullYear()
         });
 
         template.save(function(err) {

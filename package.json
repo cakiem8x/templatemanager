@@ -10,6 +10,7 @@
         "imagemagick": "latest",
         "jade": "0.35.x",
         "mkdirp": "latest",
+        "moment": "latest",
         "mongoose": "3.6.x",
         "socket.io": "0.9.x"
     },
