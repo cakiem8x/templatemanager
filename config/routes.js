@@ -17,6 +17,8 @@ module.exports = function(app) {
 
     // Back-end
     app.get('/admin', authentication.requireAuthentication, dashboard.index);
+    app.all('/admin/password', authentication.requireAuthentication, auth.changePassword);
+
     app.get('/admin/template', authentication.requireAuthentication, template.index);
     app.all('/admin/template/add', authentication.requireAuthentication, template.add);
     app.all('/admin/template/edit/:id', authentication.requireAuthentication, template.edit);

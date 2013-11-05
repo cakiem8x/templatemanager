@@ -37,8 +37,16 @@ html
                                 a(href="/admin/template") Templates
 
                         ul.nav.navbar-nav.navbar-right
-                            li
-                                a(href="/signout") Sign out
+                            li.dropdown
+                                a.dropdown-toggle(href="#", data-toggle="dropdown")
+                                    i.fa.fa-cog
+                                    | &nbsp;
+                                    b.caret
+                                ul.dropdown-menu
+                                    li
+                                        a(href="/admin/password") Change password
+                                    li
+                                        a(href="/signout") Sign out
             .container
                 .main
                     block content
