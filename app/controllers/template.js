@@ -15,7 +15,12 @@ exports.index = function(req, res) {
         pageRange = 5,
         page      = req.param('page') || 1,
         q         = req.param('q') || '',
+        year      = req.param('year'),
         criteria  = q ? { name: new RegExp(q, 'i') } : {};
+
+    if (year) {
+        criteria.year = year;
+    }
 
     Template.count(criteria, function(err, total) {
         Template.find(criteria).skip((page - 1) * perPage).limit(perPage).exec(function(err, templates) {
@@ -37,7 +42,10 @@ exports.index = function(req, res) {
                 title: 'Templates',
                 total: total,
                 templates: templates,
+
+                // Criteria
                 q: q,
+                year: year,
 
                 // Pagination
                 page: page,

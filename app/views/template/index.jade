@@ -4,6 +4,11 @@ block content
     div.page-header
         h2
             a(href="/admin/template") Templates
+
+            if year
+                &nbsp;/&nbsp;
+                a(href="/admin/template?year=#{year}") #{year}
+
             span.pull-right
                 a.btn.btn-default(href="/admin/template/add") Add new template
 
@@ -28,27 +33,30 @@ block content
                     th Publishing year
                     th Created date
                     th # Downloads
+                    th Actions
             tbody
                 for template in templates
                     tr
                         td #{template.name}
                         td
-                            a(href="#{template.demo_url}") #{template.demo_url}
-                        td #{template.year}
+                            a(target="_blank", href="#{template.demo_url}") #{template.demo_url}
+                        td
+                            a(href="#{url(req, { page: 1, year: template.year })}") #{template.year}
                         td #{moment(template.created_date).format('YYYY-MM-DD HH:mm')}
-                        td #{template.num_downloads}
+                        td
+                            span.badge #{template.num_downloads}
+                        td
+                            div.btn-group
+                                a.btn.btn-default(href="/admin/template/edit/#{template._id}") Edit
 
         // Pagination
-        div.text-center
-            ul.pagination
-                li
-                    a(href="#{url(req, { page: 1 })}") &larr;
-                - for (i = startRange; i <= endRange; i++)
-                    if (i == page)
-                        li.active
+        if (numPages > 1)
+            div.text-center
+                ul.pagination
+                    li
+                        a(href="#{url(req, { page: 1 })}") &larr;
+                    - for (i = startRange; i <= endRange; i++)
+                        li(class=(i == page) ? 'active' : '')
                             a(href="#{url(req, { page: i })}") #{i}
-                    else
-                        li
-                            a(href="#{url(req, { page: i })}") #{i}
-                li
-                    a(href="#{url(req, { page: numPages })}") &rarr;
+                    li
+                        a(href="#{url(req, { page: numPages })}") &rarr;
