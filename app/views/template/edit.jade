@@ -7,7 +7,7 @@ block content
     div.page-header
         h2
             a(href="/admin/template") Templates
-            |  / Add new template
+            |  / Edit template
 
     include ../partial/flash
 
@@ -19,45 +19,45 @@ block content
 
     div.tab-content
         div#general.tab-pane.active
-            form#addTemplateForm.form-horizontal(action="/admin/template/add", method="post")
+            form#editTemplateForm.form-horizontal(action="/admin/template/edit/#{template._id}", method="post")
                 div.form-group
                     label.control-label.col-lg-2 Name
                     div.col-lg-6
-                        input.form-control(type="text", name="name")
+                        input.form-control(type="text", name="name", value="#{template.name}")
 
                 div.form-group
                     label.control-label.col-lg-2 Demo URL
                     div.col-lg-8
-                        input.form-control(type="text", name="demo_url", placeholder="http://")
+                        input.form-control(type="text", name="demo_url", placeholder="http://", value="#{template.demo_url}")
 
                 div.form-group
                     label.control-label.col-lg-2 Description
                     div.col-lg-6
-                        textarea.form-control(name="description", rows=5)
+                        textarea.form-control(name="description", rows=5) #{template.description}
 
                 div.form-group
                     label.control-label.col-lg-2 Tags
                     div.col-lg-8
-                        input.form-control(type="text", name="tags")
+                        input.form-control(type="text", name="tags", value="#{template.tags}")
                         small.help-block Separate tags by a comma
 
                 div.form-group
                     label.control-label.col-lg-2 Year
                     div.col-lg-2
-                        input.form-control(type="text", name="year", value="#{year}")
+                        input.form-control(type="text", name="year", value="#{template.year}")
 
                 div.form-group
                     div.col-lg-10.col-lg-offset-2
                         div.checkbox
                             label
-                                input(type="checkbox", name="free", value="1")
+                                input(type="checkbox", name="free", value="1", checked=template.free)
                                 | Free
 
                 div.form-group
                     div.col-lg-10.col-lg-offset-2
                         div.checkbox
                             label
-                                input(type="checkbox", name="responsive", value="1", checked)
+                                input(type="checkbox", name="responsive", value="1", checked=template.responsive)
                                 | Support responsive
 
                 div.form-group
@@ -70,22 +70,34 @@ block content
                             div.progress.progress-striped.active.hide
                                 div#thumbProgress.progress-bar.progress-bar-success(style="width: 100%;")
                         div.tb-tmpl-thumb
-                        input(type="hidden", name="thumbs")
+                            if template.thumbs.original
+                                img(src="#{thumbPrefixUrl}/#{template.thumbs.original}")
+                        input(type="hidden", name="thumbs", value="#{JSON.stringify(template.thumbs)}")
 
                 hr
 
                 div.form-group
                     div.col-lg-10.col-lg-offset-2
-                        button#saveButton.btn.btn-primary(type="submit") Add
+                        button#saveButton.btn.btn-primary(type="submit") Save
                         input(name="uploaded_files", type="hidden")
 
         div#files.tab-pane
-            table.table.hide
+            table.table(class=(template.files.length == 0) ? 'hide' : '')
                 thead
                     tr
                         th File name
                         th File size
+                        th # Downloads
+                        th Actions
                 tbody#uploadedFiles
+                    - each file in template.files
+                        tr(data-file="#{JSON.stringify(file)}", data-file-id="#{file._id}", data-file-downloads="#{file.num_downloads}")
+                            td #{file.name}
+                            td #{filesize(file.size)}
+                            td #{file.num_downloads}
+                            td
+                                button.btn.btn-danger.removeButton(style="margin-right: 10px;") Remove
+                                button.btn.btn-default.changeButton Change
 
             div.text-center
                 p You can choose many files at the same time
@@ -97,6 +109,19 @@ block content
                 div.progress.progress-striped.active.hide
                     div#progress.progress-bar.progress-bar-success(style="width: 0%;")
 
+    // Remove file confirmation dialog
+    div#removeFileDialog.modal.fade.in
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h4.modal-title Remove file
+                div.modal-body
+                    div Are you sure you want to remove this file?
+                    div.text-danger This action cannot be undone.
+                div.modal-footer
+                    button.btn.btn-danger.yesButton Yes
+                    button.btn.btn-default(data-dismiss="modal") No
 
 block footerScript
     script(type="text/javascript", src="/vendor/fileupload/js/vendor/jquery.ui.widget.js")
@@ -108,8 +133,7 @@ block footerScript
     script(type="text/javascript").
         $(document).ready(function() {
             // Form validator
-            $('#addTemplateForm').bootstrapValidator({
-                //live: 'enabled',
+            $('#editTemplateForm').bootstrapValidator({
                 fields: {
                     name: {
                         validators: {
@@ -142,8 +166,6 @@ block footerScript
                 }
             });
 
-            var uploadedFiles = [];
-
             // Uploader handler
             $('#uploader').fileupload({
                 dataType: 'json',
@@ -154,13 +176,33 @@ block footerScript
                 },
                 done: function(e, data) {
                     $('#uploadedFiles').parent().removeClass('hide');
+                    var fileId = $('#uploader').data('fileId');
+
                     $.each(data.result.files, function(index, file) {
-                        var $tr = $('<tr/>').appendTo('#uploadedFiles');
-                        $('<td/>').html(file.name).appendTo($tr);
-                        $('<td/>').html(filesize(file.size)).appendTo($tr);
-                        uploadedFiles.push(file);
+                        var $tr = $('<tr/>').append($('<td/>').html(file.name))
+                                            .append($('<td/>').html(filesize(file.size)))
+                                            .append($('<td/>').html('-')),
+                            $actionCell = $('<td/>').appendTo($tr);
+                        $('<button/>').css('margin-right', '10px').addClass('btn btn-danger removeButton').html('Remove').appendTo($actionCell);
+
+                        if (fileId) {
+                            $('<button/>').addClass('btn btn-default changeButton').html('Change').appendTo($actionCell);
+
+                            var $oldRow = $('tr[data-file-id="' + fileId + '"]');
+                            $tr
+                                .attr('data-file-id', fileId)
+                                .attr('data-file-downloads', $oldRow.attr('data-file-downloads'))
+                                .find('td').eq(2).html($oldRow.attr('data-file-downloads'));
+                            $oldRow.replaceWith($tr);
+                            file._id = fileId;
+                            file.num_downloads = $oldRow.attr('data-file-downloads');
+                        } else {
+                            $tr.appendTo('#uploadedFiles');
+                        }
+                        $tr.attr('data-file', JSON.stringify(file));
                     });
 
+                    $('#uploader').removeData('fileId').attr('multiple', 'multiple');
                     $('#saveButton').removeAttr('disabled');
                 }
             });
@@ -190,7 +232,34 @@ block footerScript
             });
 
             $('#saveButton').on('click', function(e) {
+                var uploadedFiles = [];
+                $('#uploadedFiles').find('tr').each(function() {
+                    uploadedFiles.push(JSON.parse($(this).attr('data-file')));
+                });
+
                 $('input[name="uploaded_files"]').val(JSON.stringify(uploadedFiles));
                 $(this).parent('form').submit();
+            });
+
+            // Remove file handler
+            $('#uploadedFiles').on('click', '.removeButton', function() {
+                var $that = $(this), removeFileDialog = $('#removeFileDialog');
+                removeFileDialog
+                    // Yes button click handler
+                    .find('.yesButton')
+                        .off('click')
+                        .on('click', function() {
+                            $that.parents('tr').remove();
+                            removeFileDialog.modal('hide');
+                        })
+                        .end()
+                    .modal('show');
+            });
+
+            // Change file handler
+            $('#uploadedFiles').on('click', '.changeButton', function() {
+                var $that = $(this), id = $that.parents('tr').attr('data-file-id');
+                $that.attr('disabled', 'disabled');
+                $('#uploader').data('fileId', id).removeAttr('multiple').click();
             });
         });

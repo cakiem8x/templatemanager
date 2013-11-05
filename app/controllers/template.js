@@ -1,5 +1,6 @@
 var mongoose    = require('mongoose'),
     Template    = mongoose.model('template'),
+    filesize    = require('filesize'),
     fs          = require('fs'),
     mkdirp      = require('mkdirp'),
     moment      = require('moment'),
@@ -95,6 +96,49 @@ exports.add = function(req, res) {
             year: new Date().getFullYear()
         });
     }
+};
+
+/**
+ * Edit template
+ */
+exports.edit = function(req, res) {
+    var id = req.param('id');
+    Template.findOne({ _id: id }).exec(function(err, template) {
+        if ('post' == req.method.toLowerCase()) {
+            template.name        = req.body.name;
+            template.demo_url    = req.body.demo_url;
+            template.description = req.body.description;
+            template.tags        = req.body.tags;
+            template.thumbs      = JSON.parse(req.body.thumbs || []);
+            template.files       = JSON.parse(req.body.uploaded_files || []);
+            template.responsive  = req.body.responsive || true;
+            template.free        = req.body.free || false;
+            template.year        = req.body.year || new Date().getFullYear();
+
+            template.save(function(err) {
+                if (err) {
+                    req.flash('error', 'Could not save the template');
+                } else {
+                    req.flash('success', 'Template has been updated successfully');
+                }
+                return res.redirect('/admin/template/edit/' + id);
+            });
+        } else {
+            var config = req.app.get('config');
+            res.render('template/edit', {
+                messages: {
+                    warning: req.flash('error'),
+                    success: req.flash('success')
+                },
+                thumbPrefixUrl: config.thumbs.url,
+                template: template,
+                title: 'Edit template',
+
+                // Helper
+                filesize: filesize
+            });
+        }
+    });
 };
 
 /**

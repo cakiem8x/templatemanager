@@ -6,6 +6,7 @@
         "connect-flash": "latest",
         "connect-mongo": "latest",
         "express": "3.x",
+        "filesize": "2.x",
         "formidable": "latest",
         "imagemagick": "latest",
         "jade": "0.35.x",

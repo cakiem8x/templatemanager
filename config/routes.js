@@ -19,6 +19,7 @@ module.exports = function(app) {
     app.get('/admin', authentication.requireAuthentication, dashboard.index);
     app.get('/admin/template', authentication.requireAuthentication, template.index);
     app.all('/admin/template/add', authentication.requireAuthentication, template.add);
+    app.all('/admin/template/edit/:id', authentication.requireAuthentication, template.edit);
 
     // Upload
     app.post('/admin/thumb', authentication.requireAuthentication, template.thumb);
