@@ -182,6 +182,7 @@ block footerScript
                 autoUpload: true,
                 url: '/admin/upload',
                 start: function(e) {
+                    $('.changeButton').attr('disabled', 'disabled');
                     $('#saveButton').attr('disabled', 'disabled');
                 },
                 done: function(e, data) {
@@ -280,9 +281,7 @@ block footerScript
 
             // Change file handler
             $('#uploadedFiles').on('click', '.changeButton', function() {
-                var $that = $(this);
-                $('.changeButton').attr('disabled', 'disabled');
-                $('#uploader').data('editingRow', $that.parents('tr'))
+                $('#uploader').data('editingRow', $(this).parents('tr'))
                               .removeAttr('multiple')
                               .click();
             });
