@@ -86,18 +86,22 @@ block content
                 thead
                     tr
                         th File name
+                        th Description
                         th File size
                         th # Downloads
                         th Actions
                 tbody#uploadedFiles
                     - each file in template.files
-                        tr(data-file="#{JSON.stringify(file)}", data-file-id="#{file._id}", data-file-downloads="#{file.num_downloads}")
+                        tr(data-file="#{JSON.stringify(file)}")
                             td #{file.name}
+                            td
+                                input.form-control.descriptionText(type="text", value="#{file.description}")
                             td #{filesize(file.size)}
                             td #{file.num_downloads}
                             td
-                                button.btn.btn-danger.removeButton(style="margin-right: 10px;") Remove
-                                button.btn.btn-default.changeButton Change
+                                div.btn-group
+                                    button.btn.btn-danger.removeButton Remove
+                                    button.btn.btn-default.changeButton Change
 
             div.text-center
                 p You can choose many files at the same time
@@ -166,6 +170,12 @@ block footerScript
                 }
             });
 
+            // Init data for rows showing uploaded files
+            $('#uploadedFiles').find('tr').each(function() {
+                $(this).data('file', JSON.parse($(this).attr('data-file')))
+                       .removeAttr('data-file');
+            });
+
             // Uploader handler
             $('#uploader').fileupload({
                 dataType: 'json',
@@ -176,34 +186,41 @@ block footerScript
                 },
                 done: function(e, data) {
                     $('#uploadedFiles').parent().removeClass('hide');
-                    var fileId = $('#uploader').data('fileId');
+                    var editingRow = $('#uploader').data('editingRow');
 
                     $.each(data.result.files, function(index, file) {
-                        var $tr = $('<tr/>').append($('<td/>').html(file.name))
-                                            .append($('<td/>').html(filesize(file.size)))
-                                            .append($('<td/>').html('-')),
-                            $actionCell = $('<td/>').appendTo($tr);
-                        $('<button/>').css('margin-right', '10px').addClass('btn btn-danger removeButton').html('Remove').appendTo($actionCell);
+                        // Changing the uploaded file
+                        if (editingRow) {
+                            // Update row data
+                            var f = editingRow.data('file');
+                            file._id                = f._id;
+                            file.num_downloads      = f.num_downloads;
+                            file.description        = f.description;
+                            editingRow.data('file', file);
 
-                        if (fileId) {
-                            $('<button/>').addClass('btn btn-default changeButton').html('Change').appendTo($actionCell);
-
-                            var $oldRow = $('tr[data-file-id="' + fileId + '"]');
-                            $tr
-                                .attr('data-file-id', fileId)
-                                .attr('data-file-downloads', $oldRow.attr('data-file-downloads'))
-                                .find('td').eq(2).html($oldRow.attr('data-file-downloads'));
-                            $oldRow.replaceWith($tr);
-                            file._id = fileId;
-                            file.num_downloads = $oldRow.attr('data-file-downloads');
+                            // Update UI
+                            editingRow
+                                .find('td')
+                                    .eq(0).html(file.name).end()
+                                    .eq(2).html(filesize(file.size)).end();
                         } else {
-                            $tr.appendTo('#uploadedFiles');
+                            // Upload new file
+                            $('<tr/>').append($('<td/>').html(file.name))
+                                      .append($('<td/>').append($('<input/>').attr('type', 'text').addClass('form-control descriptionText')))
+                                      .append($('<td/>').html(filesize(file.size)))
+                                      .append($('<td/>').html('-'))
+                                      .append($('<td/>').append($('<button/>').addClass('btn btn-danger removeButton').html('Remove')))
+                                      .data('file', file)
+                                      .appendTo('#uploadedFiles');
                         }
-                        $tr.attr('data-file', JSON.stringify(file));
                     });
 
-                    $('#uploader').removeData('fileId').attr('multiple', 'multiple');
+                    $('#uploader').removeData('editingRow').attr('multiple', 'multiple');
                     $('#saveButton').removeAttr('disabled');
+
+                    if (editingRow) {
+                        $('.changeButton').removeAttr('disabled');
+                    }
                 }
             });
 
@@ -234,12 +251,17 @@ block footerScript
             $('#saveButton').on('click', function(e) {
                 var uploadedFiles = [];
                 $('#uploadedFiles').find('tr').each(function() {
-                    uploadedFiles.push(JSON.parse($(this).attr('data-file')));
+                    uploadedFiles.push($(this).data('file'));
                 });
 
                 $('input[name="uploaded_files"]').val(JSON.stringify(uploadedFiles));
                 $(this).parent('form').submit();
             });
+
+            // Update file description handler
+           $('#uploadedFiles').on('keyup', '.descriptionText', function() {
+               $(this).parents('tr').data('file').description = $(this).val();
+           });
 
             // Remove file handler
             $('#uploadedFiles').on('click', '.removeButton', function() {
@@ -258,8 +280,10 @@ block footerScript
 
             // Change file handler
             $('#uploadedFiles').on('click', '.changeButton', function() {
-                var $that = $(this), id = $that.parents('tr').attr('data-file-id');
-                $that.attr('disabled', 'disabled');
-                $('#uploader').data('fileId', id).removeAttr('multiple').click();
+                var $that = $(this);
+                $('.changeButton').attr('disabled', 'disabled');
+                $('#uploader').data('editingRow', $that.parents('tr'))
+                              .removeAttr('multiple')
+                              .click();
             });
         });

@@ -21,6 +21,7 @@ var mongoose       = require('mongoose'),
         },
         files: [{
             name: { type: String, default: '' },
+            description: { type: String, default: '' },
             path: { type: String, default: '' },
             size: { type: Number, default: 0 },
             num_downloads: { type: Number, default: 0 },

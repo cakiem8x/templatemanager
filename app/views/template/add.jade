@@ -84,6 +84,7 @@ block content
                 thead
                     tr
                         th File name
+                        th Description
                         th File size
                         th Actions
                 tbody#uploadedFiles
@@ -169,6 +170,7 @@ block footerScript
                     $.each(data.result.files, function(index, file) {
                         var $tr = $('<tr/>').appendTo('#uploadedFiles')
                                             .append($('<td/>').html(file.name))
+                                            .append($('<td/>').append($('<input/>').attr('type', 'text').addClass('form-control descriptionText')))
                                             .append($('<td/>').html(filesize(file.size)));
                         $('<td/>').appendTo($tr)
                                   .append($('<button/>').addClass('btn btn-danger removeButton').html('Remove'));
@@ -213,6 +215,11 @@ block footerScript
 
                 $('input[name="uploaded_files"]').val(JSON.stringify(uploadedFiles));
                 $(this).parent('form').submit();
+            });
+
+            // Update file description handler
+            $('#uploadedFiles').on('keyup', '.descriptionText', function() {
+                $(this).parents('tr').data('file').description = $(this).val();
             });
 
             // Remove file handler
