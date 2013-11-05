@@ -85,6 +85,7 @@ block content
                     tr
                         th File name
                         th File size
+                        th Actions
                 tbody#uploadedFiles
 
             div.text-center
@@ -96,6 +97,20 @@ block content
             div.col-lg-8.col-lg-offset-2(style="margin-top: 20px;")
                 div.progress.progress-striped.active.hide
                     div#progress.progress-bar.progress-bar-success(style="width: 0%;")
+
+    // Remove file confirmation dialog
+    div#removeFileDialog.modal.fade.in
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h4.modal-title Remove file
+                div.modal-body
+                    div Are you sure you want to remove this file?
+                    div.text-danger This action cannot be undone.
+                div.modal-footer
+                    button.btn.btn-danger.yesButton Yes
+                    button.btn.btn-default(data-dismiss="modal") No
 
 
 block footerScript
@@ -109,7 +124,6 @@ block footerScript
         $(document).ready(function() {
             // Form validator
             $('#addTemplateForm').bootstrapValidator({
-                //live: 'enabled',
                 fields: {
                     name: {
                         validators: {
@@ -142,8 +156,6 @@ block footerScript
                 }
             });
 
-            var uploadedFiles = [];
-
             // Uploader handler
             $('#uploader').fileupload({
                 dataType: 'json',
@@ -155,10 +167,13 @@ block footerScript
                 done: function(e, data) {
                     $('#uploadedFiles').parent().removeClass('hide');
                     $.each(data.result.files, function(index, file) {
-                        var $tr = $('<tr/>').appendTo('#uploadedFiles');
-                        $('<td/>').html(file.name).appendTo($tr);
-                        $('<td/>').html(filesize(file.size)).appendTo($tr);
-                        uploadedFiles.push(file);
+                        var $tr = $('<tr/>').appendTo('#uploadedFiles')
+                                            .append($('<td/>').html(file.name))
+                                            .append($('<td/>').html(filesize(file.size)));
+                        $('<td/>').appendTo($tr)
+                                  .append($('<button/>').addClass('btn btn-danger removeButton').html('Remove'));
+
+                        $tr.data('file', file);
                     });
 
                     $('#saveButton').removeAttr('disabled');
@@ -190,7 +205,28 @@ block footerScript
             });
 
             $('#saveButton').on('click', function(e) {
+                // Collect uploaded files
+                var uploadedFiles = [];
+                $('#uploadedFiles').find('tr').each(function() {
+                    uploadedFiles.push($(this).data('file'));
+                });
+
                 $('input[name="uploaded_files"]').val(JSON.stringify(uploadedFiles));
                 $(this).parent('form').submit();
+            });
+
+            // Remove file handler
+            $('#uploadedFiles').on('click', '.removeButton', function() {
+                var $that = $(this), removeFileDialog = $('#removeFileDialog');
+                removeFileDialog
+                    // Yes button click handler
+                    .find('.yesButton')
+                        .off('click')
+                        .on('click', function() {
+                            $that.parents('tr').remove();
+                            removeFileDialog.modal('hide');
+                        })
+                        .end()
+                    .modal('show');
             });
         });
