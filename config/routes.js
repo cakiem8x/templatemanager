@@ -34,4 +34,5 @@ module.exports = function(app) {
 
     app.all('/account', authentication.requireAccountAuthentication, account.dashboard);
     app.all('/account/template', authentication.requireAccountAuthentication, account.template);
+    app.all('/account/template/download/:id', authentication.requireAccountAuthentication, account.download);
 };

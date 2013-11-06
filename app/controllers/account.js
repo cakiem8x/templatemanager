@@ -6,6 +6,7 @@ var
 
     mongoose = require('mongoose'),
     Template = mongoose.model('template'),
+    fs       = require('fs'),
     filesize = require('filesize');
 
 /**
@@ -140,5 +141,32 @@ exports.template = function(req, res) {
                 filesize: filesize
             });
         });
+    });
+};
+
+/**
+ * Download template
+ */
+exports.download = function(req, res) {
+    var id = req.param('id');
+    Template.findOne({ 'files._id': id }).exec(function(err, template) {
+        if (!err) {
+            var file = null;
+            // TODO: Find a quick and more convenient way to get the file
+            for (var i in template.files) {
+                if (template.files[i]._id == id) {
+                    file = template.files[i];
+                    break;
+                }
+            }
+            if (file) {
+                res.setHeader('Content-Description', 'Download file');
+                res.setHeader('Content-Type', 'application/octet-stream');
+                res.setHeader('Content-Disposition', 'attachment; filename=' + file.name);
+
+                var stream = fs.createReadStream(file.path);
+                stream.pipe(res);
+            }
+        }
     });
 };
