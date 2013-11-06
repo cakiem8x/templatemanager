@@ -31,7 +31,7 @@ var mongoose       = require('mongoose'),
         created_date: { type: Date, default: Date.now },
         responsive: { type: Boolean, default: true },
         free: { type: Boolean, default: false },
-        browsers: { type: String, default: 'IE 8+, Opera 9+, Firefox, Chrome, Safari' },
+        browsers: { type: String, default: 'IE 8,Opera,Firefox,Chrome,Safari' },
         software_versions: { type: String, default: '' },
         high_resolution: { type: String, default: 'n/a' },
         year: { type: Number, default: new Date().getFullYear() }

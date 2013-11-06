@@ -49,7 +49,15 @@ block content
                 div.form-group
                     label.control-label.col-lg-2 Supported browsers
                     div.col-lg-8
-                        input.form-control(type="text", name="browsers", value="#{template.browsers}")
+                        div.btn-group
+                            button.btn.btn-default.browserButton(type="button", value="IE 8") IE 8
+                            button.btn.btn-default.browserButton(type="button", value="IE 9") IE 9
+                            button.btn.btn-default.browserButton(type="button", value="IE 10") IE 10
+                            button.btn.btn-default.browserButton(type="button", value="Chrome") Chrome
+                            button.btn.btn-default.browserButton(type="button", value="Firefox") Firefox
+                            button.btn.btn-default.browserButton(type="button", value="Safari") Safari
+                            button.btn.btn-default.browserButton(type="button", value="Opera") Opera
+                        input(type="hidden", name="browsers", value="#{template.browsers}")
 
                 div.form-group
                     label.control-label.col-lg-2 High resolution
@@ -273,8 +281,15 @@ block footerScript
                 $('#uploadedFiles').find('tr').each(function() {
                     uploadedFiles.push($(this).data('file'));
                 });
-
                 $('input[name="uploaded_files"]').val(JSON.stringify(uploadedFiles));
+
+                // Supported browsers
+                var browsers = [];
+                $('.browserButton.active').each(function() {
+                    browsers.push($(this).val());
+                });
+                $('input[name="browsers"]').val(browsers.join(','));
+
                 $(this).parent('form').submit();
             });
 
@@ -303,6 +318,18 @@ block footerScript
                 $('#uploader').data('editingRow', $(this).parents('tr'))
                               .removeAttr('multiple')
                               .click();
+            });
+
+            // Update supported browsers option
+            $.each("#{template.browsers || ''}".split(','), function(index, browser) {
+                $('.browserButton[value="' + browser + '"]').addClass('active').prepend($('<i/>').addClass('fa fa-check'));
+            });
+            $('.browserButton').on('click', function() {
+                if ($(this).hasClass('active')) {
+                    $(this).removeClass('active').find('i').remove();
+                } else {
+                    $(this).addClass('active').prepend($('<i/>').addClass('fa fa-check'));
+                }
             });
 
             // Update high resolution option
