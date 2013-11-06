@@ -1,0 +1,47 @@
+extends ../layouts/default
+
+block content
+    div.col-lg-8.col-lg-offset-2
+        div.page-header
+            h2 Account area
+
+        include ../partial/flash
+
+    div.col-lg-4.col-lg-offset-4
+
+        div.panel.panel-default
+            div.panel-heading
+                h3.panel-title Sign in
+            div.panel-body
+                form#signinForm(method="post", action="/account/signin")
+                    div.form-group
+                        input.form-control(type="text", name="user_name", placeholder="Username")
+                    div.form-group
+                        input.form-control(type="password", name="password", placeholder="Password")
+                    button.btn.btn-success(type="submit") Sign in
+
+
+block footerScript
+    script(type="text/javascript", src="/vendor/bootstrapvalidator/js/bootstrapValidator.min.js")
+    script(type="text/javascript").
+        $(document).ready(function() {
+            // Form validator
+            $('#signinForm').bootstrapValidator({
+                fields: {
+                    user_name: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The username is required'
+                            }
+                        }
+                    },
+                    password: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The password is required'
+                            }
+                        }
+                    }
+                }
+            });
+        });

@@ -1,4 +1,5 @@
-var auth      = require('../app/controllers/auth'),
+var account   = require('../app/controllers/account'),
+    auth      = require('../app/controllers/auth'),
     dashboard = require('../app/controllers/dashboard'),
     index     = require('../app/controllers/index'),
     template  = require('../app/controllers/template');
@@ -9,11 +10,11 @@ module.exports = function(app) {
     // Routes
     app.get('/', index.index);
 
-    // Sign in
-    app.all('/signin', auth.signin);
+    // --- Administration routes ---
 
-    // Sign out
-    app.get('/signout', auth.signout);
+    // Auth
+    app.all('/admin/signin', auth.signin);
+    app.get('/admin/signout', auth.signout);
 
     // Back-end
     app.get('/admin', authentication.requireAuthentication, dashboard.index);
@@ -26,4 +27,8 @@ module.exports = function(app) {
     // Upload
     app.post('/admin/thumb', authentication.requireAuthentication, template.thumb);
     app.post('/admin/upload', authentication.requireAuthentication, template.upload);
+
+    // --- Account routes ---
+    app.all('/account/signin', account.signin);
+    app.all('/account/signout', account.signout);
 };
