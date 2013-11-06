@@ -81,7 +81,7 @@ exports.add = function(req, res) {
                 return res.redirect('/admin/template/add');
             } else {
                 req.flash('success', 'Template has been added successfully');
-                return res.redirect('/admin/template/add');
+                return res.redirect('/admin/template/edit/' + template._id);
             }
         });
     } else {
