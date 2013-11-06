@@ -10,7 +10,9 @@ block content
                 a(href="/admin/template?year=#{year}") #{year}
 
             span.pull-right
-                a.btn.btn-default(href="/admin/template/add") Add new template
+                a.btn.btn-link(href="/admin/template/add")
+                    i.fa.fa-plus
+                    | &nbsp;Add new template
 
     if total == 0
         p.text-center There is no templates
