@@ -33,13 +33,32 @@ block content
                 div.form-group
                     label.control-label.col-lg-2 Description
                     div.col-lg-6
-                        textarea.form-control(name="description", rows=5)
+                        textarea.form-control(name="description", rows=6)
 
                 div.form-group
                     label.control-label.col-lg-2 Tags
                     div.col-lg-8
                         input.form-control(type="text", name="tags")
                         small.help-block Separate tags by a comma
+
+                div.form-group
+                    label.control-label.col-lg-2 Software versions
+                    div.col-lg-6
+                        input.form-control(type="text", name="software_versions")
+
+                div.form-group
+                    label.control-label.col-lg-2 Supported browsers
+                    div.col-lg-6
+                        input.form-control(type="text", name="browsers", placeholder="IE 8+, Opera, Firefox, Chrome, Safari")
+
+                div.form-group
+                    label.control-label.col-lg-2 High resolution
+                    div.col-lg-6
+                        div.btn-group
+                            button.btn.btn-default.highResolutionButton(type="button", value="yes") Yes
+                            button.btn.btn-default.highResolutionButton(type="button", value="no") No
+                            button.btn.btn-default.highResolutionButton.active(type="button", value="n/a") N/A
+                        input(type="hidden", name="high_resolution", value="n/a")
 
                 div.form-group
                     label.control-label.col-lg-2 Year
@@ -235,5 +254,11 @@ block footerScript
                         })
                         .end()
                     .modal('show');
+            });
+
+            // Update high resolution option
+            $('.highResolutionButton').on('click', function() {
+                $(this).addClass('active').parent('btn-group').find('button').removeClass('active');
+                $('input[name="high_resolution"]').val($(this).val());
             });
         });

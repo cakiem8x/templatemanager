@@ -68,6 +68,9 @@ exports.add = function(req, res) {
             demo_url: req.body.demo_url,
             description: req.body.description,
             tags: req.body.tags,
+            software_versions: req.body.software_versions,
+            browsers: req.body.browsers,
+            high_resolution: req.body.high_resolution,
             thumbs: JSON.parse(req.body.thumbs || []),
             files: JSON.parse(req.body.uploaded_files || []),
             responsive: req.body.responsive || true,
@@ -105,15 +108,18 @@ exports.edit = function(req, res) {
     var id = req.param('id');
     Template.findOne({ _id: id }).exec(function(err, template) {
         if ('post' == req.method.toLowerCase()) {
-            template.name        = req.body.name;
-            template.demo_url    = req.body.demo_url;
-            template.description = req.body.description;
-            template.tags        = req.body.tags;
-            template.thumbs      = JSON.parse(req.body.thumbs || []);
-            template.files       = JSON.parse(req.body.uploaded_files || []);
-            template.responsive  = req.body.responsive || true;
-            template.free        = req.body.free || false;
-            template.year        = req.body.year || new Date().getFullYear();
+            template.name              = req.body.name;
+            template.demo_url          = req.body.demo_url;
+            template.description       = req.body.description;
+            template.tags              = req.body.tags;
+            template.software_versions = req.body.software_versions;
+            template.browsers          = req.body.browsers;
+            template.high_resolution   = req.body.high_resolution;
+            template.thumbs            = JSON.parse(req.body.thumbs || []);
+            template.files             = JSON.parse(req.body.uploaded_files || []);
+            template.responsive        = req.body.responsive || true;
+            template.free              = req.body.free || false;
+            template.year              = req.body.year || new Date().getFullYear();
 
             template.save(function(err) {
                 if (err) {

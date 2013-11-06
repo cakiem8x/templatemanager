@@ -42,6 +42,25 @@ block content
                         small.help-block Separate tags by a comma
 
                 div.form-group
+                    label.control-label.col-lg-2 Software versions
+                    div.col-lg-8
+                        input.form-control(type="text", name="software_versions", value="#{template.software_versions}")
+
+                div.form-group
+                    label.control-label.col-lg-2 Supported browsers
+                    div.col-lg-8
+                        input.form-control(type="text", name="browsers", value="#{template.browsers}")
+
+                div.form-group
+                    label.control-label.col-lg-2 High resolution
+                    div.col-lg-6
+                        div.btn-group
+                            button.btn.btn-default.highResolutionButton(type="button", value="yes") Yes
+                            button.btn.btn-default.highResolutionButton(type="button", value="no") No
+                            button.btn.btn-default.highResolutionButton(type="button", value="n/a") N/A
+                        input(type="hidden", name="high_resolution", value="#{template.high_resolution || 'n/a'}")
+
+                div.form-group
                     label.control-label.col-lg-2 Year
                     div.col-lg-2
                         input.form-control(type="text", name="year", value="#{template.year}")
@@ -284,5 +303,16 @@ block footerScript
                 $('#uploader').data('editingRow', $(this).parents('tr'))
                               .removeAttr('multiple')
                               .click();
+            });
+
+            // Update high resolution option
+            $('.highResolutionButton[value="#{template.high_resolution}"]').addClass('active');
+            $('.highResolutionButton').on('click', function() {
+                $(this)
+                    .parent()
+                        .find('button').removeClass('active').end()
+                        .end()
+                    .addClass('active');
+                $('input[name="high_resolution"]').val($(this).val());
             });
         });
