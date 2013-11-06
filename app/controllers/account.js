@@ -1,6 +1,12 @@
-var http = require('http'),
+var
+    // For authentication
+    http = require('http'),
     url  = require('url'),
-    qs   = require('querystring');
+    qs   = require('querystring'),
+
+    mongoose = require('mongoose'),
+    Template = mongoose.model('template'),
+    filesize = require('filesize');
 
 /**
  * Sign in
@@ -68,4 +74,71 @@ exports.signout = function(req, res) {
     } else {
         res.redirect('/');
     }
+};
+
+/**
+ * Dashboard
+ */
+exports.dashboard = function(req, res) {
+    res.render('account/dashboard', {
+        title: 'Dashboard'
+    });
+};
+
+/**
+ * List templates
+ */
+exports.template = function(req, res) {
+    var app       = req.app,
+        config    = app.get('config'),
+
+        // Criteria
+        perPage   = 9,
+        pageRange = 5,
+        page      = req.param('page') || 1,
+        q         = req.param('q') || '',
+        year      = req.param('year'),
+        criteria  = q ? { name: new RegExp(q, 'i') } : {};
+
+    if (year) {
+        criteria.year = year;
+    }
+
+    Template.count(criteria, function(err, total) {
+        Template.find(criteria).skip((page - 1) * perPage).limit(perPage).sort({ created_date: -1 }).exec(function(err, templates) {
+            if (err) {
+                templates = [];
+            }
+
+            var numPages   = Math.ceil(total / perPage),
+                startRange = (page == 1) ? 1 : pageRange * Math.floor(page / pageRange) + 1,
+                endRange   = startRange + pageRange;
+
+            if (endRange > numPages) {
+                endRange = numPages;
+            }
+
+            res.render('account/template', {
+                req: req,
+                moment: moment,
+                title: 'Templates',
+                total: total,
+                templates: templates,
+                thumbPrefixUrl: config.thumbs.url,
+
+                // Criteria
+                q: q,
+                year: year,
+
+                // Pagination
+                page: page,
+                numPages: numPages,
+                startRange: startRange,
+                endRange: endRange,
+
+                // Helper
+                filesize: filesize
+            });
+        });
+    });
 };

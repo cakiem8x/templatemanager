@@ -31,4 +31,7 @@ module.exports = function(app) {
     // --- Account routes ---
     app.all('/account/signin', account.signin);
     app.all('/account/signout', account.signout);
+
+    app.all('/account', authentication.requireAccountAuthentication, account.dashboard);
+    app.all('/account/template', authentication.requireAccountAuthentication, account.template);
 };

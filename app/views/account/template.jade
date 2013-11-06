@@ -1,0 +1,75 @@
+extends ../layouts/account
+
+block content
+    div.page-header
+        h2
+            a(href="/account/template") Templates
+
+            if year
+                &nbsp;/&nbsp;
+                a(href="/account/template?year=#{year}") #{year}
+
+    if total == 0
+        p.text-center There is no templates
+    else
+        div.row(style="margin-bottom: 20px;")
+            div.col-lg-8 Found #{total} templates
+            div.col-lg-4.pull-right
+                form.form-inline(method="get", action="/account/template")
+                    div.input-group
+                        input.form-control(type="text", name="q", value="#{q}")
+                        span.input-group-btn
+                            button.btn.btn-default(type="submit")
+                                i.fa.fa-search
+
+        - each template, index in templates
+            if (index % 3 == 0)
+                div.row
+            div.col-lg-4
+                div.tb-tmpl-item
+                    img(src="#{thumbPrefixUrl}#{template.thumbs.medium}")
+
+                    h3 #{template.name}
+
+                    if template.description
+                        p #{template.description.substr(0, 200)}...
+                    if template.responsive
+                        small.help-block
+                            i.fa.fa-mobile.fa-2x
+                            | &nbsp; Responsive
+                    if template.browsers
+                        small.help-block
+                            i.fa.fa-check
+                            | &nbsp; #{template.browsers.split(',').join(', ')}
+                    if template.software_versions
+                        small.help-block
+                            i.fa.fa-heart
+                            | &nbsp; #{template.software_versions.split(',').join(', ')}
+
+                    if template.files.length > 0
+                        div.text-center
+                            div.btn-group
+                                button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
+                                    | Download &nbsp;
+                                    span.caret
+
+                                ul.dropdown-menu
+                                    for file in template.files
+                                        li.text-left
+                                            a(href="/account/template/download/#{file._id}") #{file.description} (#{filesize(file.size)})
+
+        div.clearfix
+
+        // Pagination
+        if (numPages > 1)
+            div.text-center
+                ul.pagination
+                    li
+                        a(href="#{url(req, { page: 1 })}") &larr;
+                    - for (i = startRange; i <= endRange; i++)
+                        li(class=(i == page) ? 'active' : '')
+                            a(href="#{url(req, { page: i })}") #{i}
+                    li
+                        a(href="#{url(req, { page: numPages })}") &rarr;
+
+        div(style="margin-bottom: 200px;")
