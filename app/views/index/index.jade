@@ -1,3 +1,119 @@
-extends ../layouts/default
+!!! 5
+html
+    head
+        meta(charset="utf-8")
+        meta(http-equiv="Content-type", content="text/html;charset=UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
+        title #{provider.name}
+        //link(rel="stylesheet", href="/vendor/bootstrap/css/bootstrap.min.css")
+        link(rel="stylesheet", href="/vendor/bootstrap-theme/css/flatly.css")
+        link(rel="stylesheet", href="/vendor/font-awesome/css/font-awesome.min.css")
+        link(rel="stylesheet", href="/asset/css/style.css")
+        //if IE 7
+            link(rel="stylesheet", href="/vendor/font-awesome/css/font-awesome-ie7.min.css")
+        //if lt IE 9
+            script(src="/vendor/html5shiv/html5shiv.min.js")
+            script(src="/vendor/respond/respond.min.js")
+    body.tpl-body
+        div.navbar.navbar-default.navbar-fixed-top
+            div.container
+                div.navbar-header
+                    button.navbar-toggle(type="button", data-toggle="collapse", data-target="#navbarCollapse")
+                        span.icon-bar
+                        span.icon-bar
+                        span.icon-bar
+                    a.navbar-brand(href="#{provider.url}", title="#{provider.name}")
+                        if provider.logo
+                            img(src="#{provider.logo}")
+                        else
+                            #{provider.name}
 
-block content
+                div#navbarCollapse.nav-collapse
+                    ul.nav.navbar-nav
+                        li
+                            a#templateButton(href="#")
+                                i.fa.fa-heart
+                                | &nbsp;Templates
+                        li
+                            a#filterButton(href="#")
+                                i.fa.fa-flask
+                                | &nbsp;Filter
+                        li
+                            a(href="#{provider.registerUrl}")
+                                i.fa.fa-shopping-cart
+                                | &nbsp; Join us
+
+
+                    ul.nav.navbar-nav.navbar-right
+                        li
+                            a(href="#")
+                                i.fa.fa-mobile.fa-2x
+                        li
+                            a(href="#")
+                                i.fa.fa-mobile.fa-2x.fa-rotate-90
+                        li
+                            a(href="#")
+                                i.fa.fa-tablet.fa-2x
+                        li
+                            a(href="#")
+                                i.fa.fa-tablet.fa-2x.fa-rotate-90
+                        li
+                            a(href="#")
+                                i.fa.fa-laptop.fa-2x
+                        li
+                            a(href="#")
+                                i.fa.fa-desktop.fa-2x
+
+        // Templates
+        div.col-lg-6.col-lg-offset-3
+            div.tpl-items
+                div.row
+                    if total > 0
+                        ul.tpl-item-list
+                            for template in templates
+                                li.col-lg-4
+                                    img(src="#{thumbPrefixUrl}#{template.thumbs.medium}")
+
+        // Filters
+        div.col-lg-6.col-lg-offset-3
+            div.tpl-filter
+                div.row
+                    form.form-horizontal
+                        div.form-group
+                            label.col-lg-2.control-label Year
+                            div.col-lg-10
+                                div.btn-group
+                                    button.btn.btn-default(type="button") 2013
+                                    button.btn.btn-default(type="button") 2012
+                                    button.btn.btn-default(type="button") 2011
+
+                        div.form-group
+                            label.col-lg-2.control-label Tag
+
+                        div.form-group
+                            label.col-lg-2.control-label Responsive
+                            div.col-lg-10
+                                div.btn-group
+                                    button.btn.btn-default(type="button") Yes
+                                    button.btn.btn-default(type="button") No
+                                    button.btn.btn-default(type="button") N/A
+
+                        div.form-group
+                            label.col-lg-2.control-label High Resolution
+                            div.col-lg-10
+                                div.btn-group
+                                    button.btn.btn-default(type="button") Yes
+                                    button.btn.btn-default(type="button") No
+                                    button.btn.btn-default(type="button") N/A
+
+                        div.form-group
+                            div.col-lg-10.col-lg-offset-2
+                                button.btn.btn-success(type="button", style="margin-right: 20px;") Filter
+                                button.btn.btn-success(type="button") Reset
+
+        //if lt IE 9
+            script(src="/vendor/jquery/jquery-1.10.2.min.js")
+        //[if gte IE 9]><!
+        script(src="/vendor/jquery/jquery-2.0.3.min.js")
+        //<![endif]
+        script(src="/vendor/bootstrap/js/bootstrap.min.js")

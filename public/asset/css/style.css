@@ -1,3 +1,9 @@
+.tpl-body .navbar, .tpl-body .nav {
+  height: 50px; }
+.tpl-body .nav > li {
+  /*border-left: 1px solid #e5e5e5;*/
+  height: 100%; }
+
 html, body {
   height: 100%; }
 
@@ -21,3 +27,14 @@ footer {
 
 .main-content {
   margin: 15px 0; }
+
+.tpl-items, .tpl-filter {
+  margin: 49px auto 0 auto;
+  max-height: 400px;
+  border: 1px solid #e5e5e5; }
+
+.tpl-item-list {
+  list-style-type: none;
+  padding-top: 20px; }
+  .tpl-item-list li img {
+    width: 100%; }

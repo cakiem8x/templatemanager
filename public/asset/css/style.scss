@@ -1,5 +1,19 @@
 // Variables
 $footerHeight: 80px;
+$navbarHeight: 50px;
+
+.tpl-body {
+  .navbar.navbar-default {
+    //background: #fff;
+  }
+  .navbar, .nav {
+    height: $navbarHeight;
+  }
+  .nav>li {
+    /*border-left: 1px solid #e5e5e5;*/
+    height: 100%;
+  }
+}
 
 // Sticky footer
 html, body {
@@ -28,4 +42,19 @@ footer {
 
 .main-content {
   margin: 15px 0;
+}
+
+.tpl-items, .tpl-filter {
+  margin: #{$navbarHeight - 1} auto 0 auto;
+  max-height: 400px;
+  border: 1px solid #e5e5e5;
+}
+.tpl-item-list {
+  list-style-type: none;
+  padding-top: 20px;
+  li {
+    img {
+      width: 100%;
+    }
+  }
 }

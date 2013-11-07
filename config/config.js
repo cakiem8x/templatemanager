@@ -24,8 +24,10 @@ module.exports = {
             key: 'CM1ttnc4YlVEf8QhlXxS'
         },
         provider: {
-            name: 'provider\'s name',
-            url: 'http://domain.com'
+            name: 'ZooTemplate',
+            logo: '/asset/img/logo.png',
+            url: 'http://www.zootemplate.com',
+            registerUrl: 'http://www.zootemplate.com/member/signup.php'
         }
     },
     test: {
