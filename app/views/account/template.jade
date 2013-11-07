@@ -29,7 +29,11 @@ block content
                 div.tb-tmpl-item
                     img(src="#{thumbPrefixUrl}#{template.thumbs.medium}")
 
-                    h3 #{template.name}
+                    h3
+                        | #{template.name}
+                        small &nbsp;/&nbsp;
+                        small
+                            a(href="#{url(req, { page: 1, year: template.year })}") #{template.year}
 
                     if template.description
                         p #{template.description.substr(0, 200)}...

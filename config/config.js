@@ -22,6 +22,10 @@ module.exports = {
         amember: {
             url: 'http://amember.dev',
             key: 'CM1ttnc4YlVEf8QhlXxS'
+        },
+        provider: {
+            name: 'provider\'s name',
+            url: 'http://domain.com'
         }
     },
     test: {

@@ -5,7 +5,8 @@ exports.requireAuthentication = function(req, res, next) {
     }
     // Set the variable for layout
     req.app.locals({
-        user_name: req.session.user_name
+        user_name: req.session.user_name,
+        provider: req.app.get('config').provider
     });
     next();
 };
@@ -17,7 +18,8 @@ exports.requireAccountAuthentication = function(req, res, next) {
     }
     // Set the variable for layout
     req.app.locals({
-        account: req.session.account
+        account: req.session.account,
+        provider: req.app.get('config').provider
     });
     next();
 };

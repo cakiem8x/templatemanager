@@ -46,7 +46,8 @@ html
 
         footer
             .container
-                | Copyright (c) 2013 company's name
+                | Copyright (c) 2013 &nbsp;
+                a(href="#{provider.url}") #{provider.name}
 
         //if lt IE 9
             script(type="text/javascript", src="/vendor/jquery/jquery-1.10.2.min.js")
