@@ -68,11 +68,26 @@ html(ng-app="TemplateDemo")
         // Templates
         div.col-lg-6.col-lg-offset-3(ng-class="{ 'show': activeTab == 'templates', 'hide': activeTab == 'filter' }")
             div.tpl-items
-                div.row
                     p.text-center(ng-class="{ 'show': total == 0, 'hide': total > 0 }") Not found templates
                     ul.tpl-item-list(ng-class="{ 'show': total > 0, 'hide': total == 0 }")
                         li.col-lg-4(ng-repeat="template in templates")
                             img(ng-src="#{thumbPrefixUrl}{{ template.thumbs.medium }}")
+                        li.clearfix
+
+                    div.clearfix
+
+                    // Pagination
+                    div.text-center(ng-show="pagination.numPages > 1")
+                        ul.pagination
+                            li
+                                a(href="#", ng-click="goPage(1)", tpl-pagination) &larr;
+
+                            li(ng-repeat="i in pagination.range", ng-class="{ 'active': i == 1 }")
+                                a(href="#", ng-click="goPage(i)", tpl-pagination) {{ i }}
+                            li
+                                a(href="#", ng-click="goPage(pagination.numPages)", tpl-pagination) &rarr;
+
+                    div.clearfix
 
         // Filters
         div.col-lg-6.col-lg-offset-3(ng-class="{ 'show': activeTab == 'filter', 'hide': activeTab == 'templates' }")

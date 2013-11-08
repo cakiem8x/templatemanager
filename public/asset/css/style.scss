@@ -43,11 +43,27 @@ footer {
 .main-content {
   margin: 15px 0;
 }
-
-.tpl-items, .tpl-filter {
+.tpl-items {
+  border: 1px solid #e5e5e5;
+  margin: #{$navbarHeight - 1} auto 0 auto;
+  padding-bottom: 10px;
+  .pagination {
+    margin: 0;
+  }
+}
+.tpl-item-list {
+  list-style-type: none;
+  padding-top: 20px;
+  li {
+    margin: 0;
+    img {
+      width: 100%;
+    }
+  }
+}
+.tpl-filter {
   margin: #{$navbarHeight - 1} auto 0 auto;
   padding-top: 20px;
-  max-height: 400px;
   border: 1px solid #e5e5e5;
 
   hr {
@@ -57,13 +73,4 @@ footer {
 }
 .tpl-tag-list {
 
-}
-.tpl-item-list {
-  list-style-type: none;
-  padding-top: 20px;
-  li {
-    img {
-      width: 100%;
-    }
-  }
 }
