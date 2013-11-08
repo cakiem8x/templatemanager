@@ -282,7 +282,8 @@ block footerScript
 
             // Update high resolution option
             $('.highResolutionButton').on('click', function() {
-                $(this).addClass('active').parent('btn-group').find('button').removeClass('active');
+                $(this).parent().find('button').removeClass('active');
+                $(this).addClass('active');
                 $('input[name="high_resolution"]').val($(this).val());
             });
         });
