@@ -1,6 +1,6 @@
 // Variables
 $footerHeight: 80px;
-$navbarHeight: 50px;
+$navbarHeight: 59px;
 
 .tpl-body {
   .navbar.navbar-default {
@@ -46,8 +46,17 @@ footer {
 
 .tpl-items, .tpl-filter {
   margin: #{$navbarHeight - 1} auto 0 auto;
+  padding-top: 20px;
   max-height: 400px;
   border: 1px solid #e5e5e5;
+
+  hr {
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+}
+.tpl-tag-list {
+
 }
 .tpl-item-list {
   list-style-type: none;

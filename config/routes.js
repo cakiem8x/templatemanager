@@ -7,8 +7,9 @@ var account   = require('../app/controllers/account'),
 var authentication = require('./middlewares/authentication');
 
 module.exports = function(app) {
-    // Routes
+    // --- Front-end routes ---
     app.get('/', index.index);
+    app.post('/filter', index.filter);
 
     // --- Administration routes ---
 

@@ -1,5 +1,5 @@
 !!! 5
-html
+html(ng-app="TemplateDemo")
     head
         meta(charset="utf-8")
         meta(http-equiv="Content-type", content="text/html;charset=UTF-8")
@@ -14,7 +14,7 @@ html
         //if lt IE 9
             script(src="/vendor/html5shiv/html5shiv.min.js")
             script(src="/vendor/respond/respond.min.js")
-    body.tpl-body
+    body.tpl-body(ng-controller="DemoController")
         div.navbar.navbar-default.navbar-fixed-top
             div.container
                 div.navbar-header
@@ -31,11 +31,12 @@ html
                 div#navbarCollapse.nav-collapse
                     ul.nav.navbar-nav
                         li
-                            a#templateButton(href="#")
+                            a#templateButton(href="#", ng-click="activateTab('templates')")
                                 i.fa.fa-heart
-                                | &nbsp;Templates
+                                | &nbsp;Templates&nbsp;&nbsp;
+                                span.badge {{ total }}
                         li
-                            a#filterButton(href="#")
+                            a#filterButton(href="#", ng-click="activateTab('filter')")
                                 i.fa.fa-flask
                                 | &nbsp;Filter
                         li
@@ -65,51 +66,59 @@ html
                                 i.fa.fa-desktop.fa-2x
 
         // Templates
-        div.col-lg-6.col-lg-offset-3
+        div.col-lg-6.col-lg-offset-3(ng-class="{ 'show': activeTab == 'templates', 'hide': activeTab == 'filter' }")
             div.tpl-items
                 div.row
-                    if total > 0
-                        ul.tpl-item-list
-                            for template in templates
-                                li.col-lg-4
-                                    img(src="#{thumbPrefixUrl}#{template.thumbs.medium}")
+                    p.text-center(ng-class="{ 'show': total == 0, 'hide': total > 0 }") Not found templates
+                    ul.tpl-item-list(ng-class="{ 'show': total > 0, 'hide': total == 0 }")
+                        li.col-lg-4(ng-repeat="template in templates")
+                            img(ng-src="#{thumbPrefixUrl}{{ template.thumbs.medium }}")
 
         // Filters
-        div.col-lg-6.col-lg-offset-3
+        div.col-lg-6.col-lg-offset-3(ng-class="{ 'show': activeTab == 'filter', 'hide': activeTab == 'templates' }")
             div.tpl-filter
                 div.row
                     form.form-horizontal
                         div.form-group
-                            label.col-lg-2.control-label Year
-                            div.col-lg-10
+                            label.col-lg-3.control-label Year
+                            div.col-lg-9
                                 div.btn-group
-                                    button.btn.btn-default(type="button") 2013
-                                    button.btn.btn-default(type="button") 2012
-                                    button.btn.btn-default(type="button") 2011
+                                    button.btn.btn-default.active(type="button", value="", tpl-check-button="year") All
+                                    for year in years
+                                        button.btn.btn-default(type="button", value="#{year}", tpl-check-button="year") #{year}
+
+                        if tags.length > 0
+                            div.form-group
+                                label.col-lg-3.control-label Tag
+                                div.col-lg-9
+                                    ul.list-unstyled.list-inline.tpl-tag-list
+                                        li
+                                            a.badge(href="#", tpl-tag="") All
+                                        for tag in tags
+                                            li
+                                                a(href="#", tpl-tag="#{tag}") #{tag}
 
                         div.form-group
-                            label.col-lg-2.control-label Tag
-
-                        div.form-group
-                            label.col-lg-2.control-label Responsive
-                            div.col-lg-10
+                            label.col-lg-3.control-label Responsive
+                            div.col-lg-9
                                 div.btn-group
-                                    button.btn.btn-default(type="button") Yes
-                                    button.btn.btn-default(type="button") No
-                                    button.btn.btn-default(type="button") N/A
+                                    button.btn.btn-default.active(type="button", value="", tpl-check-button="responsive") All
+                                    button.btn.btn-default(type="button", value="true", tpl-check-button="responsive") Yes
+                                    button.btn.btn-default(type="button", value="false", tpl-check-button="responsive") No
 
                         div.form-group
-                            label.col-lg-2.control-label High Resolution
-                            div.col-lg-10
+                            label.col-lg-3.control-label High Resolution
+                            div.col-lg-9
                                 div.btn-group
-                                    button.btn.btn-default(type="button") Yes
-                                    button.btn.btn-default(type="button") No
-                                    button.btn.btn-default(type="button") N/A
+                                    button.btn.btn-default.active(type="button", value="", tpl-check-button="high_resolution") All
+                                    button.btn.btn-default(type="button", value="yes", tpl-check-button="high_resolution") Yes
+                                    button.btn.btn-default(type="button", value="no", tpl-check-button="high_resolution") No
+
+                        hr
 
                         div.form-group
-                            div.col-lg-10.col-lg-offset-2
-                                button.btn.btn-success(type="button", style="margin-right: 20px;") Filter
-                                button.btn.btn-success(type="button") Reset
+                            div.col-lg-9.col-lg-offset-3
+                                button.btn.btn-primary(type="button", style="margin-right: 20px;", ng-click="filter()") Filter
 
         //if lt IE 9
             script(src="/vendor/jquery/jquery-1.10.2.min.js")
@@ -117,3 +126,7 @@ html
         script(src="/vendor/jquery/jquery-2.0.3.min.js")
         //<![endif]
         script(src="/vendor/bootstrap/js/bootstrap.min.js")
+        script(src="/vendor/angularjs/angular.min.js")
+        script(src="/asset/js/app.js")
+
+
