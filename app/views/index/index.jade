@@ -66,31 +66,33 @@ html(ng-app="TemplateDemo")
                                 i.fa.fa-desktop.fa-2x
 
         // Templates
-        div.col-lg-6.col-lg-offset-3(ng-class="{ 'show': activeTab == 'templates', 'hide': activeTab == 'filter' }")
+        div.tpl-tab.col-lg-6.col-lg-offset-3(ng-class="{ 'show': activeTab == 'templates', 'hide': activeTab == 'filter' }")
             div.tpl-items
-                    p.text-center(ng-class="{ 'show': total == 0, 'hide': total > 0 }") Not found templates
-                    ul.tpl-item-list(ng-class="{ 'show': total > 0, 'hide': total == 0 }")
-                        li.col-lg-4(ng-repeat="template in templates")
+                p.text-center(ng-class="{ 'show': total == 0, 'hide': total > 0 }") Not found templates
+                ul.tpl-item-list(ng-class="{ 'show': total > 0, 'hide': total == 0 }")
+                    li.col-lg-4(ng-repeat="template in templates")
+                        h2 {{ template.name }}
+                        a(href="#", ng-click="showTemplate(template)")
                             img(ng-src="#{thumbPrefixUrl}{{ template.thumbs.medium }}")
-                        li.clearfix
+                    li.clearfix
 
-                    div.clearfix
+                div.clearfix
 
-                    // Pagination
-                    div.text-center(ng-show="pagination.numPages > 1")
-                        ul.pagination
-                            li
-                                a(href="#", ng-click="goPage(1)", tpl-pagination) &larr;
+                // Pagination
+                div.text-center(ng-show="pagination.numPages > 1")
+                    ul.pagination
+                        li
+                            a(href="#", ng-click="goPage(1)", tpl-pagination) &larr;
 
-                            li(ng-repeat="i in pagination.range", ng-class="{ 'active': i == 1 }")
-                                a(href="#", ng-click="goPage(i)", tpl-pagination) {{ i }}
-                            li
-                                a(href="#", ng-click="goPage(pagination.numPages)", tpl-pagination) &rarr;
+                        li(ng-repeat="i in pagination.range", ng-class="{ 'active': i == 1 }")
+                            a(href="#", ng-click="goPage(i)", tpl-pagination) {{ i }}
+                        li
+                            a(href="#", ng-click="goPage(pagination.numPages)", tpl-pagination) &rarr;
 
-                    div.clearfix
+                div.clearfix
 
         // Filters
-        div.col-lg-6.col-lg-offset-3(ng-class="{ 'show': activeTab == 'filter', 'hide': activeTab == 'templates' }")
+        div.tpl-tab.col-lg-6.col-lg-offset-3(ng-class="{ 'show': activeTab == 'filter', 'hide': activeTab == 'templates' }")
             div.tpl-filter
                 div.row
                     form.form-horizontal
@@ -134,6 +136,10 @@ html(ng-app="TemplateDemo")
                         div.form-group
                             div.col-lg-9.col-lg-offset-3
                                 button.btn.btn-primary(type="button", style="margin-right: 20px;", ng-click="filter()") Filter
+
+        // Frame showing template demo URL
+        iframe.tpl-frame(ng-src="{{ frameUrl }}")
+
 
         //if lt IE 9
             script(src="/vendor/jquery/jquery-1.10.2.min.js")

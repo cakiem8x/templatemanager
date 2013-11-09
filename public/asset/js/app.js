@@ -54,11 +54,13 @@ angular
         high_resolution: null
     })
     .controller('DemoController', function($rootScope, $scope, $http, defaultCriteria) {
-        $scope.criteria  = defaultCriteria;
+        $scope.criteria        = defaultCriteria;
 
-        $scope.activeTab = 'templates';
-        $scope.total     = 0;
-        $scope.templates = [];
+        $scope.activeTab       = 'templates';
+        $scope.total           = 0;
+        $scope.templates       = [];
+        $scope.currentTemplate = null;
+        $scope.frameUrl        = null;
 
         // Pagination
         $scope.pagination = {
@@ -73,9 +75,8 @@ angular
 
         $scope.filter = function() {
             $http.post('/filter', $scope.criteria).success(function(data) {
-                $scope.total     = data.total;
-                $scope.templates = data.templates;
-
+                $scope.total      = data.total;
+                $scope.templates  = data.templates;
                 $scope.pagination = {
                     page: data.page,
                     numPages: data.numPages,
@@ -92,6 +93,11 @@ angular
             $scope.pagination.page = page;
             $scope.criteria.page   = page;
             $scope.filter();
+        };
+
+        $scope.showTemplate = function(template) {
+            $scope.currentTemplate = template;
+            $scope.frameUrl        = template.demo_url;
         };
 
         // Load the data
