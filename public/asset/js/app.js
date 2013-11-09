@@ -95,9 +95,9 @@ angular
             $scope.filter();
         };
 
-        $scope.showTemplate = function(template) {
+        $scope.showTemplate = function(template, theme) {
             $scope.currentTemplate = template;
-            $scope.frameUrl        = template.demo_url;
+            $scope.frameUrl        = theme ? theme.demo_url : template.demo_url;
         };
 
         // Load the data

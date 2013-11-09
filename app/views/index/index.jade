@@ -71,9 +71,21 @@ html(ng-app="TemplateDemo")
                 p.text-center(ng-class="{ 'show': total == 0, 'hide': total > 0 }") Not found templates
                 ul.tpl-item-list(ng-class="{ 'show': total > 0, 'hide': total == 0 }")
                     li.col-lg-4(ng-repeat="template in templates")
-                        h2 {{ template.name }}
-                        a(href="#", ng-click="showTemplate(template)")
+                        div.text-center(style="margin-bottom: 10px;")
+                            div.hide(ng-class="{ 'show': template.themes == null || template.themes.length == 0 }")
+                                a.btn.btn-default(href="#", ng-click="showTemplate(template)") {{ template.name }}
+
+                            div.hide(ng-class="{ 'show': template.themes && template.themes.length > 0 }")
+                                button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
+                                    | {{ template.name }} &nbsp;
+                                    span.caret
+                                    ul.dropdown-menu
+                                        li(ng-repeat="theme in template.themes")
+                                            a(href="{{ theme.demo_url }}", ng-click="showTemplate(template, theme)") {{ theme.name }}
+
+                        p
                             img(ng-src="#{thumbPrefixUrl}{{ template.thumbs.medium }}")
+
                     li.clearfix
 
                 div.clearfix
