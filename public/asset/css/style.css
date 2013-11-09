@@ -43,16 +43,16 @@ footer {
   list-style-type: none;
   padding: 0;
   margin: 0; }
-  .tpl-item-list li {
+  .tpl-item-list > li {
     margin: 0;
     padding: 15px 0; }
-    .tpl-item-list li h2 {
+    .tpl-item-list > li h2 {
       font-size: 20px;
       margin: 0 0 10px 0;
       text-align: center; }
-    .tpl-item-list li img {
+    .tpl-item-list > li img {
       width: 100%; }
-    .tpl-item-list li.clearfix {
+    .tpl-item-list > li.clearfix {
       padding: 0; }
 
 .tpl-filter {

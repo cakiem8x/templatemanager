@@ -76,12 +76,13 @@ html(ng-app="TemplateDemo")
                                 a.btn.btn-default(href="#", ng-click="showTemplate(template)") {{ template.name }}
 
                             div.hide(ng-class="{ 'show': template.themes && template.themes.length > 0 }")
-                                button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
-                                    | {{ template.name }} &nbsp;
-                                    span.caret
-                                    ul.dropdown-menu
-                                        li(ng-repeat="theme in template.themes")
-                                            a(href="{{ theme.demo_url }}", ng-click="showTemplate(template, theme)") {{ theme.name }}
+                                div.btn-group
+                                    button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
+                                        | {{ template.name }} &nbsp;
+                                        span.caret
+                                    ul.dropdown-menu.text-left
+                                        li(ng-repeat="theme in template.themes", style="background: {{ theme.color }}")
+                                            a(href="#", ng-click="showTemplate(template, theme)") {{ theme.name }}
 
                         p
                             img(ng-src="#{thumbPrefixUrl}{{ template.thumbs.medium }}")
