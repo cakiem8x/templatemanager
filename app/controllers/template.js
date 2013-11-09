@@ -63,9 +63,27 @@ exports.index = function(req, res) {
  */
 exports.add = function(req, res) {
     if ('post' == req.method.toLowerCase()) {
+        var themes        = [],
+            themeNames    = req.body['theme.name'],
+            themeColors   = req.body['theme.color'],
+            themeDemoUrls = req.body['theme.demo_url'];
+        if (themeNames) {
+            var numThemes = themeNames.length;
+            for (var i = 0; i < numThemes; i++) {
+                if (themeNames[i] && themeColors[i] && themeDemoUrls[i]) {
+                    themes.push({
+                        name: themeNames[i],
+                        color: themeColors[i],
+                        demo_url: themeDemoUrls[i]
+                    });
+                }
+            }
+        }
+
         var template = new Template({
             name: req.body.name,
             demo_url: req.body.demo_url,
+            themes: themes,
             description: req.body.description,
             tags: req.body.tags,
             software_versions: req.body.software_versions,
@@ -108,8 +126,26 @@ exports.edit = function(req, res) {
     var id = req.param('id');
     Template.findOne({ _id: id }).exec(function(err, template) {
         if ('post' == req.method.toLowerCase()) {
+            var themes        = [],
+                themeNames    = req.body['theme.name'],
+                themeColors   = req.body['theme.color'],
+                themeDemoUrls = req.body['theme.demo_url'];
+            if (themeNames) {
+                var numThemes = themeNames.length;
+                for (var i = 0; i < numThemes; i++) {
+                    if (themeNames[i] && themeColors[i] && themeDemoUrls[i]) {
+                        themes.push({
+                            name: themeNames[i],
+                            color: themeColors[i],
+                            demo_url: themeDemoUrls[i]
+                        });
+                    }
+                }
+            }
+
             template.name              = req.body.name;
             template.demo_url          = req.body.demo_url;
+            template.themes            = themes;
             template.description       = req.body.description;
             template.tags              = req.body.tags;
             template.software_versions = req.body.software_versions;

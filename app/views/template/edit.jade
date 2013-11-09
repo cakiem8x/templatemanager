@@ -2,6 +2,7 @@ extends ../layouts/backend
 
 block head
     link(rel="stylesheet", href="/vendor/fileupload/css/jquery.fileupload-ui.css")
+    link(rel="stylesheet", href="/vendor/bootstrap-colorpicker/css/bootstrap-colorpicker.css")
 
 block content
     div.page-header
@@ -34,6 +35,34 @@ block content
                     label.control-label.col-lg-2 Demo URL
                     div.col-lg-8
                         input.form-control(type="text", name="demo_url", placeholder="http://", value="#{template.demo_url}")
+
+                div.form-group
+                    label.control-label.col-lg-2 Themes
+                    div#themes.col-lg-10
+                        div#themeTemplate.hide.row(style="margin-bottom: 10px;")
+                            div.col-lg-3
+                                input.form-control(type="text", name="theme.name[]", placeholder="Name")
+                            div.col-lg-2
+                                input.form-control(type="text", name="theme.color[]", placeholder="Color")
+                            div.col-lg-6
+                                input.form-control(type="text", name="theme.demo_url[]", placeholder="Theme URL")
+                            div.col-lg-1
+                                button.btn.btn-default.removeThemeButton(type="button")
+                                    i.fa.fa-times
+                        for theme in template.themes
+                            div.row(style="margin-bottom: 10px;")
+                                div.col-lg-3
+                                    input.form-control(type="text", name="theme.name[]", placeholder="Name", value="#{theme.name}")
+                                div.col-lg-2
+                                    input.form-control(type="text", name="theme.color[]", placeholder="Color", value="#{theme.color}")
+                                div.col-lg-6
+                                    input.form-control(type="text", name="theme.demo_url[]", placeholder="Theme URL", value="#{theme.demo_url}")
+                                div.col-lg-1
+                                    button.btn.btn-default.removeThemeButton(type="button")
+                                        i.fa.fa-times
+
+                        button.btn.btn-default#addThemeButton(type="button")
+                            i.fa.fa-plus
 
                 div.form-group
                     label.control-label.col-lg-2 Description
@@ -166,6 +195,7 @@ block footerScript
     script(type="text/javascript", src="/vendor/fileupload/js/jquery.fileupload-process.js")
     script(type="text/javascript", src="/vendor/filesize/filesize.min.js")
     script(type="text/javascript", src="/vendor/bootstrapvalidator/js/bootstrapValidator.min.js")
+    script(type="text/javascript", src="/vendor/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js")
     script(type="text/javascript").
         $(document).ready(function() {
             // Form validator
@@ -346,5 +376,23 @@ block footerScript
                         .end()
                     .addClass('active');
                 $('input[name="high_resolution"]').val($(this).val());
+            });
+
+            // Manage themes
+            $('#addThemeButton').on('click', function() {
+                var $row = $('#themeTemplate').clone();
+                $row
+                    .removeAttr('id')
+                    .find('.removeThemeButton')
+                        .on('click', function() {
+                            $row.remove();
+                        })
+                        .end()
+                    .removeClass('hide')
+                    .insertBefore('#addThemeButton');
+            });
+
+            $('#themes').on('focus', '[name="theme.color[]"]', function() {
+                $(this).colorpicker();
             });
         });

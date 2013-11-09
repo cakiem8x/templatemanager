@@ -3,6 +3,11 @@ var mongoose       = require('mongoose'),
     templateSchema = new Schema({
         name: { type: String, default: '' },
         demo_url: { type: String, default: '' },
+        themes: [{
+            name: { type: String, default: '' },
+            color: { type: String, default: '' },
+            demo_url: { type: String, default: '' }
+        }],
         description: { type: String, default: '' },
         tags: {
             type: [],
