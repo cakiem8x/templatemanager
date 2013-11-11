@@ -71,7 +71,7 @@ angular
         };
 
         $scope.activateTab = function(tab) {
-            $scope.activeTab = tab;
+            $scope.activeTab = ($scope.activeTab == tab) ? null : tab;
         };
 
         $scope.load = function() {
@@ -103,6 +103,7 @@ angular
         };
 
         $scope.showTemplate = function(template, theme) {
+            $scope.activeTab       = null;
             $scope.currentTemplate = template;
             $scope.frameUrl        = theme ? theme.demo_url : template.demo_url;
         };

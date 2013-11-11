@@ -66,7 +66,7 @@ html(ng-app="TemplateDemo")
                                 i.fa.fa-desktop.fa-2x
 
         // Templates
-        div.tpl-tab.col-lg-6.col-lg-offset-3(ng-class="{ 'show': activeTab == 'templates', 'hide': activeTab == 'filter' }")
+        div.tpl-tab.col-lg-6.col-lg-offset-3(ng-class="{ 'show': activeTab == 'templates', 'hide': activeTab == 'filter' || activeTab == null }")
             div.tpl-items
                 p.text-center(ng-class="{ 'show': total == 0, 'hide': total > 0 }") Not found templates
                 ul.tpl-item-list(ng-class="{ 'show': total > 0, 'hide': total == 0 }")
@@ -105,7 +105,7 @@ html(ng-app="TemplateDemo")
                 div.clearfix
 
         // Filters
-        div.tpl-tab.col-lg-6.col-lg-offset-3(ng-class="{ 'show': activeTab == 'filter', 'hide': activeTab == 'templates' }")
+        div.tpl-tab.col-lg-6.col-lg-offset-3(ng-class="{ 'show': activeTab == 'filter', 'hide': activeTab == 'templates' || activeTab == null }")
             div.tpl-filter
                 div.row
                     form.form-horizontal
@@ -152,7 +152,6 @@ html(ng-app="TemplateDemo")
 
         // Frame showing template demo URL
         iframe.tpl-frame(ng-src="{{ frameUrl }}")
-
 
         //if lt IE 9
             script(src="/vendor/jquery/jquery-1.10.2.min.js")
