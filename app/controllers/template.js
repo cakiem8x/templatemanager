@@ -82,6 +82,7 @@ exports.add = function(req, res) {
 
         var template = new Template({
             name: req.body.name,
+            slug: req.body.slug,
             demo_url: req.body.demo_url,
             themes: themes,
             description: req.body.description,
@@ -144,6 +145,7 @@ exports.edit = function(req, res) {
             }
 
             template.name              = req.body.name;
+            template.slug              = req.body.slug;
             template.demo_url          = req.body.demo_url;
             template.themes            = themes;
             template.description       = req.body.description;
@@ -180,6 +182,22 @@ exports.edit = function(req, res) {
                 filesize: filesize
             });
         }
+    });
+};
+
+/**
+ * Generate template slug
+ */
+exports.slug = function(req, res) {
+    var template = new Template({
+        _id: req.body.id,
+        name: req.body.name
+    });
+    Template.generateSlug(template, function(slug) {
+        console.log(slug);
+        res.json({
+            slug: slug
+        });
     });
 };
 

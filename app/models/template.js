@@ -2,6 +2,7 @@ var mongoose       = require('mongoose'),
     Schema         = mongoose.Schema,
     templateSchema = new Schema({
         name: { type: String, default: '' },
+        slug: { type: String, default: '' },
         demo_url: { type: String, default: '' },
         themes: [{
             name: { type: String, default: '' },
@@ -51,5 +52,38 @@ templateSchema
         }
         return numDownloads;
     });
+
+templateSchema.methods.generateSlug = function() {
+    return this.name.toString().toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w\-]+/g, '')
+                    .replace(/\-\-+/g, '-')
+                    .replace(/^-+/, '')
+                    .replace(/-+$/, '');
+};
+
+templateSchema.statics.generateSlug = function(template, cb) {
+    var slug = template.slug ? template.slug : template.generateSlug(), schema = this;
+    if (slug == '') {
+        slug = '-';
+    }
+
+    var found = true,
+        count = 0,
+        findUntilNotFound = function() {
+            schema.findOne({
+                slug: slug + (count == 0 ? '' : '-' + count)
+            }, function(err, t) {
+                if (t == null || t._id == template._id) {
+                    found = false;
+                    cb(slug + (count == 0 ? '' : '-' + count));
+                } else {
+                    count++;
+                    findUntilNotFound();
+                }
+            });
+        };
+    findUntilNotFound();
+};
 
 module.exports = mongoose.model('template', templateSchema);

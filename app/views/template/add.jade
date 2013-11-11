@@ -27,6 +27,11 @@ block content
                         input.form-control(type="text", name="name")
 
                 div.form-group
+                    label.control-label.col-lg-2 Slug
+                    div.col-lg-6
+                        input.form-control(type="text", name="slug")
+
+                div.form-group
                     label.control-label.col-lg-2 Demo URL
                     div.col-lg-8
                         input.form-control(type="text", name="demo_url", placeholder="http://")
@@ -178,6 +183,13 @@ block footerScript
                             }
                         }
                     },
+                    slug: {
+                        validators: {
+                            notEmpty: {
+                                message: 'The slug is required'
+                            }
+                        }
+                    },
                     demo_url: {
                         validators: {
                             notEmpty: {
@@ -200,6 +212,25 @@ block footerScript
                         }
                     }
                 }
+            });
+
+            // Generate slug based one template's name
+            $('input[name="name"]').on('keyup', function() {
+                var name = $(this).val(), $slug = $('input[name="slug"]');
+                if (name == '') {
+                    $slug.val('');
+                    return;
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '/admin/template/slug',
+                    data: {
+                        name: name
+                    },
+                    dataType: 'json'
+                }).success(function(response) {
+                    $slug.val(response.slug);
+                });
             });
 
             // Uploader handler

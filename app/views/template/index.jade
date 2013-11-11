@@ -31,6 +31,7 @@ block content
             thead
                 tr
                     th Name
+                    th Slug
                     th URL
                     th Publishing year
                     th Created date
@@ -40,6 +41,7 @@ block content
                 for template in templates
                     tr
                         td #{template.name}
+                        td #{template.slug}
                         td
                             a(target="_blank", href="#{template.demo_url}") #{template.demo_url}
                         td
