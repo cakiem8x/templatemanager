@@ -63,6 +63,11 @@ angular
         $scope.currentTemplate = null;
         $scope.frameUrl        = null;
 
+        $scope.w = $(document).width();
+        $scope.h = $(document).height();
+        $scope.t = 0;
+        $scope.l = 0;
+
         // Pagination
         $scope.pagination = {
             page: 1,
@@ -106,6 +111,33 @@ angular
             $scope.activeTab       = null;
             $scope.currentTemplate = template;
             $scope.frameUrl        = theme ? theme.demo_url : template.demo_url;
+        };
+
+        /**
+         * Resize the main frame to given size
+         * If both width and height are not specified, then resize to current window's size
+         *
+         * @param {Int} width
+         * @param {Int} height
+         */
+        $scope.resizeTo = function(width, height) {
+            if ($scope.currentTemplate == null) {
+                return;
+            }
+
+            var screenWidth = $(document).width(), screenHeight = $(document).height();
+
+            if (width && height) {
+                $scope.w = width;
+                $scope.h = height;
+                $scope.t = (height >= screenHeight) ? 0 : (screenHeight - height) / 2;
+                $scope.l = (width  >= screenWidth)  ? 0 : (screenWidth  - width)  / 2;
+            } else {
+                $scope.w = screenWidth;
+                $scope.h = screenHeight;
+                $scope.t = 0;
+                $scope.l = 0;
+            }
         };
 
         // Load the data

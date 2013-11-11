@@ -1,8 +1,11 @@
 // Variables
 $footerHeight: 80px;
 $navbarHeight: 59px;
+$bodyBackgroundColor: #2c3e50;
 
 .tpl-body {
+  background: $bodyBackgroundColor;
+
   .navbar.navbar-default {
     //background: #fff;
   }
@@ -86,12 +89,17 @@ footer {
     margin-right: 15px;
   }
 }
-.tpl-frame {
+.tpl-frame-container {
   position: fixed;
   top: #{$navbarHeight - 1};
   left: 0;
   width: 100%;
   height: 100%;
+  iframe {
+    border: 0;
+    width: 100%;
+    height: 100%;
+  }
 }
 .tpl-tag-list {
 
