@@ -158,7 +158,9 @@ html(ng-app="TemplateDemo")
 
         // Frame showing template demo URL
         div.tpl-frame-container(ng-style="{ width: w, height: h, marginTop: t, marginLeft: l }")
-            iframe(ng-src="{{ frameUrl }}")
+            div.tpl-loader.hide
+                i.fa.fa-refresh.fa-spin.fa-inverse.fa-3x
+            iframe(ng-src="{{ frameUrl }}", tpl-frame-loading, track="frameUrl")
 
         //if lt IE 9
             script(src="/vendor/jquery/jquery-1.10.2.min.js")

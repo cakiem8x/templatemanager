@@ -46,6 +46,26 @@ angular
             }
         };
     })
+    .directive('tplFrameLoading', function() {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                var el          = angular.element(element),
+                    loader      = el.parent().find('.tpl-loader'),
+                    srcProperty = attrs['track'];
+                el.on('load', function() {
+                    loader.removeClass('show').addClass('hide');
+                });
+
+                // Show the loader indicator when the URL is changed
+                scope.$watch(srcProperty, function() {
+                    if (scope[srcProperty]) {
+                        loader.removeClass('hide').addClass('show');
+                    }
+                });
+            }
+        };
+    })
     .constant('defaultCriteria', {
         page: 1,
         year: null,
@@ -80,7 +100,7 @@ angular
         };
 
         $scope.load = function() {
-            $http.post('/filter', $scope.criteria).success(function(data) {
+            return $http.post('/filter', $scope.criteria).success(function(data) {
                 $scope.total      = data.total;
                 $scope.templates  = data.templates;
                 $scope.pagination = {
@@ -111,12 +131,6 @@ angular
             $scope.activeTab       = null;
             $scope.currentTemplate = template;
             $scope.frameUrl        = theme ? theme.demo_url : template.demo_url;
-
-            // Reset frame size
-            $scope.w = $(document).width();
-            $scope.h = $(document).height();
-            $scope.t = 0;
-            $scope.l = 0;
         };
 
         /**
@@ -134,7 +148,8 @@ angular
             var screenWidth = $(document).width(), screenHeight = $(document).height();
 
             if (width && height) {
-                $scope.w = width;
+                // 15px is the width of scroll bar
+                $scope.w = width + 15;
                 $scope.h = height;
                 $scope.t = (height >= screenHeight) ? 0 : (screenHeight - height) / 2;
                 $scope.l = (width  >= screenWidth)  ? 0 : (screenWidth  - width)  / 2;
@@ -147,5 +162,15 @@ angular
         };
 
         // Load the data
-        $scope.load();
+        $scope.load().success(function(data) {
+            // Show random template
+            var templates = data.templates;
+            if (templates && templates.length > 0) {
+                $scope.activeTab       = null;
+                $scope.currentTemplate = templates[Math.floor(Math.random() * templates.length)];
+
+                var themes = $scope.currentTemplate.themes;
+                $scope.frameUrl = (!themes || themes.length == 0) ? $scope.currentTemplate.demo_url : themes[Math.floor(Math.random() * themes.length)];
+            }
+        });
     });
