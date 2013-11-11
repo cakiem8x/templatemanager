@@ -42,10 +42,17 @@ html(ng-app="TemplateDemo")
                         li
                             a(href="#{provider.registerUrl}")
                                 i.fa.fa-shopping-cart
-                                | &nbsp; Join us
+                                | &nbsp;Join us
 
 
                     ul.nav.navbar-nav.navbar-right
+                        li(ng-show="currentTemplate", ng-class="{ 'dropdown': currentTemplate.themes.length > 0 }")
+                            a(href="#", data-toggle="dropdown", ng-class="{ 'dropdown-toggle': currentTemplate.themes.length > 0 }") {{ currentTemplate.name }}&nbsp;
+                                b.caret(ng-show="currentTemplate.themes.length")
+                            ul(ng-show="currentTemplate.themes.length", ng-class="{ 'dropdown-menu': currentTemplate.themes.length > 0 }")
+                                li(ng-repeat="theme in currentTemplate.themes", style="background: {{ theme.color }}")
+                                    a(href="#", ng-click="showTemplate(currentTemplate, theme)") {{ theme.name }}
+
                         li
                             a(href="#")
                                 i.fa.fa-mobile.fa-2x
