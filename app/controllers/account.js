@@ -6,6 +6,7 @@ var
 
     mongoose = require('mongoose'),
     Template = mongoose.model('template'),
+    Download = mongoose.model('download'),
     fs       = require('fs'),
     filesize = require('filesize');
 
@@ -159,14 +160,28 @@ exports.download = function(req, res) {
                     break;
                 }
             }
-            if (file) {
-                res.setHeader('Content-Description', 'Download file');
-                res.setHeader('Content-Type', 'application/octet-stream');
-                res.setHeader('Content-Disposition', 'attachment; filename=' + file.name);
-
-                var stream = fs.createReadStream(file.path);
-                stream.pipe(res);
+            if (!file) {
+                return res.end('Not found');
             }
+
+            file.num_downloads++;
+            template.save(function(err) {
+                if (!err) {
+                    var download = new Download({
+                        template: template._id,
+                        file: id,
+                        user_name: req.session.account
+                    });
+                    download.save();
+
+                    res.setHeader('Content-Description', 'Download file');
+                    res.setHeader('Content-Type', 'application/octet-stream');
+                    res.setHeader('Content-Disposition', 'attachment; filename=' + file.name);
+
+                    var stream = fs.createReadStream(file.path);
+                    stream.pipe(res);
+                }
+            });
         }
     });
 };
