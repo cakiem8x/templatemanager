@@ -15,7 +15,7 @@ angular
                     if (!el.hasClass('active')) {
                         el.addClass('active').prepend($('<i/>').addClass('fa fa-check'));
                     }
-                    scope.criteria[attrs['tplCheckButton']] = el.val();
+                    scope.filterCriteria[attrs['tplCheckButton']] = el.val();
                 });
             }
         };
@@ -29,7 +29,7 @@ angular
                     el.parents('ul').find('.badge').removeClass('badge');
                     el.addClass('badge');
 
-                    scope.criteria.tag = attrs['tplTag'];
+                    scope.filterCriteria.tag = attrs['tplTag'];
                 });
             }
         };
@@ -55,6 +55,7 @@ angular
     })
     .controller('DemoController', function($rootScope, $scope, $http, defaultCriteria) {
         $scope.criteria        = defaultCriteria;
+        $scope.filterCriteria  = defaultCriteria;
 
         $scope.activeTab       = 'templates';
         $scope.total           = 0;
@@ -73,7 +74,7 @@ angular
             $scope.activeTab = tab;
         };
 
-        $scope.filter = function() {
+        $scope.load = function() {
             $http.post('/filter', $scope.criteria).success(function(data) {
                 $scope.total      = data.total;
                 $scope.templates  = data.templates;
@@ -92,7 +93,13 @@ angular
         $scope.goPage = function(page) {
             $scope.pagination.page = page;
             $scope.criteria.page   = page;
-            $scope.filter();
+            $scope.load();
+        };
+
+        $scope.filter = function() {
+            $scope.criteria      = $scope.filterCriteria;
+            $scope.criteria.page = 1;
+            $scope.load();
         };
 
         $scope.showTemplate = function(template, theme) {
@@ -101,5 +108,5 @@ angular
         };
 
         // Load the data
-        $scope.filter();
+        $scope.load();
     });
