@@ -44,7 +44,6 @@ html(ng-app="TemplateDemo")
                                 i.fa.fa-shopping-cart
                                 | &nbsp;Join us
 
-
                     ul.nav.navbar-nav.navbar-right
                         li(ng-show="currentTemplate", ng-class="{ 'dropdown': currentTemplate.themes.length > 0 }")
                             a(href="#", data-toggle="dropdown", ng-class="{ 'dropdown-toggle': currentTemplate.themes.length > 0 }") {{ currentTemplate.name }}&nbsp;
@@ -169,5 +168,3 @@ html(ng-app="TemplateDemo")
         script(src="/vendor/bootstrap/js/bootstrap.min.js")
         script(src="/vendor/angularjs/angular.min.js")
         script(src="/asset/js/app.js")
-
-

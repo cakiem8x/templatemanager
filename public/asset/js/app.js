@@ -111,6 +111,12 @@ angular
             $scope.activeTab       = null;
             $scope.currentTemplate = template;
             $scope.frameUrl        = theme ? theme.demo_url : template.demo_url;
+
+            // Reset frame size
+            $scope.w = $(document).width();
+            $scope.h = $(document).height();
+            $scope.t = 0;
+            $scope.l = 0;
         };
 
         /**
