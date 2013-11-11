@@ -21,7 +21,14 @@ $ sudo npm install
 * Run the app:
 
 ```bash
-$ node app.js
+$ NODE_ENV=<the environment> PORT=<the listening port> node app.js
+```
+
+or run with [forever](https://github.com/nodejitsu/forever):
+
+```bash
+$ chmod 755 start.sh
+$ nohup start.sh >> /var/log/template_manager.log 2>&1 &
 ```
 
 ## License
