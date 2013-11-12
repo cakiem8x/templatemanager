@@ -88,7 +88,6 @@ exports.add = function(req, res) {
             description: req.body.description,
             tags: req.body.tags,
             software_versions: req.body.software_versions,
-            browsers: req.body.browsers,
             high_resolution: req.body.high_resolution,
             thumbs: JSON.parse(req.body.thumbs || '[]'),
             files: JSON.parse(req.body.uploaded_files || '[]'),
@@ -96,6 +95,10 @@ exports.add = function(req, res) {
             free: req.body.free || false,
             year: req.body.year || new Date().getFullYear()
         });
+
+        if (req.body.browsers) {
+            template.browsers = req.body.browsers;
+        }
 
         template.save(function(err) {
             if (err) {

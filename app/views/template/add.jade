@@ -72,14 +72,25 @@ block content
                     label.control-label.col-lg-2 Supported browsers
                     div.col-lg-8
                         div.btn-group
-                            button.btn.btn-default.browserButton(type="button", value="IE 8") IE 8
+                            button.btn.btn-default.browserButton.active(type="button", value="IE 8")
+                                i.fa.fa-check
+                                | IE 8
+
                             button.btn.btn-default.browserButton(type="button", value="IE 9") IE 9
                             button.btn.btn-default.browserButton(type="button", value="IE 10") IE 10
-                            button.btn.btn-default.browserButton(type="button", value="Chrome") Chrome
-                            button.btn.btn-default.browserButton(type="button", value="Firefox") Firefox
-                            button.btn.btn-default.browserButton(type="button", value="Safari") Safari
-                            button.btn.btn-default.browserButton(type="button", value="Opera") Opera
-                        input(type="hidden", name="browsers")
+                            button.btn.btn-default.browserButton.active(type="button", value="Chrome")
+                                i.fa.fa-check
+                                | Chrome
+                            button.btn.btn-default.browserButton.active(type="button", value="Firefox")
+                                i.fa.fa-check
+                                | Firefox
+                            button.btn.btn-default.browserButton.active(type="button", value="Safari")
+                                i.fa.fa-check
+                                | Safari
+                            button.btn.btn-default.browserButton.active(type="button", value="Opera")
+                                i.fa.fa-check
+                                | Opera
+                        input(type="hidden", name="browsers", value="IE 8,Chrome,Firefox,Safari,Opera")
 
                 div.form-group
                     label.control-label.col-lg-2 High resolution
