@@ -251,6 +251,7 @@ block footerScript
                 url: '/admin/upload',
                 start: function(e) {
                     $('#saveButton').attr('disabled', 'disabled');
+                    $('#progress').parent().addClass('progress-striped').removeClass('hide').end().css('width', '0%');
                 },
                 done: function(e, data) {
                     $('#uploadedFiles').parent().removeClass('hide');
@@ -266,6 +267,7 @@ block footerScript
                     });
 
                     $('#saveButton').removeAttr('disabled');
+                    //$('#progress').parent().addClass('hide');
                 }
             });
 
