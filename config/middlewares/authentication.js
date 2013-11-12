@@ -5,7 +5,7 @@ exports.requireAuthentication = function(req, res, next) {
     }
     // Set the variable for layout
     req.app.locals({
-        user: req.session.user,
+        sessionUser: req.session.user,
         provider: req.app.get('config').provider
     });
     next();

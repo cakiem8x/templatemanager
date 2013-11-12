@@ -4,28 +4,32 @@ block content
     div.page-header
         h2
             a(href="/admin/user") Administrators
-            |  / Add new administrator
+            |  / Edit the administrator
 
     div.col-lg-8.col-lg-offset-2
         include ../partial/flash
 
-        form#addAdminForm.form-horizontal(action="/admin/user/add", method="post")
+        form#editAdminForm.form-horizontal(action="/admin/user/edit/#{user._id}", method="post")
             div.form-group
                 label.control-label.col-lg-3 Full name
                 div.col-lg-4
-                    input.form-control(type="text", name="first_name", placeholder="First name")
+                    input.form-control(type="text", name="first_name", placeholder="First name", value="#{user.first_name}")
                 div.col-lg-4
-                    input.form-control(type="text", name="last_name", placeholder="Last name")
+                    input.form-control(type="text", name="last_name", placeholder="Last name", value="#{user.last_name}")
 
             div.form-group
                 label.control-label.col-lg-3 User name
                 div.col-lg-6
-                    input.form-control(type="text", name="username", autocomplete="off")
+                    input.form-control(type="text", name="username", autocomplete="off", value="#{user.username}")
 
             div.form-group
                 label.control-label.col-lg-3 Email address
                 div.col-lg-6
-                    input.form-control(type="text", name="email", autocomplete="off")
+                    input.form-control(type="text", name="email", autocomplete="off", value="#{user.email}")
+
+            div.form-group
+                div.col-lg-9.col-lg-offset-3
+                    span.text-info Leave the password fields empty if you do not want to change it
 
             div.form-group
                 label.control-label.col-lg-3 Password
@@ -40,21 +44,21 @@ block content
             div.form-group
                 label.control-label.col-lg-3 Role
                 div.col-lg-4
-                    select.form-control(name="role")
-                       option(value="admin") Administrator
-                       option(value="root") Root
+                    select.form-control(name="role", value="#{user.role}")
+                       option(value="admin", selected='admin' == user.role) Administrator
+                       option(value="root", selected='root' == user.role) Root
 
             hr
 
             div.form-group
                 div.col-lg-9.col-lg-offset-3
-                    button#saveButton.btn.btn-primary(type="submit") Add
+                    button#saveButton.btn.btn-primary(type="submit") Save
 
 block footerScript
     script(type="text/javascript", src="/vendor/bootstrapvalidator/js/bootstrapValidator.min.js")
     script(type="text/javascript").
         $(document).ready(function() {
-            $('#addAdminForm').bootstrapValidator({
+            $('#editAdminForm').bootstrapValidator({
                 fields: {
                     first_name: {
                         validators: {
@@ -70,6 +74,9 @@ block footerScript
                             },
                             remote: {
                                 url: '/admin/user/check/username',
+                                data: {
+                                    id: '#{user._id}'
+                                },
                                 message: 'The username is already taken by other administrator'
                             }
                         }
@@ -81,39 +88,26 @@ block footerScript
                             },
                             remote: {
                                 url: '/admin/user/check/email',
+                                data: {
+                                    id: '#{user._id}'
+                                },
                                 message: 'The email is already taken by other administrator'
                             }
                         }
                     },
                     password: {
                         validators: {
-                            notEmpty: {
-                                message: 'The password is required'
-                            },
                             identical: {
                                 field: 'confirm_password',
                                 message: 'The password and confirmation one are not the same'
-                            },
-                            stringLength: {
-                                min: 6,
-                                max: 30,
-                                message: 'The password must have at least 6 and less than 30 characters'
                             }
                         }
                     },
                     confirm_password: {
                         validators: {
-                            notEmpty: {
-                                message: 'You have to retype the password'
-                            },
                             identical: {
                                 field: 'password',
                                 message: 'The password and confirmation one are not the same'
-                            },
-                            stringLength: {
-                                min: 6,
-                                max: 30,
-                                message: 'The password must have at least 6 and less than 30 characters'
                             }
                         }
                     }

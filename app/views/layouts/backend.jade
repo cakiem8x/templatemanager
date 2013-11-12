@@ -35,14 +35,14 @@ html
                         ul.nav.navbar-nav
                             li
                                 a(href="/admin/template") Templates
-                            if ('root' == user.role)
+                            if ('root' == sessionUser.role)
                                 li
                                     a(href="/admin/user") Administrators
 
                         ul.nav.navbar-nav.navbar-right
                             li.dropdown
                                 a.dropdown-toggle(href="#", data-toggle="dropdown")
-                                    | Hello #{user.username} &nbsp;
+                                    | Hello #{sessionUser.username} &nbsp;
                                     b.caret
                                 ul.dropdown-menu
                                     li
@@ -71,7 +71,7 @@ html
 
         script(type="text/javascript").
             $(document).ready(function() {
-                io.connect().emit('userName', '#{user.username}');
+                io.connect().emit('userName', '#{sessionUser.username}');
             });
 
         block footerScript

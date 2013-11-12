@@ -26,6 +26,7 @@ block content
         table.table(style="margin-top: 20px;")
             thead
                 tr
+                    th Full name
                     th Username
                     th Email
                     th Role
@@ -33,15 +34,15 @@ block content
             tbody
                 for user in users
                     tr
+                        td #{user.full_name}
                         td #{user.username}
                         td #{user.email}
                         td #{user.role}
                         td
-                            if ('root' == user.role)
-                                p
-                            else
-                                div.btn-group
+                            div.btn-group
+                                if ('root' != user.role)
                                     button.btn.btn-warning(data-user="#{user._id}") Lock
+                                a.btn.btn-default(href="/admin/user/edit/#{user._id}") Edit
 
         // Pagination
         if (numPages > 1)

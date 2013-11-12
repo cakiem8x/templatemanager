@@ -22,6 +22,12 @@ userSchema
         return this._password;
     });
 
+userSchema
+    .virtual('full_name')
+    .get(function() {
+        return [this.first_name, this.last_name].join(' ');
+    });
+
 userSchema.methods = {
     createSalt: function() {
         return Math.round((new Date().valueOf() * Math.random())) + '';
@@ -49,8 +55,8 @@ userSchema.methods = {
 userSchema.statics.isAvailable = function(user, field, callback) {
     var criteria = {};
     criteria[field] = user[field];
-    this.count(criteria, function(err, total) {
-        callback(!err && total == 0);
+    this.findOne(criteria, function(err, foundUser) {
+        callback(!err && !foundUser, foundUser);
     });
 };
 

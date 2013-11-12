@@ -35,6 +35,7 @@ module.exports = function(app) {
     // User
     app.get('/admin/user', adminAuthorization, user.index);
     app.all('/admin/user/add', adminAuthorization, user.add);
+    app.all('/admin/user/edit/:id', adminAuthorization, user.edit);
     app.post('/admin/user/check/:field', adminAuthorization, user.check);
 
     // --- Account routes ---

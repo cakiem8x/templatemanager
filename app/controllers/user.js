@@ -59,6 +59,7 @@ exports.add = function(req, res) {
         });
         var callback = function(success) {
             req.flash(success ? 'success' : 'error', success ? 'The administrator has been added successfully' : 'Cannot add new administrator');
+            return res.redirect('/admin/user/add');
         };
         User.isAvailable(user, 'username', function(isUsernameAvailable) {
             if (isUsernameAvailable) {
@@ -75,10 +76,64 @@ exports.add = function(req, res) {
                 callback(false);
             }
         });
-        return res.redirect('/admin/user');
     } else {
         res.render('user/add', {
+            messages: {
+                warning: req.flash('error'),
+                success: req.flash('success')
+            },
             title: 'Add new administrator'
+        });
+    }
+};
+
+/**
+ * Update an administrator account
+ */
+exports.edit = function(req, res) {
+    var id = req.param('id');
+    if ('post' == req.method.toLowerCase()) {
+        User.findOne({ _id: id }, function(err, user) {
+            user.first_name = req.body.first_name;
+            user.last_name  = req.body.last_name;
+            user.username   = req.body.username;
+            user.email      = req.body.email;
+            user.role       = req.body.role;
+
+            if (req.body.password && req.body.confirm_password && req.body.password == req.body.confirm_password) {
+                user.password = req.body.password;
+            }
+
+            var callback = function(success) {
+                req.flash(success ? 'success' : 'error', success ? 'The administrator has been updated successfully' : 'Cannot update the administrator');
+                return res.redirect('/admin/user/edit/' + id);
+            };
+            User.isAvailable(user, 'username', function(isUsernameAvailable, foundUser) {
+                if (isUsernameAvailable || (foundUser && foundUser._id == id)) {
+                    User.isAvailable(user, 'email', function(isEmailAvailable, foundUser) {
+                        if (isEmailAvailable || (foundUser && foundUser._id == id)) {
+                            user.save(function(err) {
+                                callback(!err);
+                            });
+                        } else {
+                            callback(false);
+                        }
+                    });
+                } else {
+                    callback(false);
+                }
+            });
+        });
+    } else {
+        User.findOne({ _id: id }, function(err, user) {
+            res.render('user/edit', {
+                messages: {
+                    warning: req.flash('error'),
+                    success: req.flash('success')
+                },
+                title: 'Edit the administrator',
+                user: user
+            });
         });
     }
 };
@@ -88,12 +143,13 @@ exports.add = function(req, res) {
  */
 exports.check = function(req, res) {
     var field = req.param('field'),
+        id    = req.body.id,
         value = req.body[field],
         user  = new User();
     user[field] = value;
-    User.isAvailable(user, field, function(isAvailable) {
+    User.isAvailable(user, field, function(isAvailable, foundUser) {
         res.json({
-            valid: isAvailable
+            valid: isAvailable || (id && foundUser && foundUser._id == id)
         });
     });
 };
