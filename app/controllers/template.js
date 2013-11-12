@@ -303,7 +303,7 @@ exports.upload = function(req, res) {
     res.setHeader('Content-Disposition', 'inline; filename="files.json"');
 
     var socketConnections = app.get('socketConnections'),
-        userName          = req.session.user_name,
+        userName          = req.session.user.username,
         files             = [];
 
     form
