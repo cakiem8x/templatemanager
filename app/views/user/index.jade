@@ -1,0 +1,56 @@
+extends ../layouts/backend
+
+block content
+    div.page-header
+        h2
+            a(href="/admin/user") Administrators
+
+            span.pull-right
+                a.btn.btn-link(href="/admin/user/add")
+                    i.fa.fa-plus
+                    | &nbsp;Add new administrator
+
+    if total == 0
+        p.text-center There is no administrator
+    else
+        div.row
+            div.col-lg-8 Found #{total} administrators
+            div.col-lg-4.pull-right
+                form.form-inline(method="get", action="/admin/user")
+                    div.input-group
+                        input.form-control(type="text", name="q", value="#{q}")
+                        span.input-group-btn
+                            button.btn.btn-default(type="submit")
+                                i.fa.fa-search
+
+        table.table(style="margin-top: 20px;")
+            thead
+                tr
+                    th Username
+                    th Email
+                    th Role
+                    th Actions
+            tbody
+                for user in users
+                    tr
+                        td #{user.username}
+                        td #{user.email}
+                        td #{user.role}
+                        td
+                            if ('root' == user.role)
+                                p
+                            else
+                                div.btn-group
+                                    button.btn.btn-warning(data-user="#{user._id}") Lock
+
+        // Pagination
+        if (numPages > 1)
+            div.text-center
+                ul.pagination
+                    li
+                        a(href="#{url(req, { page: 1 })}") &larr;
+                    - for (i = startRange; i <= endRange; i++)
+                        li(class=(i == page) ? 'active' : '')
+                            a(href="#{url(req, { page: i })}") #{i}
+                    li
+                        a(href="#{url(req, { page: numPages })}") &rarr;

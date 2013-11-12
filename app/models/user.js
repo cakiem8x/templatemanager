@@ -2,6 +2,8 @@ var mongoose   = require('mongoose'),
     Schema     = mongoose.Schema,
     crypto     = require('crypto'),
     userSchema = new Schema({
+        first_name: { type: String, default: '' },
+        last_name: { type: String, default: '' },
         username: { type: String, default: '' },
         email: { type: String, default: '' },
         hashed_password: { type: String, default: '' },
@@ -39,6 +41,17 @@ userSchema.methods = {
     verifyPassword: function(plainText) {
         return this.encryptPassword(plainText) == this.hashed_password;
     }
+};
+
+/**
+ * Check if the username / email address is taken or not
+ */
+userSchema.statics.isAvailable = function(user, field, callback) {
+    var criteria = {};
+    criteria[field] = user[field];
+    this.count(criteria, function(err, total) {
+        callback(!err && total == 0);
+    });
 };
 
 module.exports = mongoose.model('user', userSchema);

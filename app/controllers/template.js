@@ -194,7 +194,6 @@ exports.slug = function(req, res) {
         name: req.body.name
     });
     Template.generateSlug(template, function(slug) {
-        console.log(slug);
         res.json({
             slug: slug
         });

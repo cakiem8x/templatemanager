@@ -35,6 +35,9 @@ html
                         ul.nav.navbar-nav
                             li
                                 a(href="/admin/template") Templates
+                            if ('root' == user.role)
+                                li
+                                    a(href="/admin/user") Administrators
 
                         ul.nav.navbar-nav.navbar-right
                             li.dropdown
