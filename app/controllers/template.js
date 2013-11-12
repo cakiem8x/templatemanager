@@ -90,9 +90,9 @@ exports.add = function(req, res) {
             software_versions: req.body.software_versions,
             browsers: req.body.browsers,
             high_resolution: req.body.high_resolution,
-            thumbs: JSON.parse(req.body.thumbs || []),
-            files: JSON.parse(req.body.uploaded_files || []),
-            responsive: req.body.responsive || true,
+            thumbs: JSON.parse(req.body.thumbs || '[]'),
+            files: JSON.parse(req.body.uploaded_files || '[]'),
+            responsive: req.body.responsive || false,
             free: req.body.free || false,
             year: req.body.year || new Date().getFullYear()
         });
@@ -153,9 +153,9 @@ exports.edit = function(req, res) {
             template.software_versions = req.body.software_versions;
             template.browsers          = req.body.browsers;
             template.high_resolution   = req.body.high_resolution;
-            template.thumbs            = JSON.parse(req.body.thumbs || []);
-            template.files             = JSON.parse(req.body.uploaded_files || []);
-            template.responsive        = req.body.responsive || true;
+            template.thumbs            = JSON.parse(req.body.thumbs || '[]');
+            template.files             = JSON.parse(req.body.uploaded_files || '[]');
+            template.responsive        = req.body.responsive || false;
             template.free              = req.body.free || false;
             template.year              = req.body.year || new Date().getFullYear();
 
