@@ -94,6 +94,8 @@ exports.edit = function(req, res) {
     var id = req.param('id');
     if ('post' == req.method.toLowerCase()) {
         User.findOne({ _id: id }, function(err, user) {
+            var isCurrentUser = req.session.user.username == user.username;
+
             user.first_name = req.body.first_name;
             user.last_name  = req.body.last_name;
             user.username   = req.body.username;
@@ -106,6 +108,15 @@ exports.edit = function(req, res) {
 
             var callback = function(success) {
                 req.flash(success ? 'success' : 'error', success ? 'The administrator has been updated successfully' : 'Cannot update the administrator');
+
+                // Update the session
+                if (success && isCurrentUser) {
+                    req.session.user = {
+                        username: user.username,
+                        role: user.role
+                    };
+                }
+
                 return res.redirect('/admin/user/edit/' + id);
             };
             User.isAvailable(user, 'username', function(isUsernameAvailable, foundUser) {
