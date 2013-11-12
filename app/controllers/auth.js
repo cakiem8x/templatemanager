@@ -5,6 +5,11 @@ var mongoose = require('mongoose'),
  * Sign in
  */
 exports.signin = function(req, res) {
+    // Redirect to the admin page if user has logged in
+    if (req.session.user) {
+        return res.redirect('/admin');
+    }
+
     if ('post' == req.method.toLowerCase()) {
         User.findOne({ username: req.body.user_name }, function(err, user) {
             if (err || !user) {
