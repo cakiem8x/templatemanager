@@ -39,8 +39,7 @@ html
                         ul.nav.navbar-nav.navbar-right
                             li.dropdown
                                 a.dropdown-toggle(href="#", data-toggle="dropdown")
-                                    i.fa.fa-cog
-                                    | &nbsp;
+                                    | Hello #{user.username} &nbsp;
                                     b.caret
                                 ul.dropdown-menu
                                     li
@@ -69,7 +68,7 @@ html
 
         script(type="text/javascript").
             $(document).ready(function() {
-                io.connect().emit('userName', '#{user_name}');
+                io.connect().emit('userName', '#{user.username}');
             });
 
         block footerScript

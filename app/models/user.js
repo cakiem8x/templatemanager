@@ -5,7 +5,8 @@ var mongoose   = require('mongoose'),
         username: { type: String, default: '' },
         email: { type: String, default: '' },
         hashed_password: { type: String, default: '' },
-        salt: { type: String, default: '' }
+        salt: { type: String, default: '' },
+        role: { type: String, default: 'admin' }
     });
 
 userSchema

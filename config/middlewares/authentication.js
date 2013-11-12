@@ -1,11 +1,11 @@
 exports.requireAuthentication = function(req, res, next) {
-    if (!req.session || !req.session.user_name) {
+    if (!req.session || !req.session.user) {
         req.session.returnTo = req.originalUrl;
         return res.redirect('/admin/signin');
     }
     // Set the variable for layout
     req.app.locals({
-        user_name: req.session.user_name,
+        user: req.session.user,
         provider: req.app.get('config').provider
     });
     next();

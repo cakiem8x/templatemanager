@@ -16,7 +16,10 @@ exports.signin = function(req, res) {
                 return res.redirect('/admin/signin');
             }
 
-            req.session.user_name = user.username;
+            req.session.user = {
+                username: user.username,
+                role: user.role
+            };
             return res.redirect('/admin');
         });
     } else {
@@ -34,8 +37,8 @@ exports.signin = function(req, res) {
  * Sign out
  */
 exports.signout = function(req, res) {
-    if (req.session.user_name) {
-        delete req.session.user_name;
+    if (req.session.user) {
+        delete req.session.user;
         res.redirect('/admin/signin');
     } else {
         res.redirect('/');
@@ -47,7 +50,7 @@ exports.signout = function(req, res) {
  */
 exports.changePassword = function(req, res) {
     if ('post' == req.method.toLowerCase()) {
-        var userName    = req.session.user_name,
+        var userName    = req.session.user.username,
             password    = req.body.password,
             newPassword = req.body.new_password,
             confirm     = req.body.confirm_password;
