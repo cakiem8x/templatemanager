@@ -11,6 +11,10 @@ exports.signin = function(req, res) {
                 req.flash('error', 'Not found administrator account');
                 return res.redirect('/admin/signin');
             }
+            if (user.locked) {
+                req.flash('error', 'The administrator is locked');
+                return res.redirect('/admin/signin');
+            }
             if (!user.verifyPassword(req.body.password)) {
                 req.flash('error', 'Wrong password');
                 return res.redirect('/admin/signin');

@@ -40,9 +40,10 @@ block content
                         td #{user.role}
                         td
                             div.btn-group
-                                if ('root' != user.role)
-                                    button.btn.btn-warning(data-user="#{user._id}") Lock
                                 a.btn.btn-default(href="/admin/user/edit/#{user._id}") Edit
+                                if (user.username != currentUser)
+                                    button.btn.btn-warning.lockButton(data-user="#{user._id}", data-locked="#{user.locked}")
+                                        = user.locked ? 'Unlock' : 'Lock'
 
         // Pagination
         if (numPages > 1)
@@ -55,3 +56,20 @@ block content
                             a(href="#{url(req, { page: i })}") #{i}
                     li
                         a(href="#{url(req, { page: numPages })}") &rarr;
+
+block footerScript
+    script(type="text/javascript").
+        $(document).ready(function() {
+            $('.lockButton').on('click', function() {
+                var $that = $(this), locked = $that.attr('data-locked'), id = $that.attr('data-user');
+                $that.attr('disabled', 'disabled');
+                $.post('/admin/user/lock', {
+                    id: id
+                }).success(function(response) {
+                    $that.removeAttr('disabled');
+                    if (response.success) {
+                        $that.html('true' == locked ? 'Lock' : 'Unlock').attr('data-locked', 'true' == locked ? 'false' : 'true');
+                    }
+                });
+            });
+        });

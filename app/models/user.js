@@ -8,7 +8,8 @@ var mongoose   = require('mongoose'),
         email: { type: String, default: '' },
         hashed_password: { type: String, default: '' },
         salt: { type: String, default: '' },
-        role: { type: String, default: 'admin' }
+        role: { type: String, default: 'admin' },
+        locked: { type: Boolean, default: false }
     });
 
 userSchema

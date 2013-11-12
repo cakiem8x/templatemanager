@@ -33,6 +33,7 @@ exports.index = function(req, res) {
 
                 // Criteria
                 q: q,
+                currentUser: req.session.user.username,
 
                 // Pagination
                 page: page,
@@ -147,6 +148,27 @@ exports.edit = function(req, res) {
             });
         });
     }
+};
+
+/**
+ * Lock/unlock administrator
+ */
+exports.lock = function(req, res) {
+    var id = req.body.id;
+    User.findOne({ _id: id }, function(err, user) {
+        if (req.session.user.username == user.username) {
+            return res.json({
+                success: false
+            });
+        }
+
+        user.locked = !user.locked;
+        user.save(function(err) {
+            return res.json({
+                success: !err
+            });
+        });
+    });
 };
 
 /**
