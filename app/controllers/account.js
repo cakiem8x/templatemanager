@@ -14,6 +14,11 @@ var
  * Sign in
  */
 exports.signin = function(req, res) {
+    // Redirect to the account dashboard when authenticated account tries to access the sign in page
+    if (req.session.account) {
+        return res.redirect('/account');
+    }
+
     var app         = req.app,
         config      = app.get('config'),
         apiEndpoint = url.parse(config.amember.url);
