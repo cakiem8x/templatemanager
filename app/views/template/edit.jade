@@ -11,7 +11,7 @@ block content
             |  / Edit template
 
             span.pull-right
-                a.btn.btn-link(href="/admin/template/add")
+                a.btn.btn-default(href="/admin/template/add")
                     i.fa.fa-plus
                         | &nbsp;Add new template
 
@@ -151,19 +151,28 @@ block content
             table.table(class=(template.files.length == 0) ? 'hide' : '')
                 thead
                     tr
-                        th File name
-                        th Description
-                        th File size
-                        th # Downloads
+                        th File name / Size / # Downloads
+                        th(style="width: 25%") Description
+                        th(style="width: 25%") Progress
                         th Actions
                 tbody#uploadedFiles
+                    tr#fileRowTemplate.hide
+                        td
+                        td
+                            input.form-control.descriptionText(type="text", disabled)
+                        td
+                            div.progress.progress-striped.active
+                                div.progress-bar.progress-bar-success(style="width: 0%;")
+                        td
+                            button.btn.btn-danger.removeButton Remove
                     - each file in template.files
-                        tr(data-file="#{JSON.stringify(file)}")
-                            td #{file.name}
+                        tr(data-file="#{JSON.stringify(file)}", data-file-name="#{file.name}")
+                            td #{file.name} / #{filesize(file.size)} / #{file.num_downloads}
                             td
                                 input.form-control.descriptionText(type="text", value="#{file.description}")
-                            td #{filesize(file.size)}
-                            td #{file.num_downloads}
+                            td
+                                div.progress.progress-striped.active.hide
+                                    div.progress-bar.progress-bar-success(style="width: 0%;")
                             td
                                 div.btn-group
                                     button.btn.btn-danger.removeButton Remove
@@ -174,10 +183,6 @@ block content
                 div.btn.btn-default.fileinput-button
                     span Upload files
                     input#uploader(type="file", name="files[]", data-url="/admin/upload", multiple)
-
-            div.col-lg-8.col-lg-offset-2(style="margin-top: 20px;")
-                div.progress.progress-striped.active.hide
-                    div#progress.progress-bar.progress-bar-success(style="width: 0%;")
 
     // Remove file confirmation dialog
     div#removeFileDialog.modal.fade.in
@@ -265,7 +270,7 @@ block footerScript
             });
 
             // Init data for rows showing uploaded files
-            $('#uploadedFiles').find('tr').each(function() {
+            $('#uploadedFiles').find('tr[data-file]').each(function() {
                 $(this).data('file', JSON.parse($(this).attr('data-file')))
                        .removeAttr('data-file');
             });
@@ -278,52 +283,58 @@ block footerScript
                 start: function(e) {
                     $('.changeButton').attr('disabled', 'disabled');
                     $('#saveButton').attr('disabled', 'disabled');
-                    $('#progress').parent().addClass('progress-striped').removeClass('hide').end().css('width', '0%');
                 },
                 done: function(e, data) {
-                    $('#uploadedFiles').parent().removeClass('hide');
                     var editingRow = $('#uploader').data('editingRow');
 
                     $.each(data.result.files, function(index, file) {
-                        // Changing the uploaded file
-                        if (editingRow) {
-                            // Update row data
-                            var f = editingRow.data('file');
-                            file._id                = f._id;
-                            file.num_downloads      = f.num_downloads;
-                            file.description        = f.description;
-                            editingRow.data('file', file);
-
-                            // Update UI
-                            editingRow
-                                .find('td')
-                                    .eq(0).html(file.name).end()
-                                    .eq(2).html(filesize(file.size)).end();
-                        } else {
-                            // Upload new file
-                            $('<tr/>').append($('<td/>').html(file.name))
-                                      .append($('<td/>').append($('<input/>').attr('type', 'text').addClass('form-control descriptionText')))
-                                      .append($('<td/>').html(filesize(file.size)))
-                                      .append($('<td/>').html('-'))
-                                      .append($('<td/>').append($('<button/>').addClass('btn btn-danger removeButton').html('Remove')))
-                                      .data('file', file)
-                                      .appendTo('#uploadedFiles');
+                        var $tr        = $('#uploadedFiles').find('tr[data-file-name="' + file.name + '"]'),
+                            editingRow = $('#uploader').data('editingRow');
+                        if ($tr) {
+                            $tr.find('input.descriptionText').removeAttr('disabled');
+                            if (editingRow) {
+                                // Update row data
+                                var f = editingRow.data('file');
+                                file._id           = f._id;
+                                file.num_downloads = f.num_downloads;
+                                file.description   = f.description;
+                                editingRow.data('file', file);
+                            } else {
+                                $tr.data('file', file);
+                            }
                         }
+
+                        // For small files, I cannot receive the progress via socket
+                        // because the upload is done before the socket emits event
+                        // In this case, I've to update the progress bar width
+                        $tr.find('.progress').removeClass('progress-striped hide').end().find('.progress-bar').css('width', '100%');
                     });
 
                     $('#uploader').removeData('editingRow').attr('multiple', 'multiple');
                     $('#saveButton').removeAttr('disabled');
-                    //$('#progress').parent().addClass('hide');
-
                     $('.changeButton').removeAttr('disabled');
                 }
+            }).on('fileuploadadd', function(e, data) {
+                $('#uploadedFiles').parent().removeClass('hide');
+
+                var editingRow = $('#uploader').data('editingRow');
+                $.each(data.files, function(index, file) {
+                    var $tr = editingRow ? editingRow : $('#fileRowTemplate').clone().appendTo('#uploadedFiles').removeClass('hide').removeAttr('id');
+                    $tr
+                        .attr('data-file-name', file.name)
+                        .find('td')
+                            .eq(0).html([file.name, filesize(file.size), 0].join(' / '));
+                });
             });
 
             var socket = io.connect();
-            socket.on('uploadProgress', function(progress) {
-                $('#progress').parent().addClass('progress-striped').removeClass('hide').end().css('width', progress);
-                if (progress == '100%') {
-                    $('#progress').parent().removeClass('progress-striped');
+            socket.on('uploadProgress', function(data) {
+                var $tr = $('#uploadedFiles').find('tr[data-file-name="' + data.filename + '"]');
+                if ($tr) {
+                    $tr.find('.progress').removeClass('hide').end().find('.progress-bar').css('width', data.progress);
+                    if (data.progress == '100%') {
+                        $tr.find('.progress').removeClass('progress-striped');
+                    }
                 }
             });
 
@@ -344,9 +355,11 @@ block footerScript
             });
 
             $('#saveButton').on('click', function(e) {
-                var uploadedFiles = [];
+                var uploadedFiles = [], file = null;
                 $('#uploadedFiles').find('tr').each(function() {
-                    uploadedFiles.push($(this).data('file'));
+                    if (file = $(this).data('file')) {
+                        uploadedFiles.push(file);
+                    }
                 });
                 $('input[name="uploaded_files"]').val(JSON.stringify(uploadedFiles));
 

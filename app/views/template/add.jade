@@ -143,21 +143,26 @@ block content
             table.table.hide
                 thead
                     tr
-                        th File name
-                        th Description
-                        th File size
+                        th File name (Size)
+                        th(style="width: 30%") Description
+                        th(style="width: 30%") Progress
                         th Actions
                 tbody#uploadedFiles
+                    tr#fileRowTemplate.hide
+                        td
+                        td
+                            input.form-control.descriptionText(type="text", disabled)
+                        td
+                            div.progress.progress-striped.active
+                                div.progress-bar.progress-bar-success(style="width: 0%;")
+                        td
+                            button.btn.btn-danger.removeButton Remove
 
             div.text-center
                 p You can choose many files at the same time
                 div.btn.btn-default.fileinput-button
                     span Upload files
                     input#uploader(type="file", name="files[]", data-url="/admin/upload", multiple)
-
-            div.col-lg-8.col-lg-offset-2(style="margin-top: 20px;")
-                div.progress.progress-striped.active.hide
-                    div#progress.progress-bar.progress-bar-success(style="width: 0%;")
 
     // Remove file confirmation dialog
     div#removeFileDialog.modal.fade.in
@@ -249,33 +254,50 @@ block footerScript
                 dataType: 'json',
                 autoUpload: true,
                 url: '/admin/upload',
-                start: function(e) {
+                start: function(e, data) {
                     $('#saveButton').attr('disabled', 'disabled');
-                    $('#progress').parent().addClass('progress-striped').removeClass('hide').end().css('width', '0%');
                 },
                 done: function(e, data) {
-                    $('#uploadedFiles').parent().removeClass('hide');
                     $.each(data.result.files, function(index, file) {
-                        var $tr = $('<tr/>').appendTo('#uploadedFiles')
-                                            .append($('<td/>').html(file.name))
-                                            .append($('<td/>').append($('<input/>').attr('type', 'text').addClass('form-control descriptionText')))
-                                            .append($('<td/>').html(filesize(file.size)));
-                        $('<td/>').appendTo($tr)
-                                  .append($('<button/>').addClass('btn btn-danger removeButton').html('Remove'));
+                        var $tr = $('#uploadedFiles').find('tr[data-file-name="' + file.name + '"]');
+                        if ($tr) {
+                            $tr.data('file', file).find('input.descriptionText').removeAttr('disabled');
+                        }
 
-                        $tr.data('file', file);
+                        // For small files, I cannot receive the progress via socket
+                        // because the upload is done before the socket emits event
+                        // In this case, I've to update the progress bar width
+                        $tr.find('.progress').removeClass('progress-striped').end().find('.progress-bar').css('width', '100%');
                     });
 
                     $('#saveButton').removeAttr('disabled');
-                    //$('#progress').parent().addClass('hide');
                 }
+            }).on('fileuploadadd', function(e, data) {
+                $('#uploadedFiles').parent().removeClass('hide');
+                $.each(data.files, function(index, file) {
+                    var $tr = $('#fileRowTemplate').clone();
+                    $tr
+                        .appendTo('#uploadedFiles')
+                        .removeClass('hide')
+                        .removeAttr('id')
+                        .attr('data-file-name', file.name)
+                        .find('td')
+                            .eq(0).html(file.name + ' (' + filesize(file.size) + ')');
+                });
+            }).on('fileuploadprogress', function(e, data) {
+                //console.log(data.files[0].name, 100 * data.loaded / data.total + '%');
+            }).on('fileuploadprogressall', function(e, data) {
+            }).on('fileuploadfail', function(e, data) {
             });
 
             var socket = io.connect();
-            socket.on('uploadProgress', function(progress) {
-                $('#progress').parent().addClass('progress-striped').removeClass('hide').end().css('width', progress);
-                if (progress == '100%') {
-                    $('#progress').parent().removeClass('progress-striped');
+            socket.on('uploadProgress', function(data) {
+                var $tr = $('#uploadedFiles').find('tr[data-file-name="' + data.filename + '"]');
+                if ($tr) {
+                    $tr.find('.progress-bar').css('width', data.progress);
+                    if (data.progress == '100%') {
+                        $tr.find('.progress').removeClass('progress-striped');
+                    }
                 }
             });
 
@@ -297,9 +319,11 @@ block footerScript
 
             $('#saveButton').on('click', function(e) {
                 // Collect uploaded files
-                var uploadedFiles = [];
+                var uploadedFiles = [], file;
                 $('#uploadedFiles').find('tr').each(function() {
-                    uploadedFiles.push($(this).data('file'));
+                    if (file = $(this).data('file')) {
+                        uploadedFiles.push(file);
+                    }
                 });
                 $('input[name="uploaded_files"]').val(JSON.stringify(uploadedFiles));
 

@@ -307,13 +307,26 @@ exports.upload = function(req, res) {
 
     var socketConnections = app.get('socketConnections'),
         userName          = req.session.user.username,
-        files             = [];
+        files             = [],
+        currentFile       = null;
+
+    form.onPart = function(part) {
+        // Because it's impossible to track upload progress for each individual file
+        // So I have to overwrite the onPart() method to track the current upload file
+        currentFile = part.filename;
+
+        // Handle part as usual
+        form.handlePart(part);
+    };
 
     form
         .on('progress', function(bytesReceived, bytesExpected) {
             if (socketConnections && socketConnections[userName]) {
                 var socket = socketConnections[userName];
-                socket.emit('uploadProgress', 100 * bytesReceived / bytesExpected + '%');
+                socket.emit('uploadProgress', {
+                    progress: 100 * bytesReceived / bytesExpected + '%',
+                    filename: currentFile
+                });
             }
         })
         .on('file', function(name, file) {
