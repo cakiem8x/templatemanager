@@ -11,9 +11,7 @@ block content
             |  / Edit template
 
             span.pull-right
-                a.btn.btn-default(href="/admin/template/add")
-                    i.fa.fa-plus
-                        | &nbsp;Add new template
+                a.btn.btn-default(href="/admin/template/add") Add new template
 
     include ../partial/flash
 
@@ -71,7 +69,7 @@ block content
 
                 div.form-group
                     label.control-label.col-lg-2 Description
-                    div.col-lg-6
+                    div.col-lg-8
                         textarea.form-control(name="description", rows=5) #{template.description}
 
                 div.form-group
