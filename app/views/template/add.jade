@@ -10,6 +10,9 @@ block content
             a(href="/admin/template") Templates
             |  / Add new template
 
+            span.pull-right
+                button#saveButton.btn.btn-primary(type="button") Save
+
     include ../partial/flash
 
     ul.nav.nav-tabs
@@ -132,12 +135,7 @@ block content
                         div.tb-tmpl-thumb
                         input(type="hidden", name="thumbs")
 
-                hr
-
-                div.form-group
-                    div.col-lg-10.col-lg-offset-2
-                        button#saveButton.btn.btn-primary(type="submit") Add
-                        input(name="uploaded_files", type="hidden")
+                input(name="uploaded_files", type="hidden")
 
         div#files.tab-pane
             table.table.hide
@@ -338,7 +336,7 @@ block footerScript
                 });
                 $('input[name="browsers"]').val(browsers.join(','));
 
-                $(this).parent('form').submit();
+                $('#addTemplateForm').submit();
             });
 
             // Update file description handler

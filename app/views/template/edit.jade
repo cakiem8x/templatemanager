@@ -11,7 +11,8 @@ block content
             |  / Edit template
 
             span.pull-right
-                a.btn.btn-default(href="/admin/template/add") Add new template
+                button#saveButton.btn.btn-primary(type="button") Save
+                a.btn.btn-link(href="/admin/template/add") Add new template
 
     include ../partial/flash
 
@@ -138,12 +139,7 @@ block content
                                 img(src="#{thumbPrefixUrl}#{template.thumbs.original}")
                         input(type="hidden", name="thumbs", value="#{JSON.stringify(template.thumbs)}")
 
-                hr
-
-                div.form-group
-                    div.col-lg-10.col-lg-offset-2
-                        button#saveButton.btn.btn-primary(type="submit") Save
-                        input(name="uploaded_files", type="hidden")
+                input(name="uploaded_files", type="hidden")
 
         div#files.tab-pane
             table.table(class=(template.files.length == 0) ? 'hide' : '')
@@ -374,7 +370,7 @@ block footerScript
                 });
                 $('input[name="browsers"]').val(browsers.join(','));
 
-                $(this).parent('form').submit();
+                $('#editTemplateForm').submit();
             });
 
             // Update file description handler
