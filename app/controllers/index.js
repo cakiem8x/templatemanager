@@ -50,7 +50,7 @@ exports.filter = function(req, res) {
     }
 
     Template.count(criteria, function(err, total) {
-        Template.find(criteria, { '_id': 0 }).select('name themes demo_url description tags thumbs responsive free browsers software_versions high_resolution year').skip((page - 1) * perPage).limit(perPage).exec(function(err, templates) {
+        Template.find(criteria, { '_id': 0 }).sort({ 'created_date': -1 }).select('name themes demo_url description tags thumbs responsive free browsers software_versions high_resolution year').skip((page - 1) * perPage).limit(perPage).exec(function(err, templates) {
             if (err) {
                 templates = [];
             }
