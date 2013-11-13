@@ -17,14 +17,18 @@ exports.index = function(req, res) {
         page      = req.param('page') || 1,
         q         = req.param('q') || '',
         year      = req.param('year'),
+        sortBy    = req.param('sort') || '-created_date',
         criteria  = q ? { name: new RegExp(q, 'i') } : {};
 
     if (year) {
         criteria.year = year;
     }
+    var sortCriteria = {}, sortDirection = ('-' == sortBy.substr(0, 1)) ? -1 : 1;
+
+    sortCriteria['-' == sortBy.substr(0, 1) ? sortBy.substr(1) : sortBy] = sortDirection;
 
     Template.count(criteria, function(err, total) {
-        Template.find(criteria).skip((page - 1) * perPage).limit(perPage).exec(function(err, templates) {
+        Template.find(criteria).sort(sortCriteria).skip((page - 1) * perPage).limit(perPage).exec(function(err, templates) {
             if (err) {
                 templates = [];
             }
@@ -47,6 +51,7 @@ exports.index = function(req, res) {
                 // Criteria
                 q: q,
                 year: year,
+                sortDirection: sortDirection,
 
                 // Pagination
                 page: page,

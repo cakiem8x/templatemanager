@@ -28,11 +28,16 @@ block content
         table.table(style="margin-top: 20px;")
             thead
                 tr
-                    th Name
-                    th Slug
-                    th URL
-                    th Publishing year
-                    th Created date
+                    th
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'name' })}") Name
+                    th
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'slug' })}") Slug
+                    th
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'url' })}") URL
+                    th
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'year' })}") Publishing year
+                    th
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'created_date' })}") Created date
                     th # Downloads
                     th Actions
             tbody
