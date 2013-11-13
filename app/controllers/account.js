@@ -33,13 +33,15 @@ exports.signin = function(req, res) {
             options = {
                 host: apiEndpoint.host,
                 port: apiEndpoint.port || 80,
-                path: '/api/check-access/by-login-pass?' + data
+                path: (apiEndpoint.path == '/' ? '' : apiEndpoint.path) + '/api/check-access/by-login-pass?' + data,
+                method: 'GET'
             };
         var result = {
             ok: false,
             error: null,
             message: null
         };
+
         var request = http.request(options, function(response) {
             response.setEncoding('utf8');
             response.on('data', function(chunk) {
@@ -47,12 +49,16 @@ exports.signin = function(req, res) {
 
                 if (result.ok == true || result.ok == 'true') {
                     req.session.account = req.body.user_name;
-                    res.redirect('/account');
+                    return res.redirect('/account');
                 } else {
                     req.flash('error', result.message || result.msg);
                     return res.redirect('/account/signin');
                 }
             });
+        });
+        request.on('error', function(e) {
+            req.flash('error', e.message);
+            res.redirect('/account/signin');
         });
         request.end();
     } else {
