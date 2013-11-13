@@ -273,6 +273,16 @@ block footerScript
                        .removeAttr('data-file');
             });
 
+            function updateProgress(fileName, progress) {
+                var $tr = $('#uploadedFiles').find('tr[data-file-name="' + fileName + '"]');
+                if ($tr) {
+                    $tr.find('.progress-bar').css('width', progress);
+                    if (progress == '100%') {
+                        $tr.find('.progress').removeClass('progress-striped');
+                    }
+                }
+            };
+
             // Uploader handler
             $('#uploader').fileupload({
                 dataType: 'json',
@@ -323,17 +333,13 @@ block footerScript
                         .find('td')
                             .eq(0).html([file.name, filesize(file.size), 0].join(' / '));
                 });
+            }).on('fileuploadprogress', function(e, data) {
+                updateProgress(data.files[0].name, 100 * data.loaded / data.total + '%');
             });
 
             var socket = io.connect();
             socket.on('uploadProgress', function(data) {
-                var $tr = $('#uploadedFiles').find('tr[data-file-name="' + data.filename + '"]');
-                if ($tr) {
-                    $tr.find('.progress').removeClass('hide').end().find('.progress-bar').css('width', data.progress);
-                    if (data.progress == '100%') {
-                        $tr.find('.progress').removeClass('progress-striped');
-                    }
-                }
+                // updateProgress(data.filename, data.progress);
             });
 
             // Upload thumbnail
