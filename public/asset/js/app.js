@@ -167,8 +167,10 @@ angular
             var templates = data.templates;
             if (templates && templates.length > 0) {
                 $scope.activeTab       = null;
-                $scope.currentTemplate = templates[Math.floor(Math.random() * templates.length)];
+                // Show the newest template
+                $scope.currentTemplate = templates[0];
 
+                // Show random theme if available
                 var themes = $scope.currentTemplate.themes;
                 $scope.frameUrl = (!themes || themes.length == 0) ? $scope.currentTemplate.demo_url : themes[Math.floor(Math.random() * themes.length)];
             }
