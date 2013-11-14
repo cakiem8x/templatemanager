@@ -41,10 +41,11 @@ html(ng-app="TemplateDemo")
                             a#filterButton(href="#", ng-click="activateTab('filter')")
                                 i.fa.fa-flask
                                 | &nbsp;Filter
-                        li
-                            a(href="#{provider.registerUrl}")
-                                i.fa.fa-shopping-cart
-                                | &nbsp;Join us
+
+                    div.navbar-form.navbar-left
+                        a.btn.btn-danger(href="#{provider.registerUrl}")
+                            i.fa.fa-shopping-cart
+                            | &nbsp;Join us
 
                     ul.nav.navbar-nav.navbar-right
                         li(ng-show="currentTemplate", ng-class="{ 'dropdown': currentTemplate.themes.length > 0 }")
