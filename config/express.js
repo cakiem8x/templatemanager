@@ -39,7 +39,10 @@ module.exports = function(app, config) {
         app.use(express.methodOverride());
 
         app.use(express.session({
-            secret: config.sessionSecret,
+            secret: config.session.secret,
+            cookie: {
+                maxAge: new Date(Date.now() + config.session.lifetime)
+            },
             store: new mongoStore({
                 url: config.db,
                 collection : 'sessions'

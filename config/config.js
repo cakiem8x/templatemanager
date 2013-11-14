@@ -4,7 +4,10 @@ var path     = require('path'),
 module.exports = {
     development: {
         root: rootPath,
-        sessionSecret: 'XrQ2Vsw2tESughz71l1B80NwqxA7z499',
+        session: {
+            secret: 'XrQ2Vsw2tESughz71l1B80NwqxA7z499',
+            lifetime: 3600 * 1000 * 1       // 1 hour
+        },
         db: 'mongodb://localhost/templatemanager_dev',
         upload: {
             dir: '/Volumes/data/projects_workspace/templatemanager',
