@@ -60,7 +60,7 @@ block content
                                 ul.dropdown-menu
                                     for file in template.files
                                         li.text-left
-                                            a(href="/account/template/download/#{file._id}") #{file.description} (#{filesize(file.size)})
+                                            a(href="/account/template/download/#{file._id}") #{file.name} (#{filesize(file.size)})
 
         div.clearfix
 
