@@ -1,9 +1,10 @@
-var account   = require('../app/controllers/account'),
-    auth      = require('../app/controllers/auth'),
-    dashboard = require('../app/controllers/dashboard'),
-    index     = require('../app/controllers/index'),
-    template  = require('../app/controllers/template'),
-    user      = require('../app/controllers/user');
+var account    = require('../app/controllers/account'),
+    auth       = require('../app/controllers/auth'),
+    dashboard  = require('../app/controllers/dashboard'),
+    index      = require('../app/controllers/index'),
+    membership = require('../app/controllers/membership'),
+    template   = require('../app/controllers/template'),
+    user       = require('../app/controllers/user');
 
 var authentication     = require('./middlewares/authentication'),
     adminAuthorization = [authentication.requireAuthentication, authentication.user.hasAuthorization];
@@ -39,6 +40,12 @@ module.exports = function(app) {
     app.all('/admin/user/edit/:id', adminAuthorization, user.edit);
     app.post('/admin/user/check/:field', adminAuthorization, user.check);
     app.post('/admin/user/lock', adminAuthorization, user.lock);
+
+    // Membership
+    app.get('/admin/membership', adminAuthorization, membership.index);
+    app.post('/admin/membership/add', adminAuthorization, membership.add);
+    app.post('/admin/membership/edit', adminAuthorization, membership.edit);
+    app.post('/admin/membership/remove', adminAuthorization, membership.remove);
 
     // --- Account routes ---
     app.all('/account/signin', account.signin);

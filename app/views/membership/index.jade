@@ -1,0 +1,212 @@
+extends ../layouts/backend
+
+block content
+    div.page-header
+        h2 Memberships
+
+    table.table
+        thead
+            tr
+                th(style="width: 25%") Title
+                th(style="width: 25%") Description
+                th(style="width: 100px") Amember product ID
+                th(style="width: 25%") Amember product
+                th Actions
+        tbody#subscriptions
+            tr#addRow
+                td
+                    input.form-control(type="text", name="title")
+                td
+                    textarea.form-control(name="description", rows="5")
+                td
+                    input.form-control(type="text", name="pid", readonly)
+                td
+                    select#productSelect.form-control.productSelect
+                        for product in products
+                            option(value="#{JSON.stringify(product)}", disabled=product.disabled, data-pid="#{product.pid}") #{product.title} (ID: #{product.pid})
+                td
+                    button.btn.btn-default#addButton(disabled=products.length == 0) Add
+            tr#newRowTemplate.hide
+                td
+                td
+                td
+                td
+                td
+                    div.btn-group
+                        button.btn.btn-default.editButton Edit
+                        button.btn.btn-danger.removeButton Remove
+            tr#editRowTemplate.hide
+                td
+                    input.form-control(type="text", name="title")
+                td
+                    textarea.form-control(name="description", rows="5")
+                td
+                    input.form-control(type="text", name="pid", readonly)
+                td
+                td
+                    div.btn-group
+                        button.btn.btn-success.saveButton Save
+                        button.btn.btn-default.cancelButton Cancel
+
+    div#removeMembershipDialog.modal.fade.in
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h4.modal-title Remove membership
+                div.modal-body
+                    div Are you sure you want to remove this membership?
+                    div.text-danger This action cannot be undone.
+                div.modal-footer
+                    button.btn.btn-danger.yesButton Yes
+                    button.btn.btn-default(data-dismiss="modal") No
+
+block footerScript
+    script(type="text/javascript").
+        $(document).ready(function() {
+            $('#subscriptions').on('change', '.productSelect', function() {
+                var product = JSON.parse($(this).val());
+                $(this)
+                    .parents('tr')
+                        .find('input[name="title"]').val(product.title).end()
+                        .find('textarea[name="description"]').val(product.description).end()
+                        .find('input[name="pid"]').val(product.pid).end();
+            });
+
+            // Add new membership
+            $('#addButton').on('click', function() {
+                var $that       = $(this),
+                    title       = $('#addRow').find('input[name="title"]').val(),
+                    description = $('#addRow').find('textarea[name="description"]').val(),
+                    pid         = $('#addRow').find('input[name="pid"]').val(),
+                    product     = JSON.parse($('#productSelect').val());
+                if (title && pid && product) {
+                    $that.attr('disabled', 'disabled');
+                    var membership = {
+                        title: title,
+                        description: description,
+                        pid: pid
+                    };
+                    $.post('/admin/membership/add', membership).success(function(data) {
+                        $that.removeAttr('disabled');
+                        if (data.success) {
+                            $('#newRowTemplate')
+                                .clone()
+                                .removeAttr('id')
+                                .removeClass('hide')
+                                .appendTo('#subscriptions')
+                                .find('td')
+                                    .eq(0).html(title).end()
+                                    .eq(1).html(description).end()
+                                    .eq(2).html(pid).end()
+                                    .eq(3).html(product.title + ' (ID:' + product.pid + ')');
+                            $('#productSelect').find('option[data-pid="' + pid + '"]').attr('disabled', 'disabled');
+                        }
+                    });
+                }
+            });
+
+            $('#editRowTemplate').on('cancelEditing', function() {
+                $('#addButton').removeAttr('disabled');
+                $('.saveButton').removeAttr('disabled');
+                var currentEditRow = $(this).data('editingRow');
+                if (currentEditRow) {
+                    $(currentEditRow).show();
+                }
+                $(this).hide();
+            });
+
+            // Remove membership
+            $('#subscriptions').on('click', '.removeButton', function() {
+                var $that = $(this);
+                $that.attr('disabled', 'disabled');
+                var pid = $that.parents('tr').find('td').eq(2).html();
+
+                var deleteDialog = $('#removeMembershipDialog');
+                deleteDialog
+                    // No button click handler
+                    .on('hidden.bs.modal', function() {
+                        $that.removeAttr('disabled');
+                    })
+                    // Yes button click handler
+                    .find('.yesButton')
+                        .off('click')
+                        .on('click', function() {
+                            $.post('/admin/membership/remove', {
+                                pid: pid
+                            }).success(function(response) {
+                                $that.removeAttr('disabled');
+                                if (response.success) {
+                                    $that.parents('tr').remove();
+                                    $('#productSelect').find('option[data-pid="' + pid + '"]').removeAttr('disabled');
+                                }
+                                deleteDialog.modal('hide');
+                            });
+                        })
+                        .end()
+                    .modal('show');
+            });
+
+            // Edit membership
+            $('#subscriptions').on('click', '.cancelButton', function() {
+                $('#editRowTemplate').trigger('cancelEditing');
+            });
+            $('#subscriptions').on('click', '.editButton', function() {
+                $('#editRowTemplate').trigger('cancelEditing');
+                $('#addButton').attr('disabled', 'disabled');
+                var $that = $(this),
+                    $row  = $that.parents('tr'),
+                    pid   = $row.find('td').eq(2).html();
+
+                $row.data('pid', pid);
+
+                $('#editRowTemplate')
+                    .data('editingRow', $row).insertAfter($row).removeClass('hide').show()
+                    .find('input[name="title"]').val($row.find('td').eq(0).html()).end()
+                    .find('textarea[name="description"]').val($row.find('td').eq(1).html()).end()
+                    .find('input[name="pid"]').val(pid).end()
+                    .find('td')
+                        .eq(3)
+                        .html('')
+                        .append($('#productSelect')
+                            .clone()
+                            .removeAttr('id')
+                            .find('option[data-pid="' + pid + '"]').attr('selected', 'selected').removeAttr('disabled').end()
+                        );
+
+                $row.hide();
+            });
+            $('#subscriptions').on('click', '.saveButton', function() {
+                $('#addButton').attr('disabled', 'disabled');
+                var $that = $(this),
+                    $row  = $that.parents('tr');
+
+                $that.attr('disabled', 'disabled');
+                var membership = {
+                    title: $row.find('input[name="title"]').val(),
+                    description: $row.find('textarea[name="description"]').val(),
+                    pid: $row.find('input[name="pid"]').val()
+                };
+                if (membership.title && membership.pid) {
+                    $.post('/admin/membership/edit', membership).success(function(data) {
+                        $that.removeAttr('disabled');
+                        if (data.success) {
+                            var $editingRow = $('#editRowTemplate').data('editingRow');
+                            $editingRow
+                                .find('td')
+                                    .eq(0).html(membership.title).end()
+                                    .eq(1).html(membership.description).end()
+                                    .eq(2).html(membership.pid).end()
+                                    .eq(3).html($row.find('option[data-pid="' + membership.pid + '"]').html());
+
+                            $('#productSelect')
+                                .find('option[data-pid="' + $editingRow.data('pid') + '"]').removeAttr('disabled').end()
+                                .find('option[data-pid="' + membership.pid + '"]').attr('disabled', 'disabled');
+
+
+                            $('#editRowTemplate').trigger('cancelEditing');
+                        }
+                    });
+                }
+            });
+        });
