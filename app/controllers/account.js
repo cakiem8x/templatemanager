@@ -72,7 +72,8 @@ exports.signin = function(req, res) {
                 warning: req.flash('error'),
                 success: req.flash('success')
             },
-            title: 'Sign in'
+            title: 'Sign in',
+            registerUrl: config.provider.registerUrl
         });
     }
 };
