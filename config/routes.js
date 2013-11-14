@@ -12,6 +12,7 @@ module.exports = function(app) {
     // --- Front-end routes ---
     app.get('/', index.index);
     app.post('/filter', index.filter);
+    app.post('/demo', index.demo);
 
     // --- Administration routes ---
 

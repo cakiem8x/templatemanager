@@ -23,6 +23,21 @@ exports.index = function(req, res) {
     });
 };
 
+exports.demo = function(req, res) {
+    var slug = req.param('slug');
+    if (!slug) {
+        res.json({
+            template: null
+        });
+    } else {
+        Template.findOne({ slug: slug }).select('name slug themes demo_url description tags thumbs responsive free browsers software_versions high_resolution year').exec(function(err, template) {
+            res.json({
+                template: template
+            });
+        });
+    }
+};
+
 exports.filter = function(req, res) {
     var app    = req.app,
         config = app.get('config');
@@ -50,7 +65,7 @@ exports.filter = function(req, res) {
     }
 
     Template.count(criteria, function(err, total) {
-        Template.find(criteria, { '_id': 0 }).sort({ 'created_date': -1 }).select('name themes demo_url description tags thumbs responsive free browsers software_versions high_resolution year').skip((page - 1) * perPage).limit(perPage).exec(function(err, templates) {
+        Template.find(criteria, { '_id': 0 }).sort({ 'created_date': -1 }).select('name slug themes demo_url description tags thumbs responsive free browsers software_versions high_resolution year').skip((page - 1) * perPage).limit(perPage).exec(function(err, templates) {
             if (err) {
                 templates = [];
             }

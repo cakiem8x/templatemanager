@@ -42,18 +42,18 @@ html(ng-app="TemplateDemo")
                                 i.fa.fa-flask
                                 | &nbsp;Filter
 
-                    div.navbar-form.navbar-left
+                    div.navbar-form.navbar-right
                         a.btn.btn-danger(href="#{provider.registerUrl}")
                             i.fa.fa-shopping-cart
                             | &nbsp;Join us
 
                     ul.nav.navbar-nav.navbar-right
                         li(ng-show="currentTemplate", ng-class="{ 'dropdown': currentTemplate.themes.length > 0 }")
-                            a(href="#", data-toggle="dropdown", ng-class="{ 'dropdown-toggle': currentTemplate.themes.length > 0 }") {{ currentTemplate.name }}&nbsp;
+                            a(href="#{{ currentTemplate.slug }}", data-toggle="dropdown", ng-class="{ 'dropdown-toggle': currentTemplate.themes.length > 0 }") {{ currentTemplate.name }}&nbsp;
                                 b.caret(ng-show="currentTemplate.themes.length")
                             ul(ng-show="currentTemplate.themes.length", ng-class="{ 'dropdown-menu': currentTemplate.themes.length > 0 }")
                                 li(ng-repeat="theme in currentTemplate.themes", style="background: {{ theme.color }}")
-                                    a(href="#", ng-click="showTemplate(currentTemplate, theme)") {{ theme.name }}
+                                    a(href="#{{ currentTemplate.slug }}", ng-click="showTemplate(currentTemplate, theme)") {{ theme.name }}
 
                         li(ng-class="{ 'disabled': !currentTemplate }")
                             a(href="#", ng-click="resizeTo(320, 480)")
@@ -82,7 +82,7 @@ html(ng-app="TemplateDemo")
                     li.col-lg-4(ng-repeat="template in templates")
                         div.text-center(style="margin-bottom: 10px;")
                             div.hide(ng-class="{ 'show': template.themes == null || template.themes.length == 0 }")
-                                a.btn.btn-default(href="#", ng-click="showTemplate(template)") {{ template.name }}
+                                a.btn.btn-default(href="#{{ template.slug }}", ng-click="showTemplate(template)") {{ template.name }}
 
                             div.hide(ng-class="{ 'show': template.themes && template.themes.length > 0 }")
                                 div.btn-group
@@ -91,7 +91,7 @@ html(ng-app="TemplateDemo")
                                         span.caret
                                     ul.dropdown-menu.text-left
                                         li(ng-repeat="theme in template.themes", style="background: {{ theme.color }}")
-                                            a(href="#", ng-click="showTemplate(template, theme)") {{ theme.name }}
+                                            a(href="#{{ template.slug }}", ng-click="showTemplate(template, theme)") {{ theme.name }}
 
                         p
                             img(ng-src="#{thumbPrefixUrl}{{ template.thumbs.medium }}")

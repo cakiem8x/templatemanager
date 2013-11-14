@@ -73,7 +73,11 @@ angular
         responsive: null,
         high_resolution: null
     })
-    .controller('DemoController', function($rootScope, $scope, $http, defaultCriteria) {
+    .config(function($locationProvider) {
+        $locationProvider.html5Mode(true);
+        $locationProvider.hashPrefix('!');
+    })
+    .controller('DemoController', function($rootScope, $scope, $http, $location, defaultCriteria) {
         $scope.criteria        = defaultCriteria;
         $scope.filterCriteria  = defaultCriteria;
 
@@ -130,7 +134,11 @@ angular
         $scope.showTemplate = function(template, theme) {
             $scope.activeTab       = null;
             $scope.currentTemplate = template;
-            $scope.frameUrl        = theme ? theme.demo_url : template.demo_url;
+
+            if (theme == null && template.themes && template.themes.length > 0) {
+                theme = template.themes[Math.floor(Math.random() * template.themes.length)];
+            }
+            $scope.frameUrl = theme ? theme.demo_url : template.demo_url;
         };
 
         /**
@@ -161,18 +169,23 @@ angular
             }
         };
 
-        // Load the data
-        $scope.load().success(function(data) {
-            // Show random template
-            var templates = data.templates;
-            if (templates && templates.length > 0) {
-                $scope.activeTab       = null;
-                // Show the newest template
-                $scope.currentTemplate = templates[0];
+        $scope.init = function() {
+            // Load the data
+            $scope.load().success(function(data) {
+                var hash = $location.hash(), templates = data.templates;
 
-                // Show random theme if available
-                var themes = $scope.currentTemplate.themes;
-                $scope.frameUrl = (!themes || themes.length == 0) ? $scope.currentTemplate.demo_url : themes[Math.floor(Math.random() * themes.length)];
-            }
-        });
+                if (hash && templates && templates.length > 0) {
+                    // Try to load template with slug as hash
+                    $http.post('/demo', { slug: hash }).success(function(response) {
+                        response.template ? $scope.showTemplate(response.template) : $scope.showTemplate(templates[0]);
+                    });
+                } else {
+                    if (templates && templates.length > 0) {
+                        $scope.showTemplate(templates[0]);
+                    }
+                }
+            });
+        };
+
+        $scope.init();
     });
