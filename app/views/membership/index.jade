@@ -10,7 +10,7 @@ block content
                 th(style="width: 25%") Title
                 th(style="width: 25%") Description
                 th(style="width: 100px") Amember product ID
-                th(style="width: 25%") Amember product
+                th(style="width: 25%") Amember product (ID)
                 th Actions
         tbody#subscriptions
             tr#addRow
@@ -22,8 +22,8 @@ block content
                     input.form-control(type="text", name="pid", readonly)
                 td
                     select#productSelect.form-control.productSelect
-                        for product in products
-                            option(value="#{JSON.stringify(product)}", disabled=product.disabled, data-pid="#{product.pid}") #{product.title} (ID: #{product.pid})
+                        each product, pid in products
+                            option(value="#{JSON.stringify(product)}", disabled=product.disabled || memberships[pid], data-pid="#{pid}") #{product.title} (#{pid})
                 td
                     button.btn.btn-default#addButton(disabled=products.length == 0) Add
             tr#newRowTemplate.hide
@@ -48,6 +48,22 @@ block content
                         button.btn.btn-success.saveButton Save
                         button.btn.btn-default.cancelButton Cancel
 
+            - each membership, pid in memberships
+                tr(data-id="#{membership._id}")
+                    td #{membership.title}
+                    td #{membership.description}
+                    td #{membership.pid}
+                    td
+                        if products[pid]
+                            | #{products[membership.pid].title} (#{products[membership.pid].pid})
+                        else
+                            | This product has been removed from Amember
+                    td
+                        div.btn-group
+                            button.btn.btn-default.editButton Edit
+                            button.btn.btn-danger.removeButton Remove
+
+
     div#removeMembershipDialog.modal.fade.in
         div.modal-dialog
             div.modal-content
@@ -66,12 +82,16 @@ block footerScript
         $(document).ready(function() {
             $('#subscriptions').on('change', '.productSelect', function() {
                 var product = JSON.parse($(this).val());
-                $(this)
-                    .parents('tr')
-                        .find('input[name="title"]').val(product.title).end()
-                        .find('textarea[name="description"]').val(product.description).end()
-                        .find('input[name="pid"]').val(product.pid).end();
+                if (product) {
+                    $(this)
+                        .parents('tr')
+                            .find('input[name="title"]').val(product.title).end()
+                            .find('textarea[name="description"]').val(product.description).end()
+                            .find('input[name="pid"]').val(product.pid).end();
+                }
             });
+
+            $('#productSelect').change();
 
             // Add new membership
             $('#addButton').on('click', function() {
@@ -95,11 +115,12 @@ block footerScript
                                 .removeAttr('id')
                                 .removeClass('hide')
                                 .appendTo('#subscriptions')
+                                .attr('data-id', data.id)
                                 .find('td')
                                     .eq(0).html(title).end()
                                     .eq(1).html(description).end()
                                     .eq(2).html(pid).end()
-                                    .eq(3).html(product.title + ' (ID:' + product.pid + ')');
+                                    .eq(3).html(product.title + ' (' + product.pid + ')');
                             $('#productSelect').find('option[data-pid="' + pid + '"]').attr('disabled', 'disabled');
                         }
                     });
@@ -120,7 +141,9 @@ block footerScript
             $('#subscriptions').on('click', '.removeButton', function() {
                 var $that = $(this);
                 $that.attr('disabled', 'disabled');
-                var pid = $that.parents('tr').find('td').eq(2).html();
+                var $row = $that.parents('tr'),
+                    id   = $row.attr('data-id'),
+                    pid  = $row.find('td').eq(2).html();
 
                 var deleteDialog = $('#removeMembershipDialog');
                 deleteDialog
@@ -133,7 +156,7 @@ block footerScript
                         .off('click')
                         .on('click', function() {
                             $.post('/admin/membership/remove', {
-                                pid: pid
+                                id: id
                             }).success(function(response) {
                                 $that.removeAttr('disabled');
                                 if (response.success) {
@@ -178,11 +201,13 @@ block footerScript
             });
             $('#subscriptions').on('click', '.saveButton', function() {
                 $('#addButton').attr('disabled', 'disabled');
-                var $that = $(this),
-                    $row  = $that.parents('tr');
+                var $that       = $(this),
+                    $row        = $that.parents('tr'),
+                    $editingRow = $('#editRowTemplate').data('editingRow');
 
                 $that.attr('disabled', 'disabled');
                 var membership = {
+                    id: $editingRow.attr('data-id'),
                     title: $row.find('input[name="title"]').val(),
                     description: $row.find('textarea[name="description"]').val(),
                     pid: $row.find('input[name="pid"]').val()
@@ -191,7 +216,6 @@ block footerScript
                     $.post('/admin/membership/edit', membership).success(function(data) {
                         $that.removeAttr('disabled');
                         if (data.success) {
-                            var $editingRow = $('#editRowTemplate').data('editingRow');
                             $editingRow
                                 .find('td')
                                     .eq(0).html(membership.title).end()

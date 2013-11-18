@@ -1,6 +1,8 @@
-var http = require('http'),
-    url  = require('url'),
-    qs   = require('querystring');
+var http       = require('http'),
+    url        = require('url'),
+    qs         = require('querystring'),
+    mongoose   = require('mongoose'),
+    Membership = mongoose.model('membership');
 
 /**
  * List memberships
@@ -28,21 +30,29 @@ exports.index = function(req, res) {
         });
         response.on('end', function() {
             var result   = JSON.parse(body),
-                products = [];      // Amember products
+                products = {};      // Amember products
             delete result._total;
             for (var key in result) {
                 key = key + '';
-                products.push({
+                products[result[key].product_id] = {
                     pid: result[key].product_id,
                     title: result[key].title,
                     description: result[key].description,
                     disabled: result[key].is_disabled == '1'
-                });
+                };
             }
 
-            res.render('membership/index', {
-                title: 'Manage memberships',
-                products: products
+            Membership.find().exec().then(function(result) {
+                var memberships = {};
+                for (var i in result) {
+                    memberships[result[i].pid + ''] = result[i];
+                }
+
+                res.render('membership/index', {
+                    title: 'Manage memberships',
+                    products: products,
+                    memberships: memberships
+                });
             });
         });
     });
@@ -57,8 +67,16 @@ exports.index = function(req, res) {
  * Add new membership
  */
 exports.add = function(req, res) {
-    res.json({
-        success: true
+    var membership = new Membership({
+        pid: req.body.pid,
+        title: req.body.title,
+        description: req.body.description
+    });
+    membership.save(function(err) {
+        res.json({
+            success: !err,
+            id: membership._id
+        });
     });
 };
 
@@ -66,8 +84,20 @@ exports.add = function(req, res) {
  * Update the membership
  */
 exports.edit = function(req, res) {
-    res.json({
-        success: true
+    Membership.findOne({ _id: req.body.id }).exec().then(function(membership) {
+        if (!membership) {
+            return res.json({
+                success: false
+            });
+        }
+        membership.pid         = req.body.pid;
+        membership.title       = req.body.title;
+        membership.description = req.body.description;
+        membership.save(function(err) {
+            res.json({
+                success: !err
+            });
+        });
     });
 };
 
@@ -75,6 +105,19 @@ exports.edit = function(req, res) {
  * Remove the membership
  */
 exports.remove = function(req, res) {
+    Membership.findOne({ _id: req.body.id }).exec().then(function(membership) {
+        if (!membership) {
+            return res.json({
+                success: false
+            });
+        }
+        membership.remove(function(err) {
+            res.json({
+                success: !err
+            });
+        });
+    });
+
     res.json({
         success: true
     });
