@@ -3,3 +3,26 @@ extends ../layouts/account
 block content
     div.page-header
         h2 Hello, #{account}
+
+    if (!subscriptions.length)
+        div.col-lg-6.col-lg-offset-3
+            div.alert.alert-warning
+                | You haven't made any subscription or all your subscriptions are expired
+    else
+        div.row
+            div.col-lg-6
+                div.panel.panel-default
+                    div.panel-heading Your subscriptions
+                    table.table
+                        thead
+                            tr
+                                th Title
+                                th Expiration
+                        tbody
+                            for subscription in subscriptions
+                                tr
+                                    td #{subscription.title}
+                                    td
+                                        | #{subscription.expiration}&nbsp;
+                                        if (moment(subscription.expiration).isBefore())
+                                            span.badge Expired

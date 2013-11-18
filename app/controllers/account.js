@@ -4,11 +4,13 @@ var
     url  = require('url'),
     qs   = require('querystring'),
 
-    mongoose = require('mongoose'),
-    Template = mongoose.model('template'),
-    Download = mongoose.model('download'),
-    fs       = require('fs'),
-    filesize = require('filesize');
+    mongoose   = require('mongoose'),
+    Template   = mongoose.model('template'),
+    Download   = mongoose.model('download'),
+    Membership = mongoose.model('membership'),
+    fs         = require('fs'),
+    filesize   = require('filesize'),
+    moment     = require('moment');
 
 /**
  * Sign in
@@ -42,25 +44,50 @@ exports.signin = function(req, res) {
                 method: 'GET'
             };
         var result = {
-            ok: false,
-            error: null,
-            message: null
-        };
+                ok: false,
+                error: null,
+                message: null
+            },
+            body    = '',
+            request = http.request(options, function(response) {
+                response.setEncoding('utf8');
+                response.on('data', function(chunk) {
+                    body += chunk;
+                });
+                response.on('end', function() {
+                    result = JSON.parse(body);
 
-        var request = http.request(options, function(response) {
-            response.setEncoding('utf8');
-            response.on('data', function(chunk) {
-                result = JSON.parse(chunk);
+                    if (result.ok == true || result.ok == 'true') {
+                        req.session.account = req.body.user_name;
 
-                if (result.ok == true || result.ok == 'true') {
-                    req.session.account = req.body.user_name;
-                    return res.redirect('/account');
-                } else {
-                    req.flash('error', result.message || result.msg);
-                    return res.redirect('/account/signin');
-                }
+                        // Get account subscriptions
+                        if (result.subscriptions) {
+                            var pids = [];
+                            for (var pid in result.subscriptions) {
+                                pids.push(pid);
+                            }
+                            Membership.find({ pid: { $in: pids } }).exec(function(err, memberships) {
+                                var subscriptions = [];
+                                if (!err && memberships) {
+                                    for (var i in memberships) {
+                                        subscriptions.push({
+                                            _id: memberships[i]._id,
+                                            title: memberships[i].title,
+                                            pid: memberships[i].pid,
+                                            expiration: result.subscriptions[memberships[i].pid] ? result.subscriptions[memberships[i].pid] : null
+                                        });
+                                    }
+                                }
+                                req.session.subscriptions = subscriptions;
+                                return res.redirect('/account');
+                            });
+                        }
+                    } else {
+                        req.flash('error', result.message || result.msg);
+                        return res.redirect('/account/signin');
+                    }
+                });
             });
-        });
         request.on('error', function(e) {
             req.flash('error', e.message);
             res.redirect('/account/signin');
@@ -95,7 +122,9 @@ exports.signout = function(req, res) {
  */
 exports.dashboard = function(req, res) {
     res.render('account/dashboard', {
-        title: 'Dashboard'
+        title: 'Dashboard',
+        subscriptions: req.session.subscriptions,
+        moment: moment
     });
 };
 
