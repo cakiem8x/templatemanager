@@ -45,7 +45,7 @@ module.exports = function(app, config) {
             },
             store: new mongoStore({
                 url: config.db,
-                collection : 'sessions'
+                collection : 'session'
             })
         }));
 
