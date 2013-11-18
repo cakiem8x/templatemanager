@@ -1,4 +1,5 @@
 var mongoose    = require('mongoose'),
+    Membership  = mongoose.model('membership'),
     Template    = mongoose.model('template'),
     filesize    = require('filesize'),
     fs          = require('fs'),
@@ -98,6 +99,7 @@ exports.add = function(req, res) {
             files: JSON.parse(req.body.uploaded_files || '[]'),
             responsive: req.body.responsive || false,
             free: req.body.free || false,
+            memberships: req.body.memberships || [],
             year: req.body.year || new Date().getFullYear()
         });
 
@@ -116,14 +118,17 @@ exports.add = function(req, res) {
         });
     } else {
         var config = req.app.get('config');
-        res.render('template/add', {
-            messages: {
-                warning: req.flash('error'),
-                success: req.flash('success')
-            },
-            thumbPrefixUrl: config.thumbs.url,
-            title: 'Add new template',
-            year: new Date().getFullYear()
+        Membership.find().exec().then(function(memberships) {
+            res.render('template/add', {
+                messages: {
+                    warning: req.flash('error'),
+                    success: req.flash('success')
+                },
+                thumbPrefixUrl: config.thumbs.url,
+                title: 'Add new template',
+                year: new Date().getFullYear(),
+                memberships: memberships
+            });
         });
     }
 };
@@ -165,6 +170,7 @@ exports.edit = function(req, res) {
             template.files             = JSON.parse(req.body.uploaded_files || '[]');
             template.responsive        = req.body.responsive || false;
             template.free              = req.body.free || false;
+            template.memberships       = req.body.memberships;
             template.year              = req.body.year || new Date().getFullYear();
 
             template.save(function(err) {
@@ -176,18 +182,21 @@ exports.edit = function(req, res) {
                 return res.redirect('/admin/template/edit/' + id);
             });
         } else {
-            var config = req.app.get('config');
-            res.render('template/edit', {
-                messages: {
-                    warning: req.flash('error'),
-                    success: req.flash('success')
-                },
-                thumbPrefixUrl: config.thumbs.url,
-                template: template,
-                title: 'Edit template',
+            Membership.find().exec().then(function(memberships) {
+                var config = req.app.get('config');
+                res.render('template/edit', {
+                    messages: {
+                        warning: req.flash('error'),
+                        success: req.flash('success')
+                    },
+                    thumbPrefixUrl: config.thumbs.url,
+                    template: template,
+                    title: 'Edit template',
+                    memberships: memberships,
 
-                // Helper
-                filesize: filesize
+                    // Helper
+                    filesize: filesize
+                });
             });
         }
     });

@@ -21,10 +21,12 @@ block content
             a(href="#general", data-toggle="tab") General
         li
             a(href="#files", data-toggle="tab") Files
+        li
+            a(href="#memberships", data-toggle="tab") Memberships
 
-    div.tab-content
-        div#general.tab-pane.active
-            form#editTemplateForm.form-horizontal(action="/admin/template/edit/#{template._id}", method="post")
+    form#editTemplateForm.form-horizontal(action="/admin/template/edit/#{template._id}", method="post")
+        div.tab-content
+            div#general.tab-pane.active
                 div.form-group
                     label.control-label.col-lg-2 Name
                     div.col-lg-6
@@ -115,13 +117,6 @@ block content
                     div.col-lg-10.col-lg-offset-2
                         div.checkbox
                             label
-                                input(type="checkbox", name="free", value="1", checked=template.free)
-                                | Free
-
-                div.form-group
-                    div.col-lg-10.col-lg-offset-2
-                        div.checkbox
-                            label
                                 input(type="checkbox", name="responsive", value="1", checked=template.responsive)
                                 | Support responsive
 
@@ -141,42 +136,68 @@ block content
 
                 input(name="uploaded_files", type="hidden")
 
-        div#files.tab-pane
-            table.table(class=(template.files.length == 0) ? 'hide' : '')
-                thead
-                    tr
-                        th File name / Size / # Downloads
-                        th(style="width: 25%") Description
-                        th(style="width: 25%") Progress
-                        th Actions
-                tbody#uploadedFiles
-                    tr#fileRowTemplate.hide
-                        td
-                        td
-                            input.form-control.descriptionText(type="text", disabled)
-                        td
-                            div.progress.progress-striped.active
-                                div.progress-bar.progress-bar-success(style="width: 0%;")
-                        td
-                            button.btn.btn-danger.removeButton Remove
-                    - each file in template.files
-                        tr(data-file="#{JSON.stringify(file)}", data-file-name="#{file.name}")
-                            td #{file.name} / #{filesize(file.size)} / #{file.num_downloads}
+            div#files.tab-pane
+                table.table(class=(template.files.length == 0) ? 'hide' : '')
+                    thead
+                        tr
+                            th File name / Size / # Downloads
+                            th(style="width: 25%") Description
+                            th(style="width: 25%") Progress
+                            th Actions
+                    tbody#uploadedFiles
+                        tr#fileRowTemplate.hide
                             td
-                                input.form-control.descriptionText(type="text", value="#{file.description}")
                             td
-                                div.progress.progress-striped.active.hide
+                                input.form-control.descriptionText(type="text", disabled)
+                            td
+                                div.progress.progress-striped.active
                                     div.progress-bar.progress-bar-success(style="width: 0%;")
                             td
-                                div.btn-group
-                                    button.btn.btn-danger.removeButton Remove
-                                    button.btn.btn-default.changeButton Change
+                                button.btn.btn-danger.removeButton Remove
+                        - each file in template.files
+                            tr(data-file="#{JSON.stringify(file)}", data-file-name="#{file.name}")
+                                td #{file.name} / #{filesize(file.size)} / #{file.num_downloads}
+                                td
+                                    input.form-control.descriptionText(type="text", value="#{file.description}")
+                                td
+                                    div.progress.progress-striped.active.hide
+                                        div.progress-bar.progress-bar-success(style="width: 0%;")
+                                td
+                                    div.btn-group
+                                        button.btn.btn-danger.removeButton Remove
+                                        button.btn.btn-default.changeButton Change
 
-            div.text-center
-                p You can choose many files at the same time
-                div.btn.btn-default.fileinput-button
-                    span Upload files
-                    input#uploader(type="file", name="files[]", data-url="/admin/upload", multiple)
+                div.text-center
+                    p You can choose many files at the same time
+                    div.btn.btn-default.fileinput-button
+                        span Upload files
+                        input#uploader(type="file", name="files[]", data-url="/admin/upload", multiple)
+
+            div#memberships.tab-pane
+                p Indicate the accounts who can download the files
+
+                div.form-group
+                    label.control-label.col-lg-2 Free
+                    div.col-lg-10
+                        div.checkbox
+                            label
+                                input(type="checkbox", name="free", value="1", checked=template.free)
+                                | Free for all accounts
+                        small.help-block All accounts can download the files
+
+                div.form-group
+                    label.control-label.col-lg-2 Specific memberships
+                    div.col-lg-10
+                        if (!memberships || memberships.length == 0)
+                            p.form-control-static
+                                | Not found memberships. You can add new one from&nbsp;
+                                a(href="/admin/memberships") Memberships page
+                        else
+                            for membership in memberships
+                                div.checkbox
+                                    label
+                                        input(type="checkbox", name="memberships[]", value="#{membership._id}", disabled=template.free, checked=template.memberships && template.memberships.indexOf(membership._id) != -1)
+                                        | #{membership.title}
 
     // Remove file confirmation dialog
     div#removeFileDialog.modal.fade.in
@@ -439,5 +460,14 @@ block footerScript
 
             $('#themes').on('focus', '[name="theme.color[]"]', function() {
                 $(this).colorpicker();
+            });
+
+            // Disable membership options when the template is marked as free
+            $('input[name="free"]').on('click', function() {
+                if ($(this).is(':checked')) {
+                    $('input[name="memberships[]"]').attr('disabled', 'disabled');
+                } else {
+                    $('input[name="memberships[]"]').removeAttr('disabled');
+                }
             });
         });

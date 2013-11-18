@@ -40,7 +40,10 @@ var mongoose       = require('mongoose'),
         browsers: { type: String, default: 'IE 8,Opera,Firefox,Chrome,Safari' },
         software_versions: { type: String, default: '' },
         high_resolution: { type: String, default: 'n/a' },
-        year: { type: Number, default: new Date().getFullYear() }
+        year: { type: Number, default: new Date().getFullYear() },
+        memberships: [
+            { type : Schema.ObjectId, ref: 'membership' }
+        ]
     });
 
 templateSchema
