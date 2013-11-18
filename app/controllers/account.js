@@ -205,39 +205,62 @@ exports.template = function(req, res) {
  * Download template
  */
 exports.download = function(req, res) {
-    var id = req.param('id');
-    Template.findOne({ 'files._id': id }).exec(function(err, template) {
-        if (!err) {
-            var file = null;
-            // TODO: Find a quick and more convenient way to get the file
-            for (var i in template.files) {
-                if (template.files[i]._id == id) {
-                    file = template.files[i];
+    var slug = req.param('slug'),
+        id   = req.param('id');
+    Template.findOne({
+        slug: slug,
+        'files._id': id
+    }).exec(function(err, template) {
+        if (err || !template) {
+            return res.send('Not found', 404);
+        }
+
+        var file = null;
+        // TODO: Find a quick and more convenient way to get the file
+        for (var i in template.files) {
+            if (template.files[i]._id == id) {
+                file = template.files[i];
+                break;
+            }
+        }
+        if (!file) {
+            return res.end('Not found', 404);
+        }
+
+        // Check if it's possible for account to download the file
+        var downloadable = false;
+        if (template.free) {
+            downloadable = true;
+        } else if (req.session.subscriptions) {
+            var subscriptions = req.session.subscriptions;
+            for (var i in subscriptions) {
+                if (!moment(subscriptions[i].expiration, 'YYYY-MM-DD').isBefore() && template.memberships && template.memberships.indexOf(subscriptions[i]._id) != -1) {
+                    downloadable = true;
                     break;
                 }
             }
-            if (!file) {
-                return res.end('Not found');
-            }
-
-            file.num_downloads++;
-            template.save(function(err) {
-                if (!err) {
-                    var download = new Download({
-                        template: template._id,
-                        file: id,
-                        user_name: req.session.account
-                    });
-                    download.save();
-
-                    res.setHeader('Content-Description', 'Download file');
-                    res.setHeader('Content-Type', 'application/octet-stream');
-                    res.setHeader('Content-Disposition', 'attachment; filename=' + file.name);
-
-                    var stream = fs.createReadStream(file.path);
-                    stream.pipe(res);
-                }
-            });
         }
+        if (!downloadable) {
+            return res.send('You is not allowed to download the file', 403);
+        }
+
+        file.num_downloads++;
+        template.save(function(err) {
+            if (!err) {
+                var download = new Download({
+                    template: template._id,
+                    file: id,
+                    user_name: req.session.account
+                });
+                download.save();
+
+                res.setHeader('Content-Description', 'Download file');
+                res.setHeader('Content-Type', 'application/octet-stream');
+                res.setHeader('Content-Disposition', 'attachment; filename=' + file.name);
+
+                var stream = fs.createReadStream(file.path);
+                stream.pipe(res);
+            }
+        });
     });
 };
