@@ -193,6 +193,8 @@ block content
                                 | Not found memberships. You can add new one from&nbsp;
                                 a(href="/admin/memberships") Memberships page
                         else
+                            p.form-control-static
+                                button#checkMembershipButton.btn.btn-default(type="button", data-checked="false") Check all
                             for membership in memberships
                                 div.checkbox
                                     label
@@ -468,6 +470,17 @@ block footerScript
                     $('input[name="memberships[]"]').attr('disabled', 'disabled');
                 } else {
                     $('input[name="memberships[]"]').removeAttr('disabled');
+                }
+            });
+
+            // Check all memberships
+            $('#checkMembershipButton').on('click', function() {
+                if ('false' == $(this).attr('data-checked') || false == $(this).attr('data-checked')) {
+                    $('input[name="memberships[]"]').prop('checked', true);
+                    $(this).attr('data-checked', 'true').html('Uncheck all');
+                } else {
+                    $('input[name="memberships[]"]').removeAttr('checked');
+                    $(this).attr('data-checked', 'false').html('Check all');
                 }
             });
         });
