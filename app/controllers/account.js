@@ -146,6 +146,21 @@ exports.template = function(req, res) {
     if (year) {
         criteria.year = year;
     }
+    // Get account subscriptions
+    if (req.session.subscriptions) {
+        var subscriptions = req.session.subscriptions,
+            membershipIds = [];
+        for (var i in subscriptions) {
+            if (!moment(subscriptions[i].expiration, 'YYYY-MM-DD').isBefore()) {
+                membershipIds.push(subscriptions[i]._id);
+            }
+        }
+        if (membershipIds.length) {
+            criteria.memberships = {
+                '$in': membershipIds
+            };
+        }
+    }
 
     Template.count(criteria, function(err, total) {
         Template.find(criteria).skip((page - 1) * perPage).limit(perPage).sort({ created_date: -1 }).exec(function(err, templates) {
