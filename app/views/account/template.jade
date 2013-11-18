@@ -52,15 +52,18 @@ block content
 
                     if template.files.length > 0
                         div.text-center
-                            div.btn-group
-                                button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
-                                    | Download &nbsp;
-                                    span.caret
+                            if downloadable(template, membershipIds)
+                                div.btn-group
+                                    button.btn.btn-success.dropdown-toggle(type="button", data-toggle="dropdown")
+                                        | Download &nbsp;
+                                        span.caret
 
-                                ul.dropdown-menu
-                                    for file in template.files
-                                        li.text-left
-                                            a(href="/account/download/#{template.slug}/#{file._id}") #{file.name} (#{filesize(file.size)})
+                                    ul.dropdown-menu
+                                        for file in template.files
+                                            li.text-left
+                                                a(href="/account/download/#{template.slug}/#{file._id}") #{file.name} (#{filesize(file.size)})
+                            else
+                                a.btn.btn-danger(href="#{purchaseUrl}") Purchase
 
         div.clearfix
 

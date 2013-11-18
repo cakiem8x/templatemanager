@@ -147,19 +147,19 @@ exports.template = function(req, res) {
         criteria.year = year;
     }
     // Get account subscriptions
+    var membershipIds = [];
     if (req.session.subscriptions) {
-        var subscriptions = req.session.subscriptions,
-            membershipIds = [];
+        var subscriptions = req.session.subscriptions;
         for (var i in subscriptions) {
             if (!moment(subscriptions[i].expiration, 'YYYY-MM-DD').isBefore()) {
                 membershipIds.push(subscriptions[i]._id);
             }
         }
-        if (membershipIds.length) {
-            criteria.memberships = {
-                '$in': membershipIds
-            };
-        }
+//        if (membershipIds.length) {
+//            criteria.memberships = {
+//                '$in': membershipIds
+//            };
+//        }
     }
 
     Template.count(criteria, function(err, total) {
@@ -183,6 +183,8 @@ exports.template = function(req, res) {
                 total: total,
                 templates: templates,
                 thumbPrefixUrl: config.thumbs.url,
+                purchaseUrl: config.provider.registerUrl,
+                membershipIds: membershipIds,
 
                 // Criteria
                 q: q,
