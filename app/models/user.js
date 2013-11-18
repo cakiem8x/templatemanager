@@ -61,4 +61,4 @@ userSchema.statics.isAvailable = function(user, field, callback) {
     });
 };
 
-module.exports = mongoose.model('user', userSchema);
+module.exports = mongoose.model('user', userSchema, 'user');

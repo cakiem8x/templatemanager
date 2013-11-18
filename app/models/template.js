@@ -86,4 +86,4 @@ templateSchema.statics.generateSlug = function(template, cb) {
     findUntilNotFound();
 };
 
-module.exports = mongoose.model('template', templateSchema);
+module.exports = mongoose.model('template', templateSchema, 'template');

@@ -7,4 +7,4 @@ var mongoose       = require('mongoose'),
         downloaded_date: { type: Date, default: Date.now }
     });
 
-module.exports = mongoose.model('download', downloadSchema);
+module.exports = mongoose.model('download', downloadSchema, 'download');
