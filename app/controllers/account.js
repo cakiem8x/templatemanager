@@ -250,7 +250,9 @@ exports.download = function(req, res) {
                 var download = new Download({
                     template: template._id,
                     file: id,
-                    user_name: req.session.account
+                    user_name: req.session.account,
+                    ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+                    browser: req.headers['user-agent']
                 });
                 download.save();
 
