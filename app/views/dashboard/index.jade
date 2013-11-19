@@ -3,3 +3,19 @@ extends ../layouts/backend
 block content
     div.page-header
         h2 Hello, #{sessionUser.username}
+
+    div.row
+        div.col-lg-6
+            div.panel.panel-default
+                div.panel-heading Recent downloads
+                table.table
+
+block footerScript
+    script(type="text/javascript").
+        $(document).ready(function() {
+            $.post('/admin/dashboard/download', {
+                limit: 10
+            }).success(function(response) {
+                console.log(response);
+            });
+        });

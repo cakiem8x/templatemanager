@@ -2,6 +2,7 @@ extends ../layouts/backend
 
 block head
     link(rel="stylesheet", href="/vendor/fileupload/css/jquery.fileupload-ui.css")
+    link(rel="stylesheet", href="/vendor/inlineEditor/css/inlineEditor.min.css")
     link(rel="stylesheet", href="/vendor/bootstrap-colorpicker/css/bootstrap-colorpicker.css")
 
 block content
@@ -140,38 +141,41 @@ block content
                 table.table(class=(template.files.length == 0) ? 'hide' : '')
                     thead
                         tr
-                            th File name / Size / # Downloads
-                            th(style="width: 25%") Description
+                            th File name / Size
+                            th(style="width: 35%") Description
                             th(style="width: 25%") Progress
                             th Actions
                     tbody#uploadedFiles
                         tr#fileRowTemplate.hide
                             td
                             td
-                                input.form-control.descriptionText(type="text", disabled)
+                                span.editableDesc Click to edit
                             td
                                 div.progress.progress-striped.active
                                     div.progress-bar.progress-bar-success(style="width: 0%;")
                             td
-                                button.btn.btn-danger.removeButton Remove
+                                button.btn.btn-danger.removeButton(type="button", title="Remove")
+                                    i.fa.fa-times
                         - each file in template.files
-                            tr(data-file="#{JSON.stringify(file)}", data-file-name="#{file.name}")
-                                td #{file.name} / #{filesize(file.size)} / #{file.num_downloads}
+                            tr(data-file-id="#{file._id}", data-file-name="#{file.name}")
+                                td #{file.name.length > 30 ? file.name.substr(0, 30) + '...' : file.name} / #{filesize(file.size)}
                                 td
-                                    input.form-control.descriptionText(type="text", value="#{file.description}")
+                                    span.editableDesc #{file.description}
                                 td
                                     div.progress.progress-striped.active.hide
                                         div.progress-bar.progress-bar-success(style="width: 0%;")
                                 td
                                     div.btn-group
-                                        button.btn.btn-danger.removeButton Remove
-                                        button.btn.btn-default.changeButton Change
+                                        button.btn.btn-danger.removeButton(type="button", title="Remove")
+                                            i.fa.fa-times
+                                        button.btn.btn-default.changeButton(type="button", title="Upload")
+                                            i.fa.fa-upload
 
                 div.text-center
                     p You can choose many files at the same time
                     div.btn.btn-default.fileinput-button
                         span Upload files
-                        input#uploader(type="file", name="files[]", data-url="/admin/upload", multiple)
+                        input#uploader(type="file", name="files[]", data-url="/admin/file/upload", multiple)
 
             div#memberships.tab-pane
                 p Indicate the accounts who can download the files
@@ -223,6 +227,7 @@ block footerScript
     script(type="text/javascript", src="/vendor/filesize/filesize.min.js")
     script(type="text/javascript", src="/vendor/bootstrapvalidator/js/bootstrapValidator.min.js")
     script(type="text/javascript", src="/vendor/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js")
+    script(type="text/javascript", src="/vendor/inlineEditor/js/inlineEditor.min.js")
     script(type="text/javascript").
         $(document).ready(function() {
             // Form validator
@@ -286,12 +291,6 @@ block footerScript
                 });
             });
 
-            // Init data for rows showing uploaded files
-            $('#uploadedFiles').find('tr[data-file]').each(function() {
-                $(this).data('file', JSON.parse($(this).attr('data-file')))
-                       .removeAttr('data-file');
-            });
-
             function updateProgress(fileName, progress) {
                 var $tr = $('#uploadedFiles').find('tr[data-file-name="' + fileName + '"]');
                 if ($tr) {
@@ -306,7 +305,8 @@ block footerScript
             $('#uploader').fileupload({
                 dataType: 'json',
                 autoUpload: true,
-                url: '/admin/upload',
+                formData: {},
+                url: '/admin/file/upload',
                 start: function(e) {
                     $('.changeButton').attr('disabled', 'disabled');
                     $('#saveButton').attr('disabled', 'disabled');
@@ -319,15 +319,8 @@ block footerScript
                             editingRow = $('#uploader').data('editingRow');
                         if ($tr) {
                             $tr.find('input.descriptionText').removeAttr('disabled');
-                            if (editingRow) {
-                                // Update row data
-                                var f = editingRow.data('file');
-                                file._id           = f._id;
-                                file.num_downloads = f.num_downloads;
-                                file.description   = f.description;
-                                editingRow.data('file', file);
-                            } else {
-                                $tr.data('file', file);
+                            if (!editingRow) {
+                                $tr.attr('data-file-id', file._id);
                             }
                         }
 
@@ -350,7 +343,7 @@ block footerScript
                     $tr
                         .attr('data-file-name', file.name)
                         .find('td')
-                            .eq(0).html([file.name, filesize(file.size), 0].join(' / '));
+                            .eq(0).html([file.name.length > 30 ? file.name.substr(0, 30) + '...' : file.name, filesize(file.size)].join(' / '));
                 });
             }).on('fileuploadprogress', function(e, data) {
                 updateProgress(data.files[0].name, 100 * data.loaded / data.total + '%');
@@ -364,6 +357,7 @@ block footerScript
             // Upload thumbnail
             $('#thumbnailUploader').fileupload({
                 dataType: 'json',
+                formData: {},
                 start: function(e) {
                     $('#saveButton').attr('disabled', 'disabled');
                     // Show the thumbnail generating progress
@@ -378,10 +372,10 @@ block footerScript
             });
 
             $('#saveButton').on('click', function(e) {
-                var uploadedFiles = [], file = null;
+                var uploadedFiles = [], fileId = null;
                 $('#uploadedFiles').find('tr').each(function() {
-                    if (file = $(this).data('file')) {
-                        uploadedFiles.push(file);
+                    if (fileId = $(this).attr('data-file-id')) {
+                        uploadedFiles.push(fileId);
                     }
                 });
                 $('input[name="uploaded_files"]').val(JSON.stringify(uploadedFiles));
@@ -397,9 +391,17 @@ block footerScript
             });
 
             // Update file description handler
-           $('#uploadedFiles').on('keyup', '.descriptionText', function() {
-               $(this).parents('tr').data('file').description = $(this).val();
-           });
+            $('#uploadedFiles').on('click', '.editableDesc', function() {
+                var fid = $(this).parents('tr').attr('data-file-id');
+                $(this).inlineEditor({
+                    method: 'POST',
+                    url: '/admin/file/desc',
+                    field: 'desc',
+                    data: {
+                        fid: $(this).parents('tr').attr('data-file-id')
+                    }
+                });
+            });
 
             // Remove file handler
             $('#uploadedFiles').on('click', '.removeButton', function() {
@@ -418,9 +420,16 @@ block footerScript
 
             // Change file handler
             $('#uploadedFiles').on('click', '.changeButton', function() {
-                $('#uploader').data('editingRow', $(this).parents('tr'))
-                              .removeAttr('multiple')
-                              .click();
+                var $row = $(this).parents('tr');
+                $('#uploader')
+                        .data('editingRow', $row)
+                        .removeAttr('multiple')
+                        .fileupload({
+                            formData: {
+                                fid: $row.attr('data-file-id')
+                            }
+                        })
+                        .click();
             });
 
             // Update supported browsers option

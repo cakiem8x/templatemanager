@@ -284,7 +284,7 @@ block footerScript
             $('#uploader').fileupload({
                 dataType: 'json',
                 autoUpload: true,
-                url: '/admin/upload',
+                url: '/admin/file/upload',
                 start: function(e, data) {
                     $('#saveButton').attr('disabled', 'disabled');
                 },

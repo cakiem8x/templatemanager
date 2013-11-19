@@ -29,7 +29,7 @@ exports.index = function(req, res) {
     sortCriteria['-' == sortBy.substr(0, 1) ? sortBy.substr(1) : sortBy] = sortDirection;
 
     Template.count(criteria, function(err, total) {
-        Template.find(criteria).sort(sortCriteria).skip((page - 1) * perPage).limit(perPage).exec(function(err, templates) {
+        Template.find(criteria).sort(sortCriteria).skip((page - 1) * perPage).limit(perPage).populate('files').exec(function(err, templates) {
             if (err) {
                 templates = [];
             }
@@ -109,6 +109,7 @@ exports.add = function(req, res) {
 
         template.save(function(err) {
             if (err) {
+                console.log(err);
                 req.flash('error', 'Could not add template');
                 return res.redirect('/admin/template/add');
             } else {
@@ -138,7 +139,7 @@ exports.add = function(req, res) {
  */
 exports.edit = function(req, res) {
     var id = req.param('id');
-    Template.findOne({ _id: id }).exec(function(err, template) {
+    Template.findOne({ _id: id }).populate('files').exec(function(err, template) {
         if ('post' == req.method.toLowerCase()) {
             var themes        = [],
                 themeNames    = req.body['theme.name'],
@@ -298,86 +299,6 @@ exports.thumb = function(req, res) {
                     }
                 }
             });
-        })
-        .parse(req);
-};
-
-/**
- * Upload template files
- */
-exports.upload = function(req, res) {
-    var app    = req.app,
-        config = app.get('config');
-
-    var form = new formidable.IncomingForm({
-        keepExtensions: true,
-        uploadDir: config.upload.dir,
-        maxFieldsSize: config.upload.maxSize
-    });
-
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-    res.setHeader('Content-Disposition', 'inline; filename="files.json"');
-
-    var socketConnections = app.get('socketConnections'),
-        userName          = req.session.user.username,
-        files             = [],
-        currentFile       = null;
-
-    form.onPart = function(part) {
-        // Because it's impossible to track upload progress for each individual file
-        // So I have to overwrite the onPart() method to track the current upload file
-        currentFile = part.filename;
-
-        // Handle part as usual
-        form.handlePart(part);
-    };
-
-    form
-        .on('progress', function(bytesReceived, bytesExpected) {
-            if (socketConnections && socketConnections[userName]) {
-                var socket = socketConnections[userName];
-                socket.emit('uploadProgress', {
-                    progress: 100 * bytesReceived / bytesExpected + '%',
-                    filename: currentFile
-                });
-            }
-        })
-        .on('file', function(name, file) {
-            // file contains size, path, name, lastModifiedDate properties
-            var now = new Date(),
-                dir = path.join(config.upload.dir, String(now.getFullYear()), String(now.getMonth() + 1));
-            if (!fs.existsSync(dir)) {
-                mkdirp.sync(dir);
-            }
-
-            var name = file.name.replace(/^\.+/, '').replace(/\s+/g, '_');
-            // Prevent overwriting existing files
-            while (fs.existsSync(dir + '/' + name)) {
-                name = name.replace(/(?:(?:_\(([\d]+)\))?(\.[^.]+))?$/, function(s, index, ext) {
-                    return '_(' + ((parseInt(index, 10) || 0) + 1) + ')' + (ext || '');
-                });
-            }
-
-            files.push({
-                name: file.name,
-                path: path.join(dir, name),
-                size: file.size,
-                last_modified: new Date(file.lastModifiedDate).getTime(),
-                uploaded_date: now.getTime()
-            });
-
-            fs.rename(file.path, path.join(dir, name));
-        })
-        .on('error', function(e) {
-        })
-        .on('end', function() {
-            res.writeHead(200, {
-                'Content-Type': req.headers.accept.indexOf('application/json') !== -1 ? 'application/json' : 'text/plain'
-            });
-            res.end(JSON.stringify({
-                files: files
-            }));
         })
         .parse(req);
 };

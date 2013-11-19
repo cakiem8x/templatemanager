@@ -25,15 +25,9 @@ var mongoose       = require('mongoose'),
             medium: String,
             original: String
         },
-        files: [{
-            name: { type: String, default: '' },
-            description: { type: String, default: '' },
-            path: { type: String, default: '' },
-            size: { type: Number, default: 0 },
-            num_downloads: { type: Number, default: 0 },
-            last_modified: { type: Date, default: Date.now },
-            uploaded_date: { type: Date, default: Date.now }
-        }],
+        files: [
+            { type : Schema.ObjectId, ref: 'file' }
+        ],
         created_date: { type: Date, default: Date.now },
         responsive: { type: Boolean, default: true },
         free: { type: Boolean, default: false },

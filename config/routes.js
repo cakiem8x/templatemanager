@@ -1,6 +1,7 @@
 var account    = require('../app/controllers/account'),
     auth       = require('../app/controllers/auth'),
     dashboard  = require('../app/controllers/dashboard'),
+    file       = require('../app/controllers/file'),
     index      = require('../app/controllers/index'),
     membership = require('../app/controllers/membership'),
     template   = require('../app/controllers/template'),
@@ -23,6 +24,8 @@ module.exports = function(app) {
 
     // Back-end
     app.get('/admin', authentication.requireAuthentication, dashboard.index);
+    app.all('/admin/dashboard/download', authentication.requireAuthentication, dashboard.download);
+
     app.all('/admin/password', authentication.requireAuthentication, auth.changePassword);
 
     app.get('/admin/template', authentication.requireAuthentication, template.index);
@@ -32,7 +35,6 @@ module.exports = function(app) {
 
     // Upload
     app.post('/admin/thumb', authentication.requireAuthentication, template.thumb);
-    app.post('/admin/upload', authentication.requireAuthentication, template.upload);
 
     // User
     app.get('/admin/user', adminAuthorization, user.index);
@@ -46,6 +48,10 @@ module.exports = function(app) {
     app.post('/admin/membership/add', adminAuthorization, membership.add);
     app.post('/admin/membership/edit', adminAuthorization, membership.edit);
     app.post('/admin/membership/remove', adminAuthorization, membership.remove);
+
+    // File
+    app.post('/admin/file/upload', authentication.requireAuthentication, file.upload);
+    app.post('/admin/file/desc', authentication.requireAuthentication, file.desc);
 
     // --- Account routes ---
     app.all('/account/signin', account.signin);
