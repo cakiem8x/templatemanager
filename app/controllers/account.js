@@ -163,7 +163,7 @@ exports.template = function(req, res) {
     }
 
     Template.count(criteria, function(err, total) {
-        Template.find(criteria).skip((page - 1) * perPage).limit(perPage).sort({ created_date: -1 }).exec(function(err, templates) {
+        Template.find(criteria).skip((page - 1) * perPage).limit(perPage).sort({ created_date: -1 }).populate('files').exec(function(err, templates) {
             if (err) {
                 templates = [];
             }
@@ -211,14 +211,13 @@ exports.download = function(req, res) {
         id   = req.param('id');
     Template.findOne({
         slug: slug,
-        'files._id': id
-    }).exec(function(err, template) {
-        if (err || !template) {
+        files: id
+    }).populate('files').exec(function(err, template) {
+        if (err || !template || template.files.length == 0) {
             return res.send('Not found', 404);
         }
 
         var file = null;
-        // TODO: Find a quick and more convenient way to get the file
         for (var i in template.files) {
             if (template.files[i]._id == id) {
                 file = template.files[i];
