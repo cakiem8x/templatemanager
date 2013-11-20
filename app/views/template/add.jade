@@ -157,10 +157,15 @@ block content
                                         i.fa.fa-upload
 
                 div.text-center
-                    p You can choose many files at the same time
-                    div.btn.btn-default.fileinput-button
-                        span Upload files
-                        input#uploader(type="file", name="files[]", data-url="/admin/file/upload", multiple)
+                    div.col-lg-6.col-lg-offset-3
+                        div.col-lg-5
+                            div.btn.btn-default.fileinput-button
+                                span Upload new files
+                                input#uploader(type="file", name="files[]", data-url="/admin/file/upload", multiple)
+                            p You can choose many files at the same time
+                        div.col-lg-2.text-center.form-control-static &mdash; Or &mdash;
+                        div.col-lg-5
+                            button#chooseFileButton.btn.btn-danger(type="button") Choose existing files
 
             div#memberships.tab-pane
                 p Indicate the accounts who can download the files
@@ -204,6 +209,29 @@ block content
                     button.btn.btn-danger.yesButton Yes
                     button.btn.btn-default(data-dismiss="modal") No
 
+    // Choose existing file dialog
+    div#chooseFileDialog.modal.fade.in
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    div.col-lg-8.col-lg-offset-2.text-center
+                        div.form-inline
+                            div.input-group
+                                input#searchFileText.form-control(type="text", placeholder="File name or description")
+                                span.input-group-btn
+                                    button#searchFileButton.btn.btn-default(type="button", data-page="1")
+                                        i.fa.fa-search
+                    div.clearfix
+                table.table
+                    thead
+                        tr
+                            th File / Size
+                            th Uploaded date
+                            th Action
+                    tbody#searchFiles
+                div.text-center
+                    ul#searchFilesPagination.pagination
 
 block footerScript
     script(type="text/javascript", src="/vendor/fileupload/js/vendor/jquery.ui.widget.js")
@@ -214,6 +242,7 @@ block footerScript
     script(type="text/javascript", src="/vendor/bootstrapvalidator/js/bootstrapValidator.min.js")
     script(type="text/javascript", src="/vendor/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js")
     script(type="text/javascript", src="/vendor/inlineEditor/js/inlineEditor.min.js")
+    script(type="text/javascript", src="/vendor/moment/moment.min.js")
     script(type="text/javascript").
         $(document).ready(function() {
             // Form validator
@@ -327,7 +356,7 @@ block footerScript
                     $tr
                         .attr('data-file-name', file.name)
                         .find('td')
-                            .eq(0).html([file.name.length > 30 ? file.name.substr(0, 30) + '...' : file.name, filesize(file.size)].join(' / '));
+                            .eq(0).html([file.name.length > 25 ? file.name.substr(0, 25) + '...' : file.name, filesize(file.size)].join(' / '));
                 });
             }).on('fileuploadprogress', function(e, data) {
                 updateProgress(data.files[0].name, 100 * data.loaded / data.total + '%');
@@ -417,6 +446,66 @@ block footerScript
                             }
                         })
                         .click();
+            });
+
+            // Choose file handler
+            $('#chooseFileButton').on('click', function() {
+                $('#chooseFileDialog').modal('show');
+            });
+            $('#searchFileButton').on('click', function() {
+                var $that = $(this), q = $('#searchFileText').val(), $pagination = $('#searchFilesPagination').addClass('hide');
+                $('#searchFiles').html('');
+                $.post('/admin/file/search', {
+                    q: q,
+                    page: $that.attr('data-page')
+                }).success(function(response) {
+                    if (response.total == 0) {
+                        $('<tr/>')
+                            .appendTo('#searchFiles')
+                            .append($('<td/>').attr('colspan', 3).addClass('text-center').html('Not found'));
+                    } else {
+                        $.each(response.files, function(index, file) {
+                            $('<tr/>')
+                                .appendTo('#searchFiles')
+                                .append($('<td/>').html([file.name.length > 25 ? file.name.substr(0, 25) + '...' : file.name, filesize(file.size)].join(' / ') + '<br />' + '<small>' + file.description + '</small>'))
+                                .append($('<td/>').html(moment(file.uploaded_date).format('YYYY-MM-DD HH:mm:ss')))
+                                .append(
+                                    $('<button/>').data('file', file).addClass('btn btn-success').html('Choose').click(function() {
+                                        var file = $(this).data('file');
+                                        $('#uploadedFiles').find('tr[data-file-id="' + file._id + '"]').remove();
+                                        $('#fileRowTemplate')
+                                            .clone()
+                                            .appendTo('#uploadedFiles')
+                                            .removeClass('hide')
+                                            .removeAttr('id')
+                                            .attr('data-file-id', file._id)
+                                            .attr('data-file-name', file.name)
+                                            .find('td')
+                                                .eq(0).html([file.name.length > 25 ? file.name.substr(0, 25) + '...' : file.name, filesize(file.size)].join(' / ')).end()
+                                                .eq(1)
+                                                    .find('.editableDesc').html(file.description || 'Click to edit').end()
+                                                    .end()
+                                                .eq(2)
+                                                    .find('.progress').addClass('hide').end()
+                                                    .end()
+                                            .parents('table').removeClass('hide');
+                                    }).wrap($('<td/>')).parent()
+                                );
+                        });
+                        // Update pagination
+                        $pagination.html('').removeClass('hide');
+                        for (var i = response.startRange; i <= response.endRange; i++) {
+                            $('<li/>')
+                                .addClass(i == response.page ? 'active' : '')
+                                .append(
+                                    $('<a/>').attr('href', '#').html(i).click(function() {
+                                        $('#searchFileButton').attr('data-page', $(this).html()).click();
+                                    })
+                                )
+                                .appendTo($pagination);
+                        }
+                    }
+                });
             });
 
             // Update supported browsers option

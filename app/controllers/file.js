@@ -26,6 +26,46 @@ exports.desc = function(req, res) {
 };
 
 /**
+ * Search for files
+ */
+exports.search = function(req, res) {
+    var perPage   = 10,
+        pageRange = 5,
+        page      = req.param('page') || 1,
+        q         = req.param('q') || '',
+        criteria  = q ? { '$or': [{ name: new RegExp(q, 'i') }, { description: new RegExp(q, 'i') }] } : {};
+
+    File.count(criteria, function(err, total) {
+        File.find(criteria).sort({
+            uploaded_date: -1
+        }).skip((page - 1) * perPage).limit(perPage).select('uploaded_date num_downloads size description name').exec(function(err, files) {
+            if (err) {
+                files = [];
+            }
+
+            var numPages   = Math.ceil(total / perPage),
+                startRange = (page == 1) ? 1 : pageRange * Math.floor(page / pageRange) + 1,
+                endRange   = startRange + pageRange;
+
+            if (endRange > numPages) {
+                endRange = numPages;
+            }
+
+            res.json({
+                total: total,
+                files: files,
+
+                // Pagination
+                page: page,
+                numPages: numPages,
+                startRange: startRange,
+                endRange: endRange
+            });
+        });
+    });
+};
+
+/**
  * Upload template files
  */
 exports.upload = function(req, res) {
@@ -101,7 +141,6 @@ exports.upload = function(req, res) {
                     fileModel.uploaded_user = req.session.user.username;
 
                     fileModel.save(function(err) {
-                        console.log(err);
                         res.end(JSON.stringify({
                             files: err ? [] : [{
                                 // TODO: Does Mongoose support to get model properties?
