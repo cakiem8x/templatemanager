@@ -318,7 +318,7 @@ block footerScript
                         var $tr        = $('#uploadedFiles').find('tr[data-file-name="' + file.name + '"]'),
                             editingRow = $('#uploader').data('editingRow');
                         if ($tr) {
-                            $tr.find('input.descriptionText').removeAttr('disabled');
+                            $tr.find('input[type="text"]').removeAttr('disabled');
                             if (!editingRow) {
                                 $tr.attr('data-file-id', file._id);
                             }
@@ -393,14 +393,16 @@ block footerScript
             // Update file description handler
             $('#uploadedFiles').on('click', '.editableDesc', function() {
                 var fid = $(this).parents('tr').attr('data-file-id');
-                $(this).inlineEditor({
-                    method: 'POST',
-                    url: '/admin/file/desc',
-                    field: 'desc',
-                    data: {
-                        fid: $(this).parents('tr').attr('data-file-id')
-                    }
-                });
+                if (fid) {
+                    $(this).inlineEditor({
+                        method: 'POST',
+                        url: '/admin/file/desc',
+                        field: 'desc',
+                        data: {
+                            fid: fid
+                        }
+                    });
+                }
             });
 
             // Remove file handler
