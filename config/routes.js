@@ -24,7 +24,7 @@ module.exports = function(app) {
 
     // Back-end
     app.get('/admin', authentication.requireAuthentication, dashboard.index);
-    app.all('/admin/dashboard/download', authentication.requireAuthentication, dashboard.download);
+    app.post('/admin/dashboard/download', authentication.requireAuthentication, dashboard.download);
 
     app.all('/admin/password', authentication.requireAuthentication, auth.changePassword);
 

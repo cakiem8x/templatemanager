@@ -3,7 +3,8 @@ var mongoose = require('mongoose'),
 
 exports.index = function(req, res) {
     res.render('dashboard/index', {
-        title: 'Dashboard'
+        title: 'Dashboard',
+        demoUrl: req.protocol + '://' + req.get('host')
     });
 };
 
@@ -18,8 +19,12 @@ exports.download = function(req, res) {
         .skip(0)
         .limit(limit)
         .populate({
+            path: 'file',
+            select: 'name size num_downloads uploaded_date'
+        })
+        .populate({
             path: 'template',
-            select: 'year free description name slug demo_url files'
+            select: 'year free description name slug demo_url'
         })
         .exec(function(err, downloads) {
             res.json(downloads);

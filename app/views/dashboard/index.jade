@@ -5,17 +5,59 @@ block content
         h2 Hello, #{sessionUser.username}
 
     div.row
-        div.col-lg-6
+        div.col-lg-8
             div.panel.panel-default
-                div.panel-heading Recent downloads
+                div.panel-heading
+                    | Recent downloads
+                    a#refreshRecentDownloads(href="#")
+                        i.pull-right.fa.fa-refresh
                 table.table
+                    thead
+                        tr
+                            th File
+                            th Template
+                            th # Downloads
+                            th By
+                    tbody#recentDownloads
+                        tr#recentDownloadRow.hide
+                            td
+                                div {{file.name}}
+                                small {{file.size}}
+                            td
+                                a(href="#{demoUrl}#{{template.slug}}") {{template.name}}
+                            td {{file.num_downloads}}
+                            td
+                                div {{user_name}}
+                                small ({{downloaded_date}})
+                div.panel-body.text-center(style="display: none;")
+                    i.fa.fa-spin.fa-refresh
 
 block footerScript
+    script(type="text/javascript", src="/vendor/filesize/filesize.min.js")
+    script(type="text/javascript", src="/vendor/moment/moment.min.js")
     script(type="text/javascript").
         $(document).ready(function() {
-            $.post('/admin/dashboard/download', {
-                limit: 10
-            }).success(function(response) {
-                console.log(response);
-            });
+            $('#refreshRecentDownloads').on('click', function() {
+                $('#recentDownloads')
+                    .find('tr').not('.hide').remove().end()
+                    .parents('.panel').find('.panel-body').toggle();
+                $.post('/admin/dashboard/download', {
+                    limit: 10
+                }).success(function(response) {
+                    $('#refreshRecentDownloads').parents('.panel').find('.panel-body').toggle();
+                    $.each(response, function(index, download) {
+                        $('<tr/>').html(
+                            $('#recentDownloadRow')
+                                .html()
+                                .replace('{{file.name}}', download.file.name.length > 30 ? download.file.name.length.substr(0, 30) + '...' : download.file.name)
+                                .replace('{{file.size}}', filesize(download.file.size))
+                                .replace('{{file.num_downloads}}', download.file.num_downloads)
+                                .replace('{{template.slug}}', download.template.slug)
+                                .replace('{{template.name}}', download.template.name)
+                                .replace('{{user_name}}', download.user_name)
+                                .replace('{{downloaded_date}}', moment(download.downloaded_date).fromNow())
+                        ).appendTo('#recentDownloads');
+                    });
+                });
+            }).click();
         });
