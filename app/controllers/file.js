@@ -44,7 +44,7 @@ exports.search = function(req, res) {
             }
 
             var numPages   = Math.ceil(total / perPage),
-                startRange = (page == 1) ? 1 : pageRange * Math.floor(page / pageRange) + 1,
+                startRange = (page == 1) ? 1 : pageRange * Math.floor((page - 1) / pageRange) + 1,
                 endRange   = startRange + pageRange;
 
             if (endRange > numPages) {

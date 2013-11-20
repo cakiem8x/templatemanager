@@ -220,7 +220,7 @@ block content
                             div.input-group
                                 input#searchFileText.form-control(type="text", placeholder="File name or description")
                                 span.input-group-btn
-                                    button#searchFileButton.btn.btn-default(type="button", data-page="1")
+                                    button#searchFileButton.btn.btn-default(type="button")
                                         i.fa.fa-search
                     div.clearfix
                 table.table
@@ -452,61 +452,97 @@ block footerScript
             $('#chooseFileButton').on('click', function() {
                 $('#chooseFileDialog').modal('show');
             });
-            $('#searchFileButton').on('click', function() {
-                var $that = $(this), q = $('#searchFileText').val(), $pagination = $('#searchFilesPagination').addClass('hide');
-                $('#searchFiles').html('');
-                $.post('/admin/file/search', {
-                    q: q,
-                    page: $that.attr('data-page')
-                }).success(function(response) {
-                    if (response.total == 0) {
-                        $('<tr/>')
-                            .appendTo('#searchFiles')
-                            .append($('<td/>').attr('colspan', 3).addClass('text-center').html('Not found'));
-                    } else {
-                        $.each(response.files, function(index, file) {
+            $('#searchFileButton')
+                .on('searchFiles', function(e, page) {
+                    var $that = $(this), q = $('#searchFileText').val(), $pagination = $('#searchFilesPagination').addClass('hide');
+                    $('#searchFiles').html('');
+                    $.post('/admin/file/search', {
+                        q: q,
+                        page: page
+                    }).success(function(response) {
+                        if (response.total == 0) {
                             $('<tr/>')
                                 .appendTo('#searchFiles')
-                                .append($('<td/>').html([file.name.length > 25 ? file.name.substr(0, 25) + '...' : file.name, filesize(file.size)].join(' / ') + '<br />' + '<small>' + file.description + '</small>'))
-                                .append($('<td/>').html(moment(file.uploaded_date).format('YYYY-MM-DD HH:mm:ss')))
-                                .append(
-                                    $('<button/>').data('file', file).addClass('btn btn-success').html('Choose').click(function() {
-                                        var file = $(this).data('file');
-                                        $('#uploadedFiles').find('tr[data-file-id="' + file._id + '"]').remove();
-                                        $('#fileRowTemplate')
-                                            .clone()
-                                            .appendTo('#uploadedFiles')
-                                            .removeClass('hide')
-                                            .removeAttr('id')
-                                            .attr('data-file-id', file._id)
-                                            .attr('data-file-name', file.name)
-                                            .find('td')
-                                                .eq(0).html([file.name.length > 25 ? file.name.substr(0, 25) + '...' : file.name, filesize(file.size)].join(' / ')).end()
-                                                .eq(1)
-                                                    .find('.editableDesc').html(file.description || 'Click to edit').end()
-                                                    .end()
-                                                .eq(2)
-                                                    .find('.progress').addClass('hide').end()
-                                                    .end()
-                                            .parents('table').removeClass('hide');
-                                    }).wrap($('<td/>')).parent()
-                                );
-                        });
-                        // Update pagination
-                        $pagination.html('').removeClass('hide');
-                        for (var i = response.startRange; i <= response.endRange; i++) {
+                                .append($('<td/>').attr('colspan', 3).addClass('text-center').html('Not found'));
+                        } else {
+                            $.each(response.files, function(index, file) {
+                                $('<tr/>')
+                                    .appendTo('#searchFiles')
+                                    .append($('<td/>').html([file.name.length > 25 ? file.name.substr(0, 25) + '...' : file.name, filesize(file.size)].join(' / ') + '<br />' + '<small>' + file.description + '</small>'))
+                                    .append($('<td/>').html(moment(file.uploaded_date).format('YYYY-MM-DD HH:mm:ss')))
+                                    .append(
+                                        $('<button/>').data('file', file).addClass('btn btn-success').html('Choose').click(function() {
+                                            var file = $(this).data('file');
+                                            $('#uploadedFiles').find('tr[data-file-id="' + file._id + '"]').remove();
+                                            $('#fileRowTemplate')
+                                                .clone()
+                                                .appendTo('#uploadedFiles')
+                                                .removeClass('hide')
+                                                .removeAttr('id')
+                                                .attr('data-file-id', file._id)
+                                                .attr('data-file-name', file.name)
+                                                .find('td')
+                                                    .eq(0).html([file.name.length > 25 ? file.name.substr(0, 25) + '...' : file.name, filesize(file.size)].join(' / ')).end()
+                                                    .eq(1)
+                                                        .find('.editableDesc').html(file.description || 'Click to edit').end()
+                                                        .end()
+                                                    .eq(2)
+                                                        .find('.progress').addClass('hide').end()
+                                                        .end()
+                                                .parents('table').removeClass('hide');
+                                        }).wrap($('<td/>')).parent()
+                                    );
+                            });
+                            // Update pagination
+                            $pagination.html('').removeClass('hide');
                             $('<li/>')
-                                .addClass(i == response.page ? 'active' : '')
+                                .addClass(response.page == 1 ? 'disabled' : '')
                                 .append(
-                                    $('<a/>').attr('href', '#').html(i).click(function() {
-                                        $('#searchFileButton').attr('data-page', $(this).html()).click();
+                                    $('<a/>').attr('href', '#').html('&larr;').click(function() {
+                                        $('#searchFileButton').trigger('searchFiles', 1);
+                                    })
+                                )
+                                .appendTo($pagination);
+                            $('<li/>')
+                                .addClass(response.page == 1 ? 'disabled' : '')
+                                .append(
+                                    $('<a/>').attr('href', '#').html('&laquo;').click(function() {
+                                        $('#searchFileButton').trigger('searchFiles', parseInt(response.page) - 1);
+                                    })
+                                )
+                                .appendTo($pagination);
+                            for (var i = response.startRange; i <= response.endRange; i++) {
+                                $('<li/>')
+                                    .addClass(response.page == i ? 'active' : '')
+                                    .append(
+                                        $('<a/>').attr('href', '#').html(i).click(function() {
+                                            $('#searchFileButton').trigger('searchFiles', $(this).html());
+                                        })
+                                    )
+                                    .appendTo($pagination);
+                            }
+                            $('<li/>')
+                                .addClass(response.page == response.numPages ? 'disabled' : '')
+                                .append(
+                                    $('<a/>').attr('href', '#').html('&raquo;').click(function() {
+                                        $('#searchFileButton').trigger('searchFiles', parseInt(response.page) + 1);
+                                    })
+                                )
+                                .appendTo($pagination);
+                            $('<li/>')
+                                .addClass(response.page == response.numPages ? 'disabled' : '')
+                                .append(
+                                    $('<a/>').attr('href', '#').html('&rarr;').click(function() {
+                                        $('#searchFileButton').trigger('searchFiles', response.numPages);
                                     })
                                 )
                                 .appendTo($pagination);
                         }
-                    }
+                    });
+                })
+                .click(function() {
+                    $(this).trigger('searchFiles', 1);
                 });
-            });
 
             // Update supported browsers option
             $('.browserButton').on('click', function() {
