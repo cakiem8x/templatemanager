@@ -246,7 +246,7 @@ exports.download = function(req, res) {
         }
 
         file.num_downloads++;
-        template.save(function(err) {
+        file.save(function(err) {
             if (!err) {
                 var download = new Download({
                     template: template._id,

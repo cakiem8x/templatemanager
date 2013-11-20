@@ -49,7 +49,7 @@ block footerScript
                         $('<tr/>').html(
                             $('#recentDownloadRow')
                                 .html()
-                                .replace('{{file.name}}', download.file.name.length > 30 ? download.file.name.length.substr(0, 30) + '...' : download.file.name)
+                                .replace('{{file.name}}', download.file.name.length > 30 ? download.file.name.substr(0, 30) + '...' : download.file.name)
                                 .replace('{{file.size}}', filesize(download.file.size))
                                 .replace('{{file.num_downloads}}', download.file.num_downloads)
                                 .replace('{{template.slug}}', download.template.slug)
