@@ -40,7 +40,7 @@
 
             var that = this;
             // Save handler
-            $saveButton.on('click', function() {
+            $saveButton.click(function() {
                 $saveButton.attr('disabled', 'disabled').find('i').removeClass('fa-check').addClass('fa-spin fa-refresh');
                 var data = that.options.data, newValue = $input.val();
                 data[that.options.field] = newValue;
@@ -53,16 +53,17 @@
                         that.$element.html(newValue);
                     }
                     $saveButton.removeAttr('disabled').find('i').removeClass('fa-spin fa-refresh').addClass('fa-check');
+                    $cancelButton.click();
                 });
             });
 
             // Cancel handler
-            $cancelButton.on('click', function() {
+            $cancelButton.click(function() {
                 that.$element.show();
                 $editorContainer.hide();
             });
 
-            this.$element.on('click', function() {
+            this.$element.click(function() {
                 that.$element.hide();
                 $editorContainer.show();
                 $input.val(that.$element.html());
