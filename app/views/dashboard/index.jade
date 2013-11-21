@@ -5,7 +5,7 @@ block content
         h2 Hello, #{sessionUser.username}
 
     div.row
-        div.col-lg-8
+        div.col-lg-6
             div.panel.panel-default
                 div.panel-heading
                     | Recent downloads
@@ -32,17 +32,81 @@ block content
                 div.panel-body.text-center(style="display: none;")
                     i.fa.fa-spin.fa-refresh
 
+    h3 Top Downloads
+    hr
+    div.row
+        div.col-lg-4
+            div.panel.panel-default
+                div.panel-heading Today
+                div.topDownloads(data-days="1")
+
+        div.col-lg-4
+            div.panel.panel-default
+                div.panel-heading This week
+                div.topDownloads(data-days="7")
+
+        div.col-lg-4
+            div.panel.panel-default
+                div.panel-heading This month
+                div.topDownloads(data-days="30")
+
 block footerScript
     script(type="text/javascript", src="/vendor/filesize/filesize.min.js")
     script(type="text/javascript", src="/vendor/moment/moment.min.js")
+    script(type="text/javascript", src="https://www.google.com/jsapi")
     script(type="text/javascript").
+        // Top downloads of day
+        google.load('visualization', '1.0', {'packages': ['corechart']});
+        google.setOnLoadCallback(function() {
+            $(function() {
+                function drawChart(days, limit) {
+                    var width = $('#topDownloadDay').width();
+                    limit = limit || 5;
+                    $.post('/admin/dashboard/file', {
+                        days: days,
+                        limit: limit
+                    }).success(function(response) {
+                        var data = new google.visualization.DataTable();
+                        data.addColumn('string', 'File');
+                        data.addColumn('number', '#Downloads');
+                        $.each(response, function(index, file) {
+                            data.addRow(
+                                [file.name + (file.description ? ' - ' + file.description : ''), file.num_downloads]
+                            );
+                        });
+
+                        var container = $('.topDownloads[data-days="' + days + '"]').get(0);
+                        console.log(container);
+                        var chart = new google.visualization.PieChart(container);
+                        chart.draw(data, {
+                            width: width,
+                            height: 220,
+                            fontName: 'Lato',
+                            fontSize: 12,
+                            chartArea: {
+                                left: 0,
+                                top: 10,
+                                width: '100%',
+                                height: 200
+                            }
+                        });
+                    });
+                };
+
+                drawChart(1, 5);
+                drawChart(7, 5);
+                drawChart(30, 5);
+            });
+        });
+
         $(document).ready(function() {
-            $('#refreshRecentDownloads').on('click', function() {
+            // Show recent downloads
+            $('#refreshRecentDownloads').click(function() {
                 $('#recentDownloads')
                     .find('tr').not('.hide').remove().end()
                     .parents('.panel').find('.panel-body').toggle();
                 $.post('/admin/dashboard/download', {
-                    limit: 10
+                    limit: 5
                 }).success(function(response) {
                     $('#refreshRecentDownloads').parents('.panel').find('.panel-body').toggle();
                     $.each(response, function(index, download) {
