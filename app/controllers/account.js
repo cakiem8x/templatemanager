@@ -81,6 +81,9 @@ exports.signin = function(req, res) {
                                 req.session.subscriptions = subscriptions;
                                 return res.redirect('/account');
                             });
+                        } else {
+                            req.session.subscriptions = [];
+                            return res.redirect('/account');
                         }
                     } else {
                         req.flash('error', result.message || result.msg);
@@ -246,6 +249,7 @@ exports.download = function(req, res) {
         }
 
         file.num_downloads++;
+        file.last_download = new Date();
         file.save(function(err) {
             if (!err) {
                 var download = new Download({
