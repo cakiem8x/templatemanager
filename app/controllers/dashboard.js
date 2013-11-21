@@ -34,7 +34,52 @@ exports.download = function(req, res) {
 };
 
 /**
- * Download statistics
+ * Show top download accounts
+ */
+exports.account = function(req, res) {
+    var days  = req.param('days') || 1,
+        limit = parseInt(req.param('limit') || 10),
+        date  = moment().subtract('days', days);
+
+    Download.aggregate({
+        $match: {
+            downloaded_date: {
+                '$gte': new Date(date.toISOString())
+            }
+        }
+    }, {
+        $group: {
+            _id: '$user_name',
+            num_downloads: { $sum: 1 }
+        }
+    }, {
+        $sort: { num_downloads: -1 }
+    }, {
+        $limit: limit
+    }, function(err, result) {
+        res.json(result);
+    });
+
+    /*Download
+        .aggregate()
+        .match({
+            downloaded_date: {
+                '$gte': date.toISOString()
+            }
+        })
+        .group({
+            _id: '$user_name',
+            num_downloads: { $sum: 1 }
+        })
+        .sort({ num_downloads: -1 })
+        .limit(limit)
+        .exec(function(err, result) {
+            res.json(result.result);
+        });*/
+};
+
+/**
+ * Show top download files
  */
 exports.file = function(req, res) {
     var days  = req.param('days') || 1,

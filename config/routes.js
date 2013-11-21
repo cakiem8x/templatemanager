@@ -26,6 +26,7 @@ module.exports = function(app) {
     app.get('/admin', authentication.requireAuthentication, dashboard.index);
     app.post('/admin/dashboard/download', authentication.requireAuthentication, dashboard.download);
     app.post('/admin/dashboard/file', authentication.requireAuthentication, dashboard.file);
+    app.post('/admin/dashboard/account', authentication.requireAuthentication, dashboard.account);
 
     app.all('/admin/password', authentication.requireAuthentication, auth.changePassword);
 
