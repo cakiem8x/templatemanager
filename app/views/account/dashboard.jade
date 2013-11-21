@@ -4,12 +4,12 @@ block content
     div.page-header
         h2 Hello, #{account}
 
-    if (!subscriptions.length)
-        div.col-lg-6.col-lg-offset-3
-            div.alert.alert-warning
-                | You haven't made any subscription or all your subscriptions are expired
-    else
-        div.row
+    div.row
+        if (!subscriptions.length)
+            div.col-lg-6.col-lg-offset-3
+                div.alert.alert-warning
+                    | You haven't made any subscription or all your subscriptions are expired
+        else
             div.col-lg-6
                 div.panel.panel-default
                     div.panel-heading Your subscriptions
@@ -26,3 +26,53 @@ block content
                                         | #{subscription.expiration}&nbsp;
                                         if (moment(subscription.expiration, 'YYYY-MM-DD').isBefore())
                                             span.badge Expired
+
+    div.row
+        div.col-lg-8
+            div.panel.panel-default
+                div.panel-heading
+                    | Recent downloads
+                    a#refreshRecentDownloads(href="#")
+                        i.pull-right.fa.fa-refresh
+                table.table
+                    thead
+                        tr
+                            th File
+                            th Template
+                            th Downloaded date
+                            th Up-to-date
+                    tbody#recentDownloads
+                div.panel-body.text-center(style="display: none;")
+                    i.fa.fa-spin.fa-refresh
+
+block footerScript
+    script(type="text/javascript", src="/vendor/filesize/filesize.min.js")
+    script(type="text/javascript", src="/vendor/moment/moment.min.js")
+    script(type="text/javascript").
+        $(document).ready(function() {
+            // Show recent downloads
+            $('#refreshRecentDownloads').click(function() {
+                $('#recentDownloads')
+                    .find('tr').remove().end()
+                    .parents('.panel').find('.panel-body').toggle();
+                $.post('/account/dashboard/download', {
+                    limit: 5
+                }).success(function(response) {
+                    var demoUrl = '#{demoUrl}';
+                    $('#refreshRecentDownloads').parents('.panel').find('.panel-body').toggle();
+                    $.each(response, function(index, download) {
+                        var downloadUrl = '/account/download/' + download.template.slug + '/' + download.file._id;
+                        $('<tr/>')
+                            .appendTo('#recentDownloads')
+                            .append($('<td/>').append($('<a/>').attr('href', downloadUrl).html(download.file.name.length > 30 ? download.file.name.substr(0, 30) + '...' : download.file.name))
+                                              .append($('<div/>').html(filesize(download.file.size))))
+                            .append($('<td/>').append($('<a/>').attr('href', demoUrl + '#' + download.template.slug).html(download.template.name)))
+                            .append($('<td/>').html(moment(download.downloaded_date).fromNow()))
+                            .append(moment(download.downloaded_date).isAfter(download.file.uploaded_date)
+                                    ? $('<td/>').html('<i class="fa fa-check"></i>')
+                                    : $('<td/>').append($('<a/>').addClass('btn btn-success').attr('href', downloadUrl).html('Update available'))
+                            );
+                    });
+                });
+            }).click();
+        });

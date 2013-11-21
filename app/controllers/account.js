@@ -127,8 +127,34 @@ exports.dashboard = function(req, res) {
     res.render('account/dashboard', {
         title: 'Dashboard',
         subscriptions: req.session.subscriptions,
-        moment: moment
+        moment: moment,
+        demoUrl: req.protocol + '://' + req.get('host')
     });
+};
+
+/**
+ * Show account's recent downloads
+ */
+exports.recentDownloads = function(req, res) {
+    var limit = req.param('limit') || 10;
+    Download
+        .find({
+            user_name: req.session.account
+        })
+        .sort({ downloaded_date: -1 })
+        .skip(0)
+        .limit(limit)
+        .populate({
+            path: 'file',
+            select: 'name size num_downloads uploaded_date'
+        })
+        .populate({
+            path: 'template',
+            select: 'year free description name slug demo_url'
+        })
+        .exec(function(err, downloads) {
+            res.json(downloads);
+        });
 };
 
 /**

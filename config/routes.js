@@ -61,6 +61,8 @@ module.exports = function(app) {
     app.all('/account/signout', account.signout);
 
     app.all('/account', authentication.requireAccountAuthentication, account.dashboard);
+    app.post('/account/dashboard/download', authentication.requireAccountAuthentication, account.recentDownloads);
+
     app.all('/account/template', authentication.requireAccountAuthentication, account.template);
     app.get('/account/download/:slug/:id', authentication.requireAccountAuthentication, account.download);
 };
