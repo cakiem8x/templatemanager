@@ -40,8 +40,7 @@ angular
             link: function(scope, element, attrs) {
                 var el = angular.element(element);
                 el.on('click', function() {
-                    el.parents('.pagination').find('li').removeClass('active');
-                    el.parent().addClass('active');
+                    el.parents('.pagination').find('li').removeClass('active').filter('[data-page="' + scope.pagination.page + '"]').addClass('active');
                 });
             }
         };

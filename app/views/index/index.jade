@@ -103,12 +103,17 @@ html(ng-app="TemplateDemo")
                 // Pagination
                 div.text-center(ng-show="pagination.numPages > 1")
                     ul.pagination
-                        li
+                        li(ng-class="{ 'disabled': pagination.page == 1 }")
                             a(href="#", ng-click="goPage(1)", tpl-pagination) &larr;
+                        li(ng-class="{ 'disabled': pagination.page == 1 }")
+                            a(href="#", ng-click="goPage(pagination.page - 1)", tpl-pagination) &laquo;
 
-                        li(ng-repeat="i in pagination.range", ng-class="{ 'active': i == 1 }")
+                        li(ng-repeat="i in pagination.range", ng-class="{ 'active': i == pagination.page }", data-page="{{ i }}")
                             a(href="#", ng-click="goPage(i)", tpl-pagination) {{ i }}
-                        li
+
+                        li(ng-class="{ 'disabled': pagination.page == pagination.numPages }")
+                            a(href="#", ng-click="goPage(pagination.page + 1)", tpl-pagination) &raquo;
+                        li(ng-class="{ 'disabled': pagination.page == pagination.numPages }")
                             a(href="#", ng-click="goPage(pagination.numPages)", tpl-pagination) &rarr;
 
                 div.clearfix

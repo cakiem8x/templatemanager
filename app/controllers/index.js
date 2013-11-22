@@ -42,7 +42,7 @@ exports.filter = function(req, res) {
     var app    = req.app,
         config = app.get('config');
 
-    var perPage        = 6,
+    var perPage        = 3,
         pageRange      = 5,
         page           = req.param('page') || 1,
         year           = req.param('year'),
@@ -71,7 +71,7 @@ exports.filter = function(req, res) {
             }
 
             var numPages   = Math.ceil(total / perPage),
-                startRange = (page == 1) ? 1 : pageRange * Math.floor(page / pageRange) + 1,
+                startRange = (page == 1) ? 1 : pageRange * Math.floor((page - 1) / pageRange) + 1,
                 endRange   = startRange + pageRange;
 
             if (endRange > numPages) {

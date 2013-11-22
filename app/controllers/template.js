@@ -13,7 +13,7 @@ var mongoose    = require('mongoose'),
  * List templates
  */
 exports.index = function(req, res) {
-    var perPage   = 2,
+    var perPage   = 10,
         pageRange = 5,
         page      = req.param('page') || 1,
         q         = req.param('q') || '',
