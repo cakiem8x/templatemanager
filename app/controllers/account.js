@@ -57,6 +57,15 @@ exports.signin = function(req, res) {
                 response.on('end', function() {
                     result = JSON.parse(body);
 
+                    var redirect = function() {
+                        if (req.session.returnTo) {
+                            var to = req.session.returnTo;
+                            delete req.session.returnTo;
+                            return res.redirect(to);
+                        }
+                        return res.redirect('/account');
+                    };
+
                     if (result.ok == true || result.ok == 'true') {
                         req.session.account = req.body.user_name;
 
@@ -79,11 +88,11 @@ exports.signin = function(req, res) {
                                     }
                                 }
                                 req.session.subscriptions = subscriptions;
-                                return res.redirect('/account');
+                                return redirect();
                             });
                         } else {
                             req.session.subscriptions = [];
-                            return res.redirect('/account');
+                            return redirect();
                         }
                     } else {
                         req.flash('error', result.message || result.msg);

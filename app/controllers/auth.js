@@ -29,6 +29,12 @@ exports.signin = function(req, res) {
                 username: user.username,
                 role: user.role
             };
+
+            if (req.session.returnTo) {
+                var to = req.session.returnTo;
+                delete req.session.returnTo;
+                return res.redirect(to);
+            }
             return res.redirect('/admin');
         });
     } else {

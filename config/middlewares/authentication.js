@@ -1,6 +1,8 @@
 exports.requireAuthentication = function(req, res, next) {
     if (!req.session || !req.session.user) {
-        req.session.returnTo = req.originalUrl;
+        if (!req.xhr) {
+            req.session.returnTo = req.originalUrl;
+        }
         return res.redirect('/admin/signin');
     }
     // Set the variable for layout
@@ -13,7 +15,9 @@ exports.requireAuthentication = function(req, res, next) {
 
 exports.requireAccountAuthentication = function(req, res, next) {
     if (!req.session || !req.session.account) {
-        req.session.returnTo = req.originalUrl;
+        if (!req.xhr) {
+            req.session.returnTo = req.originalUrl;
+        }
         return res.redirect('/account/signin');
     }
     // Set the variable for layout
