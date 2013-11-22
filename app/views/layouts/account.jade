@@ -36,8 +36,15 @@ html
                                 a(href="/account/template") Templates
 
                         ul.nav.navbar-nav.navbar-right
-                            li
-                                a(href="/account/signout") Sign out (#{account})
+                            li.dropdown
+                                a.dropdown-toggle(href="#", data-toggle="dropdown")
+                                    | Hello #{account} &nbsp;
+                                    b.caret
+                                ul.dropdown-menu
+                                    li
+                                        a(href="/") Visit demo website
+                                    li
+                                        a(href="/account/signout") Sign out
             .container
                 .main
                     block content
