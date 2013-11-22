@@ -42,7 +42,7 @@ exports.filter = function(req, res) {
     var app    = req.app,
         config = app.get('config');
 
-    var perPage        = 3,
+    var perPage        = 6,
         pageRange      = 5,
         page           = req.param('page') || 1,
         year           = req.param('year'),
