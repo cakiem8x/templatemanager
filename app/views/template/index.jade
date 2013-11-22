@@ -60,10 +60,14 @@ block content
         if (numPages > 1)
             div.text-center
                 ul.pagination
-                    li
+                    li(class=page == 1 ? 'disabled' : '')
                         a(href="#{url(req, { page: 1 })}") &larr;
+                    li(class=page == 1 ? 'disabled' : '')
+                        a(href="#{url(req, { page: parseInt(page) - 1 })}") &laquo;
                     - for (i = startRange; i <= endRange; i++)
                         li(class=(i == page) ? 'active' : '')
                             a(href="#{url(req, { page: i })}") #{i}
-                    li
+                    li(class=page == numPages ? 'disabled' : '')
+                        a(href="#{url(req, { page: parseInt(page) + 1 })}") &raquo;
+                    li(class=page == numPages ? 'disabled' : '')
                         a(href="#{url(req, { page: numPages })}") &rarr;

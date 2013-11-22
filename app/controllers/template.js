@@ -13,7 +13,7 @@ var mongoose    = require('mongoose'),
  * List templates
  */
 exports.index = function(req, res) {
-    var perPage   = 10,
+    var perPage   = 2,
         pageRange = 5,
         page      = req.param('page') || 1,
         q         = req.param('q') || '',
@@ -35,7 +35,7 @@ exports.index = function(req, res) {
             }
 
             var numPages   = Math.ceil(total / perPage),
-                startRange = (page == 1) ? 1 : pageRange * Math.floor(page / pageRange) + 1,
+                startRange = (page == 1) ? 1 : pageRange * Math.floor((page - 1) / pageRange) + 1,
                 endRange   = startRange + pageRange;
 
             if (endRange > numPages) {
