@@ -247,10 +247,7 @@ exports.template = function(req, res) {
 exports.download = function(req, res) {
     var slug = req.param('slug'),
         id   = req.param('id');
-    Template.findOne({
-        slug: slug,
-        files: id
-    }).populate('files').exec(function(err, template) {
+    Template.findOne({ slug: slug }).populate('files').exec(function(err, template) {
         if (err || !template || template.files.length == 0) {
             return res.send('Not found', 404);
         }
