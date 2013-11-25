@@ -71,7 +71,7 @@ templateSchema.statics.generateSlug = function(template, cb) {
             schema.findOne({
                 slug: slug + (count == 0 ? '' : '-' + count)
             }, function(err, t) {
-                if (t == null || t._id == template._id) {
+                if (t == null || t._id.equals(template._id)) {
                     found = false;
                     cb(slug + (count == 0 ? '' : '-' + count));
                 } else {
