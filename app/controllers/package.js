@@ -18,9 +18,13 @@ exports.index = function(req, res) {
         page      = req.param('page') || 1,
         q         = req.param('q') || '',
         year      = req.param('year'),
+        type      = req.param('type'),
         sortBy    = req.param('sort') || '-created_date',
         criteria  = q ? { name: new RegExp(q, 'i') } : {};
 
+    if (type) {
+        criteria.type = type;
+    }
     if (year) {
         criteria.year = year;
     }

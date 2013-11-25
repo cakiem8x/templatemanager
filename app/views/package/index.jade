@@ -4,6 +4,12 @@ block content
     div.page-header
         h2
             a(href="/admin/package") Packages
+            small
+                | &nbsp;(
+                a(href="#{url(req, { page: 1, type: 'template' })}") Templates
+                | &nbsp;/&nbsp;
+                a(href="#{url(req, { page: 1, type: 'extension' })}") Extensions
+                | )
 
             if year
                 &nbsp;/&nbsp;
