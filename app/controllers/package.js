@@ -97,6 +97,7 @@ exports.add = function(req, res) {
             demo_url: req.body.demo_url,
             themes: themes,
             description: req.body.description,
+            changelog: req.body.changelog,
             tags: req.body.tags,
             software_versions: req.body.software_versions,
             high_resolution: req.body.high_resolution,
@@ -169,6 +170,7 @@ exports.edit = function(req, res) {
             package.demo_url          = req.body.demo_url;
             package.themes            = themes;
             package.description       = req.body.description;
+            package.changelog         = req.body.changelog;
             package.tags              = req.body.tags;
             package.software_versions = req.body.software_versions;
             package.browsers          = req.body.browsers;

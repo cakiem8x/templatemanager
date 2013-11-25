@@ -11,6 +11,7 @@ var mongoose       = require('mongoose'),
             demo_url: { type: String, default: '' }
         }],
         description: { type: String, default: '' },
+        changelog: { type: String, default: '' },
         tags: {
             type: [],
             get: function(tags) {

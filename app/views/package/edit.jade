@@ -21,6 +21,8 @@ block content
         li.active
             a(href="#general", data-toggle="tab") General
         li
+            a(href="#changelog", data-toggle="tab") Changelog
+        li
             a(href="#files", data-toggle="tab") Files
         li
             a(href="#memberships", data-toggle="tab") Memberships
@@ -143,6 +145,20 @@ block content
                         input(type="hidden", name="thumbs", value="#{JSON.stringify(package.thumbs)}")
 
                 input(name="uploaded_files", type="hidden")
+
+            div#changelog.tab-pane
+                p Use the Markdown format for chanelog
+                ul.nav.nav-tabs
+                    li.active
+                        a(href="#changelogContentTab", data-toggle="tab") Changelog
+                    li
+                        a(href="#changelogPreviewTab", data-toggle="tab") Preview
+
+                div.tab-content
+                    div#changelogContentTab.tab-pane.active
+                        textarea.form-control(name="changelog", rows="20") #{package.changelog}
+                    div#changelogPreviewTab.tab-pane
+                        div#changelogPreview
 
             div#files.tab-pane
                 table.table(class=(package.files.length == 0) ? 'hide' : '')
@@ -267,6 +283,7 @@ block footerScript
     script(type="text/javascript", src="/vendor/bootstrapvalidator/js/bootstrapValidator.min.js")
     script(type="text/javascript", src="/vendor/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js")
     script(type="text/javascript", src="/vendor/inlineEditor/js/inlineEditor.min.js")
+    script(type="text/javascript", src="/vendor/marked/marked.js")
     script(type="text/javascript", src="/vendor/moment/moment.min.js")
     script(type="text/javascript").
         $(document).ready(function() {
@@ -309,6 +326,11 @@ block footerScript
                         }
                     }
                 }
+            });
+
+            // Preview the changelog
+            $('a[href="#changelogPreviewTab"]').click(function() {
+                $('#changelogPreview').html(marked($('textarea[name="changelog"]').val()));
             });
 
             // Generate slug based one package's name
