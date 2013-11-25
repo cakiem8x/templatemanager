@@ -15,7 +15,7 @@ exports.index = function(req, res) {
         pageRange = 5,
         page      = req.param('page') || 1,
         q         = req.param('q') || '',
-        sortBy    = req.param('sort') || '-created_date',
+        sortBy    = req.param('sort') || '-uploaded_date',
         criteria  = q ? { '$or': [{ name: new RegExp(q, 'i') }, { description: new RegExp(q, 'i') }] } : {};
 
     var sortCriteria = {}, sortDirection = ('-' == sortBy.substr(0, 1)) ? -1 : 1;
