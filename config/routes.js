@@ -52,6 +52,7 @@ module.exports = function(app) {
     app.post('/admin/membership/remove', adminAuthorization, membership.remove);
 
     // File
+    app.get('/admin/file', authentication.requireAuthentication, file.index);
     app.post('/admin/file/upload', authentication.requireAuthentication, file.upload);
     app.post('/admin/file/desc', authentication.requireAuthentication, file.desc);
     app.post('/admin/file/search', authentication.requireAuthentication, file.search);

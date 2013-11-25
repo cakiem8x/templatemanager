@@ -1,9 +1,62 @@
 var mongoose   = require('mongoose'),
     File       = mongoose.model('file'),
     fs         = require('fs'),
+    filesize   = require('filesize'),
     mkdirp     = require('mkdirp'),
+    moment     = require('moment'),
     path       = require('path'),
     formidable = require('formidable');
+
+/**
+ * Files management
+ */
+exports.index = function(req, res) {
+    var perPage   = 10,
+        pageRange = 5,
+        page      = req.param('page') || 1,
+        q         = req.param('q') || '',
+        sortBy    = req.param('sort') || '-created_date',
+        criteria  = q ? { '$or': [{ name: new RegExp(q, 'i') }, { description: new RegExp(q, 'i') }] } : {};
+
+    var sortCriteria = {}, sortDirection = ('-' == sortBy.substr(0, 1)) ? -1 : 1;
+
+    sortCriteria['-' == sortBy.substr(0, 1) ? sortBy.substr(1) : sortBy] = sortDirection;
+
+    File.count(criteria, function(err, total) {
+        File.find(criteria).sort(sortCriteria).skip((page - 1) * perPage).limit(perPage).select('uploaded_date num_downloads size description name').exec(function(err, files) {
+            if (err) {
+                files = [];
+            }
+
+            var numPages   = Math.ceil(total / perPage),
+                startRange = (page == 1) ? 1 : pageRange * Math.floor((page - 1) / pageRange) + 1,
+                endRange   = startRange + pageRange;
+
+            if (endRange > numPages) {
+                endRange = numPages;
+            }
+
+            res.render('file/index', {
+                title: 'Files management',
+
+                total: total,
+                files: files,
+                q: q,
+                sortDirection: sortDirection,
+
+                req: req,
+                filesize: filesize,
+                moment: moment,
+
+                // Pagination
+                page: page,
+                numPages: numPages,
+                startRange: startRange,
+                endRange: endRange
+            });
+        });
+    });
+};
 
 /**
  * Update description

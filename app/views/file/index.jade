@@ -1,0 +1,80 @@
+extends ../layouts/backend
+
+block head
+    link(rel="stylesheet", href="/vendor/inlineEditor/css/inlineEditor.min.css")
+
+block content
+    div.page-header
+        h2
+            a(href="/admin/file") Files
+
+    if total == 0
+        p.text-center There is no files
+    else
+        div.row
+            div.col-lg-8 Found #{total} files
+            div.col-lg-4.pull-right
+                form.form-inline(method="get", action="/admin/file")
+                    div.input-group
+                        input.form-control(type="text", name="q", value="#{q}")
+                        span.input-group-btn
+                            button.btn.btn-default(type="submit")
+                                i.fa.fa-search
+
+        table.table(style="margin-top: 20px;")
+            thead
+                tr
+                    th(style="width: 50%;")
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'name' })}") Name
+                    th
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'size' })}") Size
+                    th
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'num_downloads' })}") # Downloads
+                    th
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'uploaded_date' })}") Uploaded date
+            tbody#uploadedFiles
+                for file in files
+                    tr(data-file-id="#{file._id}")
+                        td
+                            p #{file.name.length > 60 ? file.name.substr(0, 60) + '...' : file.name}
+                            small.text-info.editableDesc #{file.description || 'Click to edit'}
+                        td #{filesize(file.size)}
+                        td
+                            span(class=file.num_downloads == 0 ? '' : 'badge') #{file.num_downloads}
+                        td #{moment(file.uploaded_date).format('YYYY-MM-DD HH:mm:ss')}
+
+        // Pagination
+        if (numPages > 1)
+            div.text-center
+                ul.pagination
+                    li(class=page == 1 ? 'disabled' : '')
+                        a(href="#{url(req, { page: 1 })}") &larr;
+                    li(class=page == 1 ? 'disabled' : '')
+                        a(href="#{url(req, { page: parseInt(page) - 1 })}") &laquo;
+                    - for (i = startRange; i <= endRange; i++)
+                        li(class=(i == page) ? 'active' : '')
+                            a(href="#{url(req, { page: i })}") #{i}
+                    li(class=page == numPages ? 'disabled' : '')
+                        a(href="#{url(req, { page: parseInt(page) + 1 })}") &raquo;
+                    li(class=page == numPages ? 'disabled' : '')
+                        a(href="#{url(req, { page: numPages })}") &rarr;
+
+block footerScript
+    script(type="text/javascript", src="/vendor/inlineEditor/js/inlineEditor.min.js")
+    script(type="text/javascript").
+        $(document).ready(function() {
+            // Update file description handler
+            $('#uploadedFiles').on('click', '.editableDesc', function() {
+                var fid = $(this).parents('tr').attr('data-file-id');
+                if (fid) {
+                    $(this).inlineEditor({
+                        method: 'POST',
+                        url: '/admin/file/desc',
+                        field: 'desc',
+                        data: {
+                            fid: fid
+                        }
+                    });
+                }
+            });
+        });
