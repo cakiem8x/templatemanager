@@ -3,22 +3,22 @@ extends ../layouts/backend
 block content
     div.page-header
         h2
-            a(href="/admin/template") Templates
+            a(href="/admin/package") Packages
 
             if year
                 &nbsp;/&nbsp;
-                a(href="/admin/template?year=#{year}") #{year}
+                a(href="/admin/package?year=#{year}") #{year}
 
             span.pull-right
-                a.btn.btn-default(href="/admin/template/add") Add new template
+                a.btn.btn-default(href="/admin/package/add") Add new package
 
     if total == 0
-        p.text-center There is no templates
+        p.text-center There is no packages
     else
         div.row
-            div.col-lg-8 Found #{total} templates
+            div.col-lg-8 Found #{total} packages
             div.col-lg-4.pull-right
-                form.form-inline(method="get", action="/admin/template")
+                form.form-inline(method="get", action="/admin/package")
                     div.input-group
                         input.form-control(type="text", name="q", value="#{q}")
                         span.input-group-btn
@@ -41,20 +41,20 @@ block content
                     th # Downloads
                     th Actions
             tbody
-                for template in templates
+                for package in packages
                     tr
-                        td #{template.name}
-                        td #{template.slug}
+                        td #{package.name}
+                        td #{package.slug}
                         td
-                            a(target="_blank", href="#{template.demo_url}") #{template.demo_url}
+                            a(target="_blank", href="#{package.demo_url}") #{package.demo_url}
                         td
-                            a(href="#{url(req, { page: 1, year: template.year })}") #{template.year}
-                        td #{moment(template.created_date).format('YYYY-MM-DD HH:mm')}
+                            a(href="#{url(req, { page: 1, year: package.year })}") #{package.year}
+                        td #{moment(package.created_date).format('YYYY-MM-DD HH:mm')}
                         td
-                            span.badge #{template.num_downloads}
+                            span.badge #{package.num_downloads}
                         td
                             div.btn-group
-                                a.btn.btn-default(href="/admin/template/edit/#{template._id}") Edit
+                                a.btn.btn-default(href="/admin/package/edit/#{package._id}") Edit
 
         // Pagination
         if (numPages > 1)

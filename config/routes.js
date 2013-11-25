@@ -4,7 +4,7 @@ var account    = require('../app/controllers/account'),
     file       = require('../app/controllers/file'),
     index      = require('../app/controllers/index'),
     membership = require('../app/controllers/membership'),
-    template   = require('../app/controllers/template'),
+    package    = require('../app/controllers/package'),
     user       = require('../app/controllers/user');
 
 var authentication     = require('./middlewares/authentication'),
@@ -30,13 +30,13 @@ module.exports = function(app) {
 
     app.all('/admin/password', authentication.requireAuthentication, auth.changePassword);
 
-    app.get('/admin/template', authentication.requireAuthentication, template.index);
-    app.all('/admin/template/add', authentication.requireAuthentication, template.add);
-    app.all('/admin/template/edit/:id', authentication.requireAuthentication, template.edit);
-    app.post('/admin/template/slug', authentication.requireAuthentication, template.slug);
+    app.get('/admin/package', authentication.requireAuthentication, package.index);
+    app.all('/admin/package/add', authentication.requireAuthentication, package.add);
+    app.all('/admin/package/edit/:id', authentication.requireAuthentication, package.edit);
+    app.post('/admin/package/slug', authentication.requireAuthentication, package.slug);
 
     // Upload
-    app.post('/admin/thumb', authentication.requireAuthentication, template.thumb);
+    app.post('/admin/thumb', authentication.requireAuthentication, package.thumb);
 
     // User
     app.get('/admin/user', adminAuthorization, user.index);
@@ -63,6 +63,6 @@ module.exports = function(app) {
     app.all('/account', authentication.requireAccountAuthentication, account.dashboard);
     app.post('/account/dashboard/download', authentication.requireAccountAuthentication, account.recentDownloads);
 
-    app.all('/account/template', authentication.requireAccountAuthentication, account.template);
+    app.all('/account/package', authentication.requireAccountAuthentication, account.package);
     app.get('/account/download/:slug/:id', authentication.requireAccountAuthentication, account.download);
 };

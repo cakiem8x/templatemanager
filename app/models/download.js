@@ -1,7 +1,7 @@
 var mongoose       = require('mongoose'),
     Schema         = mongoose.Schema,
     downloadSchema = new Schema({
-        template: { type : Schema.ObjectId, ref: 'template' },
+        package: { type : Schema.ObjectId, ref: 'package' },
         file: { type : Schema.ObjectId, ref: 'file' },
         user_name: { type: String, default: '' },
         downloaded_date: { type: Date, default: Date.now },

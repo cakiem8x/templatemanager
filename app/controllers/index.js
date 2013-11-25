@@ -1,15 +1,15 @@
-var mongoose    = require('mongoose'),
-    Template    = mongoose.model('template');
+var mongoose = require('mongoose'),
+    Package  = mongoose.model('package');
 
 exports.index = function(req, res) {
     var app    = req.app,
         config = app.get('config');
 
-    Template.collection.distinct('tags', function(err, tags) {
-        Template.collection.distinct('year', function(err, years) {
+    Package.collection.distinct('tags', function(err, tags) {
+        Package.collection.distinct('year', function(err, years) {
             res.render('index/index', {
                 req: req,
-                title: 'Templates',
+                title: 'Packages',
                 templates: {},
                 thumbPrefixUrl: config.thumbs.url,
 
@@ -30,7 +30,7 @@ exports.demo = function(req, res) {
             template: null
         });
     } else {
-        Template.findOne({ slug: slug }).select('name slug themes demo_url description tags thumbs responsive free browsers software_versions high_resolution year').exec(function(err, template) {
+        Package.findOne({ slug: slug }).select('name slug themes demo_url description tags thumbs responsive free browsers software_versions high_resolution year').exec(function(err, template) {
             res.json({
                 template: template
             });
@@ -64,8 +64,8 @@ exports.filter = function(req, res) {
         criteria.high_resolution = highResolution;
     }
 
-    Template.count(criteria, function(err, total) {
-        Template.find(criteria, { '_id': 0 }).sort({ 'created_date': -1 }).select('name slug themes demo_url description tags thumbs responsive free browsers software_versions high_resolution year').skip((page - 1) * perPage).limit(perPage).exec(function(err, templates) {
+    Package.count(criteria, function(err, total) {
+        Package.find(criteria, { '_id': 0 }).sort({ 'created_date': -1 }).select('name slug themes demo_url description tags thumbs responsive free browsers software_versions high_resolution year').skip((page - 1) * perPage).limit(perPage).exec(function(err, templates) {
             if (err) {
                 templates = [];
             }

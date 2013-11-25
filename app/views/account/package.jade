@@ -3,65 +3,65 @@ extends ../layouts/account
 block content
     div.page-header
         h2
-            a(href="/account/template") Templates
+            a(href="/account/package") Packages
 
             if year
                 &nbsp;/&nbsp;
-                a(href="/account/template?year=#{year}") #{year}
+                a(href="/account/package?year=#{year}") #{year}
 
     if total == 0
-        p.text-center There is no templates
+        p.text-center There is no packages
     else
         div.row(style="margin-bottom: 20px;")
-            div.col-lg-8 Found #{total} templates
+            div.col-lg-8 Found #{total} packages
             div.col-lg-4.pull-right
-                form.form-inline(method="get", action="/account/template")
+                form.form-inline(method="get", action="/account/package")
                     div.input-group
                         input.form-control(type="text", name="q", value="#{q}")
                         span.input-group-btn
                             button.btn.btn-default(type="submit")
                                 i.fa.fa-search
 
-        - each template, index in templates
+        - each package, index in packages
             if (index % 3 == 0)
                 div.row
             div.col-lg-4
                 div.tb-tmpl-item
-                    img(src="#{thumbPrefixUrl}#{template.thumbs.medium}")
+                    img(src="#{thumbPrefixUrl}#{package.thumbs.medium}")
 
                     h3
-                        | #{template.name}
+                        | #{package.name}
                         small &nbsp;/&nbsp;
                         small
-                            a(href="#{url(req, { page: 1, year: template.year })}") #{template.year}
+                            a(href="#{url(req, { page: 1, year: package.year })}") #{package.year}
 
-                    if template.description
-                        p #{template.description.substr(0, 200)}...
-                    if template.responsive
+                    if package.description
+                        p #{package.description.substr(0, 200)}...
+                    if package.responsive
                         small.help-block
                             i.fa.fa-mobile.fa-2x
                             | &nbsp; Responsive
-                    if template.browsers
+                    if package.browsers
                         small.help-block
                             i.fa.fa-check
-                            | &nbsp; #{template.browsers.split(',').join(', ')}
-                    if template.software_versions
+                            | &nbsp; #{package.browsers.split(',').join(', ')}
+                    if package.software_versions
                         small.help-block
                             i.fa.fa-heart
-                            | &nbsp; #{template.software_versions.split(',').join(', ')}
+                            | &nbsp; #{package.software_versions.split(',').join(', ')}
 
-                    if template.files.length > 0
+                    if package.files.length > 0
                         div.text-center
-                            if downloadable(template, membershipIds)
+                            if downloadable(package, membershipIds)
                                 div.btn-group
                                     button.btn.btn-success.dropdown-toggle(type="button", data-toggle="dropdown")
                                         | Download &nbsp;
                                         span.caret
 
                                     ul.dropdown-menu
-                                        for file in template.files
+                                        for file in package.files
                                             li.text-left
-                                                a(href="/account/download/#{template.slug}/#{file._id}") #{file.name} (#{filesize(file.size)})
+                                                a(href="/account/download/#{package.slug}/#{file._id}") #{file.name} (#{filesize(file.size)})
                             else
                                 a.btn.btn-danger(href="#{purchaseUrl}") Purchase
 
@@ -71,12 +71,16 @@ block content
         if (numPages > 1)
             div.text-center
                 ul.pagination
-                    li
+                    li(class=page == 1 ? 'disabled' : '')
                         a(href="#{url(req, { page: 1 })}") &larr;
+                    li(class=page == 1 ? 'disabled' : '')
+                        a(href="#{url(req, { page: parseInt(page) - 1 })}") &laquo;
                     - for (i = startRange; i <= endRange; i++)
                         li(class=(i == page) ? 'active' : '')
                             a(href="#{url(req, { page: i })}") #{i}
-                    li
+                    li(class=page == numPages ? 'disabled' : '')
+                        a(href="#{url(req, { page: parseInt(page) + 1 })}") &raquo;
+                    li(class=page == numPages ? 'disabled' : '')
                         a(href="#{url(req, { page: numPages })}") &rarr;
 
         div(style="margin-bottom: 200px;")

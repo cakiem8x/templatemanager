@@ -8,8 +8,8 @@ block head
 block content
     div.page-header
         h2
-            a(href="/admin/template") Templates
-            |  / Add new template
+            a(href="/admin/package") Packages
+            |  / Add new package
 
             span.pull-right
                 button#saveButton.btn.btn-primary(type="button") Save
@@ -24,7 +24,7 @@ block content
         li
             a(href="#memberships", data-toggle="tab") Memberships
 
-    form#addTemplateForm.form-horizontal(action="/admin/template/add", method="post")
+    form#addPackageForm.form-horizontal(action="/admin/package/add", method="post")
         div.tab-content
             div#general.tab-pane.active
                 div.form-group
@@ -246,12 +246,12 @@ block footerScript
     script(type="text/javascript").
         $(document).ready(function() {
             // Form validator
-            $('#addTemplateForm').bootstrapValidator({
+            $('#addPackageForm').bootstrapValidator({
                 fields: {
                     name: {
                         validators: {
                             notEmpty: {
-                                message: 'The template name is required'
+                                message: 'The package name is required'
                             }
                         }
                     },
@@ -286,7 +286,7 @@ block footerScript
                 }
             });
 
-            // Generate slug based one template's name
+            // Generate slug based one package's name
             $('input[name="name"]').on('keyup', function() {
                 var name = $(this).val(), $slug = $('input[name="slug"]');
                 if (name == '') {
@@ -295,7 +295,7 @@ block footerScript
                 }
                 $.ajax({
                     type: 'POST',
-                    url: '/admin/template/slug',
+                    url: '/admin/package/slug',
                     data: {
                         name: name
                     },
@@ -401,7 +401,7 @@ block footerScript
                 });
                 $('input[name="browsers"]').val(browsers.join(','));
 
-                $('#addTemplateForm').submit();
+                $('#addPackageForm').submit();
             });
 
             // Update file description handler
@@ -578,7 +578,7 @@ block footerScript
                 $(this).colorpicker();
             });
 
-            // Disable membership options when the template is marked as free
+            // Disable membership options when the package is marked as free
             $('input[name="free"]').on('click', function() {
                 if ($(this).is(':checked')) {
                     $('input[name="memberships[]"]').attr('disabled', 'disabled');

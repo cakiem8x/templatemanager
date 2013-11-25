@@ -38,7 +38,7 @@ block content
                     thead
                         tr
                             th File
-                            th Template
+                            th Package
                             th Downloaded date
                             th Up-to-date
                     tbody#recentDownloads
@@ -61,12 +61,12 @@ block footerScript
                     var demoUrl = '#{demoUrl}';
                     $('#refreshRecentDownloads').parents('.panel').find('.panel-body').toggle();
                     $.each(response, function(index, download) {
-                        var downloadUrl = '/account/download/' + download.template.slug + '/' + download.file._id;
+                        var downloadUrl = '/account/download/' + download.package.slug + '/' + download.file._id;
                         $('<tr/>')
                             .appendTo('#recentDownloads')
                             .append($('<td/>').append($('<a/>').attr('href', downloadUrl).html(download.file.name.length > 30 ? download.file.name.substr(0, 30) + '...' : download.file.name))
                                               .append($('<div/>').html(filesize(download.file.size))))
-                            .append($('<td/>').append($('<a/>').attr('href', demoUrl + '#' + download.template.slug).html(download.template.name)))
+                            .append($('<td/>').append($('<a/>').attr('href', demoUrl + '#' + download.package.slug).html(download.package.name)))
                             .append($('<td/>').html(moment(download.downloaded_date).fromNow()))
                             .append(moment(download.downloaded_date).isAfter(download.file.uploaded_date)
                                     ? $('<td/>').html('<i class="fa fa-check"></i>')

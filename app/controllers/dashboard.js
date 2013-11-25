@@ -25,7 +25,7 @@ exports.download = function(req, res) {
             select: 'name size num_downloads uploaded_date'
         })
         .populate({
-            path: 'template',
+            path: 'package',
             select: 'year free description name slug demo_url'
         })
         .exec(function(err, downloads) {

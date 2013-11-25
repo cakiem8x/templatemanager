@@ -8,12 +8,12 @@ block head
 block content
     div.page-header
         h2
-            a(href="/admin/template") Templates
-            |  / Edit template
+            a(href="/admin/package") Packages
+            |  / Edit package
 
             span.pull-right
                 button#saveButton.btn.btn-primary(type="button") Save
-                a.btn.btn-link(href="/admin/template/add") Add new template
+                a.btn.btn-link(href="/admin/package/add") Add new package
 
     include ../partial/flash
 
@@ -25,23 +25,23 @@ block content
         li
             a(href="#memberships", data-toggle="tab") Memberships
 
-    form#editTemplateForm.form-horizontal(action="/admin/template/edit/#{template._id}", method="post")
+    form#editPackageForm.form-horizontal(action="/admin/package/edit/#{package._id}", method="post")
         div.tab-content
             div#general.tab-pane.active
                 div.form-group
                     label.control-label.col-lg-2 Name
                     div.col-lg-6
-                        input.form-control(type="text", name="name", value="#{template.name}")
+                        input.form-control(type="text", name="name", value="#{package.name}")
 
                 div.form-group
                     label.control-label.col-lg-2 Slug
                     div.col-lg-6
-                        input.form-control(type="text", name="slug", value="#{template.slug}")
+                        input.form-control(type="text", name="slug", value="#{package.slug}")
 
                 div.form-group
                     label.control-label.col-lg-2 Demo URL
                     div.col-lg-8
-                        input.form-control(type="text", name="demo_url", placeholder="http://", value="#{template.demo_url}")
+                        input.form-control(type="text", name="demo_url", placeholder="http://", value="#{package.demo_url}")
 
                 div.form-group
                     label.control-label.col-lg-2 Preset styles
@@ -56,7 +56,7 @@ block content
                             div.col-lg-1
                                 button.btn.btn-default.removeThemeButton(type="button")
                                     i.fa.fa-times
-                        for theme in template.themes
+                        for theme in package.themes
                             div.row(style="margin-bottom: 10px;")
                                 div.col-lg-3
                                     input.form-control(type="text", name="theme.name[]", placeholder="Name", value="#{theme.name}")
@@ -74,18 +74,18 @@ block content
                 div.form-group
                     label.control-label.col-lg-2 Description
                     div.col-lg-8
-                        textarea.form-control(name="description", rows=5) #{template.description}
+                        textarea.form-control(name="description", rows=5) #{package.description}
 
                 div.form-group
                     label.control-label.col-lg-2 Tags
                     div.col-lg-8
-                        input.form-control(type="text", name="tags", value="#{template.tags}")
+                        input.form-control(type="text", name="tags", value="#{package.tags}")
                         small.help-block Separate tags by a comma
 
                 div.form-group
                     label.control-label.col-lg-2 Software versions
                     div.col-lg-8
-                        input.form-control(type="text", name="software_versions", value="#{template.software_versions}")
+                        input.form-control(type="text", name="software_versions", value="#{package.software_versions}")
 
                 div.form-group
                     label.control-label.col-lg-2 Supported browsers
@@ -98,7 +98,7 @@ block content
                             button.btn.btn-default.browserButton(type="button", value="Firefox") Firefox
                             button.btn.btn-default.browserButton(type="button", value="Safari") Safari
                             button.btn.btn-default.browserButton(type="button", value="Opera") Opera
-                        input(type="hidden", name="browsers", value="#{template.browsers}")
+                        input(type="hidden", name="browsers", value="#{package.browsers}")
 
                 div.form-group
                     label.control-label.col-lg-2 High resolution
@@ -107,18 +107,18 @@ block content
                             button.btn.btn-default.highResolutionButton(type="button", value="yes") Yes
                             button.btn.btn-default.highResolutionButton(type="button", value="no") No
                             button.btn.btn-default.highResolutionButton(type="button", value="n/a") N/A
-                        input(type="hidden", name="high_resolution", value="#{template.high_resolution || 'n/a'}")
+                        input(type="hidden", name="high_resolution", value="#{package.high_resolution || 'n/a'}")
 
                 div.form-group
                     label.control-label.col-lg-2 Year
                     div.col-lg-2
-                        input.form-control(type="text", name="year", value="#{template.year}")
+                        input.form-control(type="text", name="year", value="#{package.year}")
 
                 div.form-group
                     div.col-lg-10.col-lg-offset-2
                         div.checkbox
                             label
-                                input(type="checkbox", name="responsive", value="1", checked=template.responsive)
+                                input(type="checkbox", name="responsive", value="1", checked=package.responsive)
                                 | Support responsive
 
                 div.form-group
@@ -131,14 +131,14 @@ block content
                             div.progress.progress-striped.active.hide
                                 div#thumbProgress.progress-bar.progress-bar-success(style="width: 100%;")
                         div.tb-tmpl-thumb
-                            if template.thumbs.original
-                                img(src="#{thumbPrefixUrl}#{template.thumbs.original}")
-                        input(type="hidden", name="thumbs", value="#{JSON.stringify(template.thumbs)}")
+                            if package.thumbs.original
+                                img(src="#{thumbPrefixUrl}#{package.thumbs.original}")
+                        input(type="hidden", name="thumbs", value="#{JSON.stringify(package.thumbs)}")
 
                 input(name="uploaded_files", type="hidden")
 
             div#files.tab-pane
-                table.table(class=(template.files.length == 0) ? 'hide' : '')
+                table.table(class=(package.files.length == 0) ? 'hide' : '')
                     thead
                         tr
                             th File name / Size
@@ -159,7 +159,7 @@ block content
                                         i.fa.fa-times
                                     button.btn.btn-default.changeButton(type="button", title="Upload")
                                         i.fa.fa-upload
-                        - each file in template.files
+                        - each file in package.files
                             tr(data-file-id="#{file._id}", data-file-name="#{file.name}")
                                 td #{file.name.length > 25 ? file.name.substr(0, 25) + '...' : file.name} / #{filesize(file.size)}
                                 td
@@ -193,7 +193,7 @@ block content
                     div.col-lg-10
                         div.checkbox
                             label
-                                input(type="checkbox", name="free", value="1", checked=template.free)
+                                input(type="checkbox", name="free", value="1", checked=package.free)
                                 | Free for all accounts
                         small.help-block All accounts can download the files
 
@@ -210,7 +210,7 @@ block content
                             for membership in memberships
                                 div.checkbox
                                     label
-                                        input(type="checkbox", name="memberships[]", value="#{membership._id}", disabled=template.free, checked=template.memberships && template.memberships.indexOf(membership._id) != -1)
+                                        input(type="checkbox", name="memberships[]", value="#{membership._id}", disabled=package.free, checked=package.memberships && package.memberships.indexOf(membership._id) != -1)
                                         | #{membership.title}
 
     // Remove file confirmation dialog
@@ -264,12 +264,12 @@ block footerScript
     script(type="text/javascript").
         $(document).ready(function() {
             // Form validator
-            $('#editTemplateForm').bootstrapValidator({
+            $('#editPackageForm').bootstrapValidator({
                 fields: {
                     name: {
                         validators: {
                             notEmpty: {
-                                message: 'The template name is required'
+                                message: 'The package name is required'
                             }
                         }
                     },
@@ -304,7 +304,7 @@ block footerScript
                 }
             });
 
-            // Generate slug based one template's name
+            // Generate slug based one package's name
             $('input[name="name"]').on('keyup', function() {
                 var name = $(this).val(), $slug = $('input[name="slug"]');
                 if (name == '') {
@@ -313,9 +313,9 @@ block footerScript
                 }
                 $.ajax({
                     type: 'POST',
-                    url: '/admin/template/slug',
+                    url: '/admin/package/slug',
                     data: {
-                        id: '#{template._id}',
+                        id: '#{package._id}',
                         name: name
                     },
                     dataType: 'json'
@@ -420,7 +420,7 @@ block footerScript
                 });
                 $('input[name="browsers"]').val(browsers.join(','));
 
-                $('#editTemplateForm').submit();
+                $('#editPackageForm').submit();
             });
 
             // Update file description handler
@@ -564,7 +564,7 @@ block footerScript
                 });
 
             // Update supported browsers option
-            $.each("#{template.browsers || ''}".split(','), function(index, browser) {
+            $.each("#{package.browsers || ''}".split(','), function(index, browser) {
                 $('.browserButton[value="' + browser + '"]').addClass('active').prepend($('<i/>').addClass('fa fa-check'));
             });
             $('.browserButton').on('click', function() {
@@ -576,7 +576,7 @@ block footerScript
             });
 
             // Update high resolution option
-            $('.highResolutionButton[value="#{template.high_resolution}"]').addClass('active');
+            $('.highResolutionButton[value="#{package.high_resolution}"]').addClass('active');
             $('.highResolutionButton').on('click', function() {
                 $(this)
                     .parent()
@@ -604,7 +604,7 @@ block footerScript
                 $(this).colorpicker();
             });
 
-            // Disable membership options when the template is marked as free
+            // Disable membership options when the package is marked as free
             $('input[name="free"]').on('click', function() {
                 if ($(this).is(':checked')) {
                     $('input[name="memberships[]"]').attr('disabled', 'disabled');

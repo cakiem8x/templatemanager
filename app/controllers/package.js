@@ -1,6 +1,6 @@
 var mongoose    = require('mongoose'),
     Membership  = mongoose.model('membership'),
-    Template    = mongoose.model('template'),
+    Package     = mongoose.model('package'),
     filesize    = require('filesize'),
     fs          = require('fs'),
     mkdirp      = require('mkdirp'),
@@ -28,10 +28,10 @@ exports.index = function(req, res) {
 
     sortCriteria['-' == sortBy.substr(0, 1) ? sortBy.substr(1) : sortBy] = sortDirection;
 
-    Template.count(criteria, function(err, total) {
-        Template.find(criteria).sort(sortCriteria).skip((page - 1) * perPage).limit(perPage).populate('files').exec(function(err, templates) {
+    Package.count(criteria, function(err, total) {
+        Package.find(criteria).sort(sortCriteria).skip((page - 1) * perPage).limit(perPage).populate('files').exec(function(err, packages) {
             if (err) {
-                templates = [];
+                packages = [];
             }
 
             var numPages   = Math.ceil(total / perPage),
@@ -42,12 +42,12 @@ exports.index = function(req, res) {
                 endRange = numPages;
             }
 
-            res.render('template/index', {
+            res.render('package/index', {
                 req: req,
                 moment: moment,
-                title: 'Templates',
+                title: 'Packages',
                 total: total,
-                templates: templates,
+                packages: packages,
 
                 // Criteria
                 q: q,
@@ -65,7 +65,7 @@ exports.index = function(req, res) {
 };
 
 /**
- * Add new template
+ * Add new package
  */
 exports.add = function(req, res) {
     if ('post' == req.method.toLowerCase()) {
@@ -86,7 +86,7 @@ exports.add = function(req, res) {
             }
         }
 
-        var template = new Template({
+        var package = new Package({
             name: req.body.name,
             slug: req.body.slug,
             demo_url: req.body.demo_url,
@@ -104,29 +104,29 @@ exports.add = function(req, res) {
         });
 
         if (req.body.browsers) {
-            template.browsers = req.body.browsers;
+            package.browsers = req.body.browsers;
         }
 
-        template.save(function(err) {
+        package.save(function(err) {
             if (err) {
                 console.log(err);
-                req.flash('error', 'Could not add template');
-                return res.redirect('/admin/template/add');
+                req.flash('error', 'Could not add package');
+                return res.redirect('/admin/package/add');
             } else {
-                req.flash('success', 'Template has been added successfully');
-                return res.redirect('/admin/template/edit/' + template._id);
+                req.flash('success', 'Package has been added successfully');
+                return res.redirect('/admin/package/edit/' + package._id);
             }
         });
     } else {
         var config = req.app.get('config');
         Membership.find().exec().then(function(memberships) {
-            res.render('template/add', {
+            res.render('package/add', {
                 messages: {
                     warning: req.flash('error'),
                     success: req.flash('success')
                 },
                 thumbPrefixUrl: config.thumbs.url,
-                title: 'Add new template',
+                title: 'Add new package',
                 year: new Date().getFullYear(),
                 memberships: memberships
             });
@@ -135,11 +135,11 @@ exports.add = function(req, res) {
 };
 
 /**
- * Edit template
+ * Edit package
  */
 exports.edit = function(req, res) {
     var id = req.param('id');
-    Template.findOne({ _id: id }).populate('files').exec(function(err, template) {
+    Package.findOne({ _id: id }).populate('files').exec(function(err, package) {
         if ('post' == req.method.toLowerCase()) {
             var themes        = [],
                 themeNames    = req.body['theme.name'],
@@ -158,41 +158,41 @@ exports.edit = function(req, res) {
                 }
             }
 
-            template.name              = req.body.name;
-            template.slug              = req.body.slug;
-            template.demo_url          = req.body.demo_url;
-            template.themes            = themes;
-            template.description       = req.body.description;
-            template.tags              = req.body.tags;
-            template.software_versions = req.body.software_versions;
-            template.browsers          = req.body.browsers;
-            template.high_resolution   = req.body.high_resolution;
-            template.thumbs            = JSON.parse(req.body.thumbs || '[]');
-            template.files             = JSON.parse(req.body.uploaded_files || '[]');
-            template.responsive        = req.body.responsive || false;
-            template.free              = req.body.free || false;
-            template.memberships       = req.body.memberships;
-            template.year              = req.body.year || new Date().getFullYear();
+            package.name              = req.body.name;
+            package.slug              = req.body.slug;
+            package.demo_url          = req.body.demo_url;
+            package.themes            = themes;
+            package.description       = req.body.description;
+            package.tags              = req.body.tags;
+            package.software_versions = req.body.software_versions;
+            package.browsers          = req.body.browsers;
+            package.high_resolution   = req.body.high_resolution;
+            package.thumbs            = JSON.parse(req.body.thumbs || '[]');
+            package.files             = JSON.parse(req.body.uploaded_files || '[]');
+            package.responsive        = req.body.responsive || false;
+            package.free              = req.body.free || false;
+            package.memberships       = req.body.memberships;
+            package.year              = req.body.year || new Date().getFullYear();
 
-            template.save(function(err) {
+            package.save(function(err) {
                 if (err) {
-                    req.flash('error', 'Could not save the template');
+                    req.flash('error', 'Could not save the package');
                 } else {
-                    req.flash('success', 'Template has been updated successfully');
+                    req.flash('success', 'Package has been updated successfully');
                 }
-                return res.redirect('/admin/template/edit/' + id);
+                return res.redirect('/admin/package/edit/' + id);
             });
         } else {
             Membership.find().exec().then(function(memberships) {
                 var config = req.app.get('config');
-                res.render('template/edit', {
+                res.render('package/edit', {
                     messages: {
                         warning: req.flash('error'),
                         success: req.flash('success')
                     },
                     thumbPrefixUrl: config.thumbs.url,
-                    template: template,
-                    title: 'Edit template',
+                    package: package,
+                    title: 'Edit package',
                     memberships: memberships,
 
                     // Helper
@@ -204,14 +204,14 @@ exports.edit = function(req, res) {
 };
 
 /**
- * Generate template slug
+ * Generate package slug
  */
 exports.slug = function(req, res) {
-    var template = new Template({
+    var package = new Package({
         _id: req.body.id,
         name: req.body.name
     });
-    Template.generateSlug(template, function(slug) {
+    Package.generateSlug(package, function(slug) {
         res.json({
             slug: slug
         });
@@ -219,7 +219,7 @@ exports.slug = function(req, res) {
 };
 
 /**
- * Upload template thumbnail
+ * Upload package thumbnail
  */
 exports.thumb = function(req, res) {
     var app    = req.app,

@@ -52,10 +52,11 @@ $ mongo
 > use templatemanager_dev;
 > db.download.ensureIndex({ user_name: 1, downloaded_date: 1 });
 > db.file.ensureIndex({ last_download: 1, num_downloads: 1 });
-> db.template.ensureIndex({ created_date: 1 });
-> db.template.ensureIndex({ slug: 1 });
-> db.template.ensureIndex({ year: 1 });
-> db.template.ensureIndex({ tag: 1, responsive: 1, high_resolution: 1 });
+> db.package.ensureIndex({ type: 1 });
+> db.package.ensureIndex({ created_date: 1 });
+> db.package.ensureIndex({ slug: 1 });
+> db.package.ensureIndex({ year: 1 });
+> db.package.ensureIndex({ tag: 1, responsive: 1, high_resolution: 1 });
 > db.user.ensureIndex({ email: 1 });
 > db.user.ensureIndex({ username: 1 });
 ```

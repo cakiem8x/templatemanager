@@ -1,6 +1,7 @@
 var mongoose       = require('mongoose'),
     Schema         = mongoose.Schema,
-    templateSchema = new Schema({
+    packageSchema  = new Schema({
+        type: { type: String, default: 'template' },
         name: { type: String, default: '' },
         slug: { type: String, default: '' },
         demo_url: { type: String, default: '' },
@@ -40,7 +41,7 @@ var mongoose       = require('mongoose'),
         ]
     });
 
-templateSchema
+packageSchema
     .virtual('num_downloads')
     .get(function() {
         var numDownloads = 0, numFiles = this.files.length;
@@ -50,7 +51,7 @@ templateSchema
         return numDownloads;
     });
 
-templateSchema.methods.generateSlug = function() {
+packageSchema.methods.generateSlug = function() {
     return this.name.toString().toLowerCase()
                     .replace(/\s+/g, '-')
                     .replace(/[^\w\-]+/g, '')
@@ -59,8 +60,8 @@ templateSchema.methods.generateSlug = function() {
                     .replace(/-+$/, '');
 };
 
-templateSchema.statics.generateSlug = function(template, cb) {
-    var slug = template.slug ? template.slug : template.generateSlug(), schema = this;
+packageSchema.statics.generateSlug = function(package, cb) {
+    var slug = package.slug ? package.slug : package.generateSlug(), schema = this;
     if (slug == '') {
         slug = '-';
     }
@@ -71,7 +72,7 @@ templateSchema.statics.generateSlug = function(template, cb) {
             schema.findOne({
                 slug: slug + (count == 0 ? '' : '-' + count)
             }, function(err, t) {
-                if (t == null || t._id.equals(template._id)) {
+                if (t == null || t._id.equals(package._id)) {
                     found = false;
                     cb(slug + (count == 0 ? '' : '-' + count));
                 } else {
@@ -83,4 +84,4 @@ templateSchema.statics.generateSlug = function(template, cb) {
     findUntilNotFound();
 };
 
-module.exports = mongoose.model('template', templateSchema, 'template');
+module.exports = mongoose.model('package', packageSchema, 'package');

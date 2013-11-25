@@ -66,7 +66,7 @@ exports.search = function(req, res) {
 };
 
 /**
- * Upload template files
+ * Upload package files
  */
 exports.upload = function(req, res) {
     var app    = req.app,

@@ -5,7 +5,7 @@ var
     qs   = require('querystring'),
 
     mongoose   = require('mongoose'),
-    Template   = mongoose.model('template'),
+    Package    = mongoose.model('package'),
     Download   = mongoose.model('download'),
     Membership = mongoose.model('membership'),
     fs         = require('fs'),
@@ -158,7 +158,7 @@ exports.recentDownloads = function(req, res) {
             select: 'name size num_downloads uploaded_date'
         })
         .populate({
-            path: 'template',
+            path: 'package',
             select: 'year free description name slug demo_url'
         })
         .exec(function(err, downloads) {
@@ -167,9 +167,9 @@ exports.recentDownloads = function(req, res) {
 };
 
 /**
- * List templates
+ * List packages
  */
-exports.template = function(req, res) {
+exports.package = function(req, res) {
     var app       = req.app,
         config    = app.get('config'),
 
@@ -200,10 +200,10 @@ exports.template = function(req, res) {
 //        }
     }
 
-    Template.count(criteria, function(err, total) {
-        Template.find(criteria).skip((page - 1) * perPage).limit(perPage).sort({ created_date: -1 }).populate('files').exec(function(err, templates) {
+    Package.count(criteria, function(err, total) {
+        Package.find(criteria).skip((page - 1) * perPage).limit(perPage).sort({ created_date: -1 }).populate('files').exec(function(err, packages) {
             if (err) {
-                templates = [];
+                packages = [];
             }
 
             var numPages   = Math.ceil(total / perPage),
@@ -214,12 +214,12 @@ exports.template = function(req, res) {
                 endRange = numPages;
             }
 
-            res.render('account/template', {
+            res.render('account/package', {
                 req: req,
                 moment: moment,
-                title: 'Templates',
+                title: 'Packages',
                 total: total,
-                templates: templates,
+                packages: packages,
                 thumbPrefixUrl: config.thumbs.url,
                 purchaseUrl: config.provider.registerUrl,
                 membershipIds: membershipIds,
@@ -247,15 +247,15 @@ exports.template = function(req, res) {
 exports.download = function(req, res) {
     var slug = req.param('slug'),
         id   = req.param('id');
-    Template.findOne({ slug: slug }).populate('files').exec(function(err, template) {
-        if (err || !template || template.files.length == 0) {
+    Package.findOne({ slug: slug }).populate('files').exec(function(err, package) {
+        if (err || !package || package.files.length == 0) {
             return res.send('Not found', 404);
         }
 
         var file = null;
-        for (var i in template.files) {
-            if (template.files[i]._id == id) {
-                file = template.files[i];
+        for (var i in package.files) {
+            if (package.files[i]._id == id) {
+                file = package.files[i];
                 break;
             }
         }
@@ -265,12 +265,12 @@ exports.download = function(req, res) {
 
         // Check if it's possible for account to download the file
         var downloadable = false;
-        if (template.free) {
+        if (package.free) {
             downloadable = true;
         } else if (req.session.subscriptions) {
             var subscriptions = req.session.subscriptions;
             for (var i in subscriptions) {
-                if (!moment(subscriptions[i].expiration, 'YYYY-MM-DD').isBefore() && template.memberships && template.memberships.indexOf(subscriptions[i]._id) != -1) {
+                if (!moment(subscriptions[i].expiration, 'YYYY-MM-DD').isBefore() && package.memberships && package.memberships.indexOf(subscriptions[i]._id) != -1) {
                     downloadable = true;
                     break;
                 }
@@ -285,7 +285,7 @@ exports.download = function(req, res) {
         file.save(function(err) {
             if (!err) {
                 var download = new Download({
-                    template: template._id,
+                    package: package._id,
                     file: id,
                     user_name: req.session.account,
                     ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
