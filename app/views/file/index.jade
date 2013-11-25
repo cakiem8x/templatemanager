@@ -25,13 +25,33 @@ block content
             thead
                 tr
                     th(style="width: 50%;")
-                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'name' })}") Name
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'name' })}")
+                            if ('name' == sortBy && 1 == sortDirection)
+                                | &uarr;&nbsp;
+                            else if ('name' == sortBy && -1 == sortDirection)
+                                | &darr;&nbsp;
+                            | Name
                     th
-                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'size' })}") Size
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'size' })}")
+                            if ('size' == sortBy && 1 == sortDirection)
+                                | &uarr;&nbsp;
+                            else if ('size' == sortBy && -1 == sortDirection)
+                                | &darr;&nbsp;
+                            | Size
                     th
-                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'num_downloads' })}") # Downloads
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'num_downloads' })}")
+                            if ('num_downloads' == sortBy && 1 == sortDirection)
+                                | &uarr;&nbsp;
+                            else if ('num_downloads' == sortBy && -1 == sortDirection)
+                                | &darr;&nbsp;
+                            | # Downloads
                     th
-                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'uploaded_date' })}") Uploaded date
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'uploaded_date' })}")
+                            if ('uploaded_date' == sortBy && 1 == sortDirection)
+                                | &uarr;&nbsp;
+                            else if ('uploaded_date' == sortBy && -1 == sortDirection)
+                                | &darr;&nbsp;
+                            | Uploaded date
             tbody#uploadedFiles
                 for file in files
                     tr(data-file-id="#{file._id}")

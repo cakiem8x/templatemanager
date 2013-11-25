@@ -20,7 +20,8 @@ exports.index = function(req, res) {
 
     var sortCriteria = {}, sortDirection = ('-' == sortBy.substr(0, 1)) ? -1 : 1;
 
-    sortCriteria['-' == sortBy.substr(0, 1) ? sortBy.substr(1) : sortBy] = sortDirection;
+    sortBy = '-' == sortBy.substr(0, 1) ? sortBy.substr(1) : sortBy;
+    sortCriteria[sortBy] = sortDirection;
 
     File.count(criteria, function(err, total) {
         File.find(criteria).sort(sortCriteria).skip((page - 1) * perPage).limit(perPage).select('uploaded_date num_downloads size description name').exec(function(err, files) {
@@ -42,6 +43,7 @@ exports.index = function(req, res) {
                 total: total,
                 files: files,
                 q: q,
+                sortBy: sortBy,
                 sortDirection: sortDirection,
 
                 req: req,
