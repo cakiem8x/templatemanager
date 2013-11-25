@@ -4,12 +4,10 @@ block content
     div.page-header
         h2
             a(href="/admin/package") Packages
-            small
-                | &nbsp;(
-                a(href="#{url(req, { page: 1, type: 'template' })}") Templates
-                | &nbsp;/&nbsp;
-                a(href="#{url(req, { page: 1, type: 'extension' })}") Extensions
-                | )
+            | &nbsp;
+            small.btn-group
+                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'template' })}", class=criteria.type == 'template' ? 'active' : '') Templates
+                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'extension' })}", class=criteria.type == 'extension' ? 'active' : '') Extensions
 
             if year
                 &nbsp;/&nbsp;
