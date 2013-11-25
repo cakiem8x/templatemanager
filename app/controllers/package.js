@@ -10,7 +10,7 @@ var mongoose    = require('mongoose'),
     imageMagick = require('imagemagick');
 
 /**
- * List templates
+ * List packages
  */
 exports.index = function(req, res) {
     var perPage   = 10,
@@ -87,6 +87,7 @@ exports.add = function(req, res) {
         }
 
         var package = new Package({
+            type: req.body.type || 'template',
             name: req.body.name,
             slug: req.body.slug,
             demo_url: req.body.demo_url,
@@ -158,6 +159,7 @@ exports.edit = function(req, res) {
                 }
             }
 
+            package.type              = req.body.type || 'template';
             package.name              = req.body.name;
             package.slug              = req.body.slug;
             package.demo_url          = req.body.demo_url;

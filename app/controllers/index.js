@@ -30,7 +30,7 @@ exports.demo = function(req, res) {
             template: null
         });
     } else {
-        Package.findOne({ slug: slug }).select('name slug themes demo_url description tags thumbs responsive free browsers software_versions high_resolution year').exec(function(err, template) {
+        Package.findOne({ type: 'template', slug: slug }).select('name slug themes demo_url description tags thumbs responsive free browsers software_versions high_resolution year').exec(function(err, template) {
             res.json({
                 template: template
             });
@@ -49,7 +49,9 @@ exports.filter = function(req, res) {
         tag            = req.param('tag'),
         responsive     = req.param('responsive'),
         highResolution = req.param('high_resolution'),
-        criteria       = {};
+        criteria       = {
+            type: 'template'
+        };
 
     if (year) {
         criteria.year = year;

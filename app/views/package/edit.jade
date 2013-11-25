@@ -29,6 +29,13 @@ block content
         div.tab-content
             div#general.tab-pane.active
                 div.form-group
+                    label.control-label.col-lg-2 Type
+                    div.col-lg-3
+                        select.form-control(name="type")
+                            option(value="template", selected=package.type == 'template') Template
+                            option(value="extension", selected=package.type == 'extension') Extension
+
+                div.form-group
                     label.control-label.col-lg-2 Name
                     div.col-lg-6
                         input.form-control(type="text", name="name", value="#{package.name}")
