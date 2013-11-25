@@ -4,14 +4,15 @@ block content
     div.page-header
         h2
             a(href="/admin/package") Packages
+
+            if criteria.year
+                &nbsp;/&nbsp;
+                a(href="/admin/package?year=#{criteria.year}") #{criteria.year}
+
             | &nbsp;
             small.btn-group
                 a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'template' })}", class=criteria.type == 'template' ? 'active' : '') Templates
                 a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'extension' })}", class=criteria.type == 'extension' ? 'active' : '') Extensions
-
-            if year
-                &nbsp;/&nbsp;
-                a(href="/admin/package?year=#{year}") #{year}
 
             span.pull-right
                 a.btn.btn-default(href="/admin/package/add") Add new package

@@ -55,7 +55,6 @@ exports.index = function(req, res) {
 
                 // Criteria
                 q: q,
-                year: year,
                 criteria: criteria,
                 sortDirection: sortDirection,
 

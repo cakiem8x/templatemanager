@@ -5,9 +5,14 @@ block content
         h2
             a(href="/account/package") Packages
 
-            if year
+            if criteria.year
                 &nbsp;/&nbsp;
-                a(href="/account/package?year=#{year}") #{year}
+                a(href="/account/package?year=#{criteria.year}") #{criteria.year}
+
+            | &nbsp;
+            small.btn-group
+                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'template' })}", class=criteria.type == 'template' ? 'active' : '') Templates
+                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'extension' })}", class=criteria.type == 'extension' ? 'active' : '') Extensions
 
     if total == 0
         p.text-center There is no packages

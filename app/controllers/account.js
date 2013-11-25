@@ -178,9 +178,13 @@ exports.package = function(req, res) {
         pageRange = 5,
         page      = req.param('page') || 1,
         q         = req.param('q') || '',
+        type      = req.param('type'),
         year      = req.param('year'),
         criteria  = q ? { name: new RegExp(q, 'i') } : {};
 
+    if (type) {
+        criteria.type = type;
+    }
     if (year) {
         criteria.year = year;
     }
@@ -226,7 +230,7 @@ exports.package = function(req, res) {
 
                 // Criteria
                 q: q,
-                year: year,
+                criteria: criteria,
 
                 // Pagination
                 page: page,
