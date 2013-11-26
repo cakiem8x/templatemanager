@@ -30,7 +30,8 @@ exports.index = function(req, res) {
     }
     var sortCriteria = {}, sortDirection = ('-' == sortBy.substr(0, 1)) ? -1 : 1;
 
-    sortCriteria['-' == sortBy.substr(0, 1) ? sortBy.substr(1) : sortBy] = sortDirection;
+    sortBy = '-' == sortBy.substr(0, 1) ? sortBy.substr(1) : sortBy;
+    sortCriteria[sortBy] = sortDirection;
 
     Package.count(criteria, function(err, total) {
         Package.find(criteria).sort(sortCriteria).skip((page - 1) * perPage).limit(perPage).populate('files').exec(function(err, packages) {
@@ -56,6 +57,7 @@ exports.index = function(req, res) {
                 // Criteria
                 q: q,
                 criteria: criteria,
+                sortBy: sortBy,
                 sortDirection: sortDirection,
 
                 // Pagination

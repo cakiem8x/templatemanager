@@ -34,15 +34,40 @@ block content
             thead
                 tr
                     th
-                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'name' })}") Name
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'name' })}")
+                            if ('name' == sortBy && 1 == sortDirection)
+                                | &uarr;&nbsp;
+                            else if ('name' == sortBy && -1 == sortDirection)
+                                | &darr;&nbsp;
+                            | Name
                     th
-                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'slug' })}") Slug
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'slug' })}")
+                            if ('slug' == sortBy && 1 == sortDirection)
+                                | &uarr;&nbsp;
+                            else if ('slug' == sortBy && -1 == sortDirection)
+                                | &darr;&nbsp;
+                            | Slug
                     th
-                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'url' })}") URL
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'url' })}")
+                            if ('url' == sortBy && 1 == sortDirection)
+                                | &uarr;&nbsp;
+                            else if ('url' == sortBy && -1 == sortDirection)
+                                | &darr;&nbsp;
+                            | URL
                     th
-                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'year' })}") Publishing year
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'year' })}")
+                            if ('year' == sortBy && 1 == sortDirection)
+                                | &uarr;&nbsp;
+                            else if ('year' == sortBy && -1 == sortDirection)
+                                | &darr;&nbsp;
+                            | Publishing year
                     th
-                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'created_date' })}") Created date
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'created_date' })}")
+                            if ('created_date' == sortBy && 1 == sortDirection)
+                                | &uarr;&nbsp;
+                            else if ('created_date' == sortBy && -1 == sortDirection)
+                                | &darr;&nbsp;
+                            | Created date
                     th # Downloads
                     th Actions
             tbody
