@@ -1,3 +1,10 @@
+/**
+ * Templates/Extensions manager. Powered by MEAN stack
+ *
+ * @link    http://github.com/nghuuphuoc/templatemanager
+ * @author  http://twitter.com/nghuuphuoc
+ */
+
 exports.requireAuthentication = function(req, res, next) {
     if (!req.session || !req.session.user) {
         if (!req.xhr) {

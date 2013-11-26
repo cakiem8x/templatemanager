@@ -1,3 +1,10 @@
+/**
+ * Templates/Extensions manager. Powered by MEAN stack
+ *
+ * @link    http://github.com/nghuuphuoc/templatemanager
+ * @author  http://twitter.com/nghuuphuoc
+ */
+
 angular
     .module('TemplateDemo', [])
     .directive('tplCheckButton', function() {
