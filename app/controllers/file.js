@@ -81,6 +81,36 @@ exports.desc = function(req, res) {
 };
 
 /**
+ * Remove file
+ */
+exports.remove = function(req, res) {
+    var id = req.body.id;
+    File.findOne({ _id: id }).exec(function(err, file) {
+        if (err || !file) {
+            return res.json({
+                success: false
+            });
+        }
+
+        // Remove file
+        var path = file.path;
+        file.remove(function(err) {
+            if (err) {
+                return res.json({
+                    success: false
+                });
+            }
+            if (fs.existsSync(path)) {
+                fs.unlinkSync(path);
+            }
+            res.json({
+                success: true
+            });
+        });
+    });
+};
+
+/**
  * Search for files
  */
 exports.search = function(req, res) {
@@ -202,6 +232,7 @@ exports.upload = function(req, res) {
                                 _id: fileModel._id,
                                 name: fileModel.name,
                                 size: fileModel.size,
+                                uploaded_date: fileModel.uploaded_date,
                                 num_downloads: fileModel.num_downloads
                             }]
                         }));

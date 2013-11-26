@@ -1,12 +1,18 @@
 extends ../layouts/backend
 
 block head
+    link(rel="stylesheet", href="/vendor/fileupload/css/jquery.fileupload-ui.css")
     link(rel="stylesheet", href="/vendor/inlineEditor/css/inlineEditor.min.css")
 
 block content
     div.page-header
         h2
             a(href="/admin/file") Files
+
+            span.pull-right
+                div.btn.btn-default.fileinput-button
+                    span Upload new files
+                    input#uploader(type="file", name="files[]", data-url="/admin/file/upload", multiple)
 
     if total == 0
         p.text-center There is no files
@@ -52,16 +58,41 @@ block content
                             else if ('uploaded_date' == sortBy && -1 == sortDirection)
                                 | &darr;&nbsp;
                             | Uploaded date
+                    th Actions
             tbody#uploadedFiles
+                tr#fileRowTemplate.hide
+                    td
+                        p.fileName
+                        p.text-info.editableDesc Click to edit
+                        div.progress.progress-striped.active(style="margin-top: 10px;")
+                            div.progress-bar.progress-bar-success(style="width: 0%;")
+                    td
+                    td
+                        span.fileNumDownloads 0
+                    td
+                    td
+                        div.btn-group
+                            button.btn.btn-danger.removeButton(type="button", title="Remove")
+                                i.fa.fa-times
+                            button.btn.btn-default.changeButton(type="button", title="Upload")
+                                i.fa.fa-upload
                 for file in files
-                    tr(data-file-id="#{file._id}")
+                    tr(data-file-id="#{file._id}", data-file-name="#{file.name}")
                         td
-                            p #{file.name.length > 60 ? file.name.substr(0, 60) + '...' : file.name}
-                            small.text-info.editableDesc #{file.description || 'Click to edit'}
+                            p.fileName #{file.name.length > 50 ? file.name.substr(0, 50) + '...' : file.name}
+                            p.text-info.editableDesc #{file.description || 'Click to edit'}
+                            div.progress.progress-striped.active.hide(style="margin-top: 10px;")
+                                div.progress-bar.progress-bar-success(style="width: 0%;")
                         td #{filesize(file.size)}
                         td
-                            span(class=file.num_downloads == 0 ? '' : 'badge') #{file.num_downloads}
+                            span.fileNumDownloads(class=file.num_downloads == 0 ? '' : 'badge') #{file.num_downloads}
                         td #{moment(file.uploaded_date).format('YYYY-MM-DD HH:mm:ss')}
+                        td
+                            div.btn-group
+                                button.btn.btn-danger.removeButton(type="button", title="Remove")
+                                    i.fa.fa-times
+                                button.btn.btn-default.changeButton(type="button", title="Upload")
+                                    i.fa.fa-upload
 
         // Pagination
         if (numPages > 1)
@@ -79,10 +110,100 @@ block content
                     li(class=page == numPages ? 'disabled' : '')
                         a(href="#{url(req, { page: numPages })}") &rarr;
 
+    // Remove file confirmation dialog
+    div#removeFileDialog.modal.fade.in
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h4.modal-title Remove file
+                div.modal-body
+                    div Are you sure you want to remove this file?
+                    div.text-danger This action cannot be undone.
+                div.modal-footer
+                    button.btn.btn-danger.yesButton Yes
+                    button.btn.btn-default(data-dismiss="modal") No
+
 block footerScript
+    script(type="text/javascript", src="/vendor/fileupload/js/vendor/jquery.ui.widget.js")
+    script(type="text/javascript", src="/vendor/fileupload/js/jquery.iframe-transport.js")
+    script(type="text/javascript", src="/vendor/fileupload/js/jquery.fileupload.js")
+    script(type="text/javascript", src="/vendor/fileupload/js/jquery.fileupload-process.js")
+    script(type="text/javascript", src="/vendor/filesize/filesize.min.js")
     script(type="text/javascript", src="/vendor/inlineEditor/js/inlineEditor.min.js")
+    script(type="text/javascript", src="/vendor/moment/moment.min.js")
     script(type="text/javascript").
         $(document).ready(function() {
+            $('#uploadedFiles').on('updateProgress', function(fileName, progress) {
+                var $tr = $(this).find('tr[data-file-name="' + fileName + '"]');
+                if ($tr) {
+                    $tr.find('.progress-bar').css('width', progress);
+                    if (progress == '100%') {
+                        $tr.find('.progress').removeClass('progress-striped');
+                    }
+                }
+            });
+
+            // Uploader handler
+            $('#uploader').fileupload({
+                dataType: 'json',
+                autoUpload: true,
+                formData: {},
+                url: '/admin/file/upload',
+                start: function(e, data) {
+                    $('.changeButton').attr('disabled', 'disabled');
+                },
+                done: function(e, data) {
+                    var editingRow = $('#uploader').data('editingRow');
+                    $.each(data.result.files, function(index, file) {
+                        var $tr        = $('#uploadedFiles').find('tr[data-file-name="' + file.name + '"]'),
+                            editingRow = $('#uploader').data('editingRow');
+                        if ($tr) {
+                            $tr.find('input[type="text"]').removeAttr('disabled');
+                            if (!editingRow) {
+                                $tr.attr('data-file-id', file._id);
+                            }
+                        }
+
+                        // For small files, I cannot receive the progress via socket
+                        // because the upload is done before the socket emits event
+                        // In this case, I've to update the progress bar width
+                        $tr
+                            .find('.progress')
+                                .removeClass('progress-striped hide')
+                                .end()
+                            .find('.progress-bar')
+                                .css('width', '100%')
+                                .end()
+                            .find('.fileNumDownloads')
+                                .html(file.num_downloads)
+                                .end()
+                            .find('td')
+                                .eq(3).html(moment(file.uploaded_date).format('YYYY-MM-DD HH:mm:ss'));
+                    });
+
+                    $('#uploader').removeData('editingRow').attr('multiple', 'multiple');
+                    $('.changeButton').removeAttr('disabled');
+                }
+            }).on('fileuploadadd', function(e, data) {
+                $('#uploadedFiles').parent().removeClass('hide');
+
+                var editingRow = $('#uploader').data('editingRow');
+                $.each(data.files, function(index, file) {
+                    var $tr = editingRow ? editingRow : $('#fileRowTemplate').clone().appendTo('#uploadedFiles').removeClass('hide').removeAttr('id');
+                    $tr
+                        .attr('data-file-name', file.name)
+                        .find('td')
+                            .eq(0)
+                                .find('.fileName').html(file.name.length > 50 ? file.name.substr(0, 50) + '...' : file.name).end()
+                                .end()
+                            .eq(1)
+                                .html(filesize(file.size));
+                });
+            }).on('fileuploadprogress', function(e, data) {
+                $('#uploadedFiles').trigger('updateProgress', [data.files[0].name, 100 * data.loaded / data.total + '%']);
+            });
+
             // Update file description handler
             $('#uploadedFiles').on('click', '.editableDesc', function() {
                 var fid = $(this).parents('tr').attr('data-file-id');
@@ -96,5 +217,38 @@ block footerScript
                         }
                     });
                 }
+            });
+
+            // Remove file handler
+            $('#uploadedFiles').on('click', '.removeButton', function() {
+                var $that = $(this), fileId = $that.parents('tr').attr('data-file-id'), removeFileDialog = $('#removeFileDialog');
+                removeFileDialog
+                    // Yes button click handler
+                    .find('.yesButton')
+                        .off('click')
+                        .on('click', function() {
+                            $.post('/admin/file/remove', {
+                                id: fileId
+                            }).success(function(response) {
+                                $that.parents('tr').remove();
+                                removeFileDialog.modal('hide');
+                            });
+                        })
+                        .end()
+                    .modal('show');
+            });
+
+            // Change file handler
+            $('#uploadedFiles').on('click', '.changeButton', function() {
+                var $row = $(this).parents('tr');
+                $('#uploader')
+                        .data('editingRow', $row)
+                        .removeAttr('multiple')
+                        .fileupload({
+                            formData: {
+                                fid: $row.attr('data-file-id')
+                            }
+                        })
+                        .click();
             });
         });

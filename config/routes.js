@@ -53,9 +53,10 @@ module.exports = function(app) {
 
     // File
     app.get('/admin/file', authentication.requireAuthentication, file.index);
-    app.post('/admin/file/upload', authentication.requireAuthentication, file.upload);
     app.post('/admin/file/desc', authentication.requireAuthentication, file.desc);
+    app.post('/admin/file/remove', authentication.requireAuthentication, file.remove);
     app.post('/admin/file/search', authentication.requireAuthentication, file.search);
+    app.post('/admin/file/upload', authentication.requireAuthentication, file.upload);
 
     // --- Account routes ---
     app.all('/account/signin', account.signin);

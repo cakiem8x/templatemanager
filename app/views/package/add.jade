@@ -226,8 +226,8 @@ block content
                     button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
                     h4.modal-title Remove file
                 div.modal-body
-                    div Are you sure you want to remove this file?
-                    div.text-danger This action cannot be undone.
+                    p Are you sure you want to remove the file from package?
+                    div You can add the file to package again if you want
                 div.modal-footer
                     button.btn.btn-danger.yesButton Yes
                     button.btn.btn-default(data-dismiss="modal") No
@@ -358,7 +358,7 @@ block footerScript
                     var editingRow = $('#uploader').data('editingRow');
                     $.each(data.result.files, function(index, file) {
                         var $tr        = $('#uploadedFiles').find('tr[data-file-name="' + file.name + '"]'),
-                            editingRow = $('#uploader').data('editingRow');;
+                            editingRow = $('#uploader').data('editingRow');
                         if ($tr) {
                             $tr.find('input[type="text"]').removeAttr('disabled');
                             if (!editingRow) {
