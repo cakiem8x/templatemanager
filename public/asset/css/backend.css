@@ -46,3 +46,9 @@ footer {
     padding: 20px 0;
     width: 100%;
     height: 100%; }
+
+.tb-download-popover ul {
+  padding: 0; }
+.tb-download-popover .popover {
+  width: 400px;
+  max-width: 400px; }

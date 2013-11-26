@@ -44,8 +44,8 @@ module.exports = function(app, config) {
                 maxAge: new Date(Date.now() + config.session.lifetime)
             },
             store: new mongoStore({
-                url: config.db,
-                collection : 'sessions'
+                url: config.db
+                //collection : 'sessions'
             })
         }));
 

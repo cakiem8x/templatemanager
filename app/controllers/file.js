@@ -1,5 +1,6 @@
 var mongoose   = require('mongoose'),
     File       = mongoose.model('file'),
+    Package    = mongoose.model('package'),
     fs         = require('fs'),
     filesize   = require('filesize'),
     mkdirp     = require('mkdirp'),
@@ -49,6 +50,7 @@ exports.index = function(req, res) {
                 req: req,
                 filesize: filesize,
                 moment: moment,
+                downloadUrl: req.protocol + '://' + req.get('host'),
 
                 // Pagination
                 page: page,
@@ -248,4 +250,23 @@ exports.upload = function(req, res) {
             });
         })
         .parse(req);
+};
+
+/**
+ * Get list of packages using the given file
+ */
+exports.package = function(req, res) {
+    var id = req.body.id;
+    File.findOne({ _id: id }).exec(function(err, file) {
+        if (err || !file) {
+            return res.json({
+                packages: []
+            });
+        }
+        Package.find({ files: id }).select('name slug').exec(function(err, packages) {
+            res.json({
+                packages: (err || !packages || packages.length == 0) ? [] : packages
+            });
+        });
+    });
 };

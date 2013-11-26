@@ -64,8 +64,9 @@ block content
                     td
                         p.fileName
                         p.text-info.editableDesc Click to edit
-                        div.progress.progress-striped.active(style="margin-top: 10px;")
+                        div.progress.progress-striped.active(style="margin: 10px 0;")
                             div.progress-bar.progress-bar-success(style="width: 0%;")
+                        a.btn.btn-success.btn-xs.downloadUrlButton Show download URLs
                     td
                     td
                         span.fileNumDownloads 0
@@ -81,8 +82,9 @@ block content
                         td
                             p.fileName #{file.name.length > 50 ? file.name.substr(0, 50) + '...' : file.name}
                             p.text-info.editableDesc #{file.description || 'Click to edit'}
-                            div.progress.progress-striped.active.hide(style="margin-top: 10px;")
+                            div.progress.progress-striped.active.hide(style="margin: 10px 0;")
                                 div.progress-bar.progress-bar-success(style="width: 0%;")
+                            a.btn.btn-warning.btn-xs.downloadUrlButton Show download URLs
                         td #{filesize(file.size)}
                         td
                             span.fileNumDownloads(class=file.num_downloads == 0 ? '' : 'badge') #{file.num_downloads}
@@ -123,6 +125,17 @@ block content
                 div.modal-footer
                     button.btn.btn-danger.yesButton Yes
                     button.btn.btn-default(data-dismiss="modal") No
+
+    div#downloadUrlDialog.modal.fade.in
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h4.modal-title Copy download URLs
+                div.modal-body
+
+                div.modal-footer
+                    button.btn.btn-default(data-dismiss="modal") Close
 
 block footerScript
     script(type="text/javascript", src="/vendor/fileupload/js/vendor/jquery.ui.widget.js")
@@ -250,5 +263,45 @@ block footerScript
                             }
                         })
                         .click();
+            });
+
+            // Show download URLs
+            $('#uploadedFiles').on('click', '.downloadUrlButton', function() {
+                var $that    = $(this),
+                    fileId   = $that.parents('tr').attr('data-file-id'),
+                    $content = $('#downloadUrlDialog').find('.modal-body');
+
+                $('#downloadUrlDialog').modal('show');
+
+                $content.addClass('text-center').html('').append($('<i/>').addClass('fa fa-spin fa-refresh'));
+                $.post('/admin/file/package', {
+                    id: fileId
+                }).success(function(response) {
+                    $content.find('i').remove();
+                    if (response.packages.length == 0) {
+                        $content.html('There is no packages using this file');
+                    } else {
+                        $content.removeClass('text-center');
+                        var $dl = $('<dl/>').addClass('dl-horizontal').appendTo($content);
+                        $.each(response.packages, function(index, package) {
+                            $('<dt/>').html(package.name).appendTo($dl);
+                            $('<dd/>')
+                                .css('margin-bottom', '10px')
+                                .appendTo($dl)
+                                .append(
+                                    $('<input/>')
+                                        .addClass('form-control')
+                                        .attr('readonly', 'readonly')
+                                        .focus(function() {
+                                            this.select();
+                                        })
+                                        .mouseup(function() {
+                                            return false;
+                                        })
+                                        .val('#{downloadUrl}/account/download/' + package.slug + '/' + fileId)
+                                );
+                        });
+                    }
+                });
             });
         });
