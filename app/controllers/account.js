@@ -253,7 +253,7 @@ exports.package = function(req, res) {
 };
 
 /**
- * Download template
+ * Download file
  */
 exports.download = function(req, res) {
     var slug = req.param('slug'),

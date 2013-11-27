@@ -16,7 +16,8 @@ var mongoose   = require('mongoose'),
         last_modified: { type: Date, default: Date.now },
         uploaded_user: { type: String, default: '' },
         uploaded_date: { type: Date, default: Date.now },
-        last_download: { type: Date, default: Date.now }
+        last_download: { type: Date, default: Date.now },
+        free: { type: Boolean, default: false }
     });
 
 fileSchema.post('remove', function(file) {

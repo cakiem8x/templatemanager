@@ -32,7 +32,7 @@ exports.index = function(req, res) {
     sortCriteria[sortBy] = sortDirection;
 
     File.count(criteria, function(err, total) {
-        File.find(criteria).sort(sortCriteria).skip((page - 1) * perPage).limit(perPage).select('uploaded_date num_downloads size description name').exec(function(err, files) {
+        File.find(criteria).sort(sortCriteria).skip((page - 1) * perPage).limit(perPage).select('uploaded_date free num_downloads size description name').exec(function(err, files) {
             if (err) {
                 files = [];
             }
@@ -81,6 +81,26 @@ exports.desc = function(req, res) {
             });
         }
         file.description = description;
+        file.save(function(err) {
+            return res.json({
+                success: !err
+            });
+        });
+    });
+};
+
+/**
+ * Mark file as free/not free for guests
+ */
+exports.free = function(req, res) {
+    var id = req.body.id;
+    File.findOne({ _id: id }).exec(function(err, file) {
+        if (err || !file) {
+            return res.json({
+                success: false
+            });
+        }
+        file.free = (file.free == null || file.free == false) ? true : false;
         file.save(function(err) {
             return res.json({
                 success: !err
@@ -267,11 +287,17 @@ exports.package = function(req, res) {
     File.findOne({ _id: id }).exec(function(err, file) {
         if (err || !file) {
             return res.json({
+                file: null,
                 packages: []
             });
         }
         Package.find({ files: id }).select('name slug').exec(function(err, packages) {
             res.json({
+                file: {
+                    _id: file._id,
+                    name: file.name,
+                    free: file.free
+                },
                 packages: (err || !packages || packages.length == 0) ? [] : packages
             });
         });

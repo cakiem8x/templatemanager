@@ -9,6 +9,7 @@ var account    = require('../app/controllers/account'),
     auth       = require('../app/controllers/auth'),
     dashboard  = require('../app/controllers/dashboard'),
     file       = require('../app/controllers/file'),
+    guest      = require('../app/controllers/guest'),
     index      = require('../app/controllers/index'),
     membership = require('../app/controllers/membership'),
     package    = require('../app/controllers/package'),
@@ -61,6 +62,7 @@ module.exports = function(app) {
     // File
     app.get('/admin/file', authentication.requireAuthentication, file.index);
     app.post('/admin/file/desc', authentication.requireAuthentication, file.desc);
+    app.post('/admin/file/free', authentication.requireAuthentication, file.free);
     app.post('/admin/file/package', authentication.requireAuthentication, file.package);
     app.post('/admin/file/remove', authentication.requireAuthentication, file.remove);
     app.post('/admin/file/search', authentication.requireAuthentication, file.search);
@@ -75,4 +77,7 @@ module.exports = function(app) {
 
     app.all('/account/package', authentication.requireAccountAuthentication, account.package);
     app.get('/account/download/:slug/:id', authentication.requireAccountAuthentication, account.download);
+
+    // --- Guest routes ---
+    app.get('/download/:id/:name', guest.download);
 };

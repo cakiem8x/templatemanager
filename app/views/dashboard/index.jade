@@ -175,8 +175,8 @@ block footerScript
                                 .replace('{{file.name}}', download.file.name.length > 30 ? download.file.name.substr(0, 30) + '...' : download.file.name)
                                 .replace('{{file.size}}', filesize(download.file.size))
                                 .replace('{{file.num_downloads}}', download.file.num_downloads)
-                                .replace('{{package.slug}}', download.package.slug)
-                                .replace('{{package.name}}', download.package.name)
+                                .replace('{{package.slug}}', download.package ? download.package.slug : '-')
+                                .replace('{{package.name}}', download.package ? download.package.name : '-')
                                 .replace('{{user_name}}', download.user_name)
                                 .replace('{{downloaded_date}}', moment(download.downloaded_date).fromNow())
                         ).appendTo('#recentDownloads');

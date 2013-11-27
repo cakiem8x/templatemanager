@@ -30,7 +30,7 @@ block content
         table.table(style="margin-top: 20px;")
             thead
                 tr
-                    th(style="width: 50%;")
+                    th(style="width: 40%;")
                         a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'name' })}")
                             if ('name' == sortBy && 1 == sortDirection)
                                 | &uarr;&nbsp;
@@ -51,6 +51,7 @@ block content
                             else if ('num_downloads' == sortBy && -1 == sortDirection)
                                 | &darr;&nbsp;
                             | # Downloads
+                    th Free for guests
                     th
                         a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'uploaded_date' })}")
                             if ('uploaded_date' == sortBy && 1 == sortDirection)
@@ -71,6 +72,9 @@ block content
                     td
                         span.fileNumDownloads 0
                     td
+                        button.btn.btn-danger.freeButton(type="button")
+                            i.fa.fa-times
+                    td
                     td
                         div.btn-group
                             button.btn.btn-danger.removeButton(type="button", title="Remove")
@@ -88,6 +92,9 @@ block content
                         td #{filesize(file.size)}
                         td
                             span.fileNumDownloads(class=file.num_downloads == 0 ? '' : 'badge') #{file.num_downloads}
+                        td
+                            button.btn.freeButton(type="button", class=file.free ? 'btn-success' : 'btn-danger')
+                                i.fa(class=file.free ? 'fa-check' : 'fa-times')
                         td #{moment(file.uploaded_date).format('YYYY-MM-DD HH:mm:ss')}
                         td
                             div.btn-group
@@ -129,10 +136,15 @@ block content
     div#downloadUrlDialog.modal.fade.in
         div.modal-dialog
             div.modal-content
-                div.modal-header
-                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
-                    h4.modal-title Copy download URLs
                 div.modal-body
+                    ul.nav.nav-tabs
+                        li.active
+                            a(href="#accountDownloadTab", data-toggle="tab") For Accounts
+                        li
+                            a(href="#guestDownloadTab", data-toggle="tab") For Guests
+                    div.tab-content
+                        div#accountDownloadTab.tab-pane.active
+                        div#guestDownloadTab.tab-pane
 
                 div.modal-footer
                     button.btn.btn-default(data-dismiss="modal") Close
@@ -192,7 +204,7 @@ block footerScript
                                 .html(file.num_downloads)
                                 .end()
                             .find('td')
-                                .eq(3).html(moment(file.uploaded_date).format('YYYY-MM-DD HH:mm:ss'));
+                                .eq(4).html(moment(file.uploaded_date).format('YYYY-MM-DD HH:mm:ss'));
                     });
 
                     $('#uploader').removeData('editingRow').attr('multiple', 'multiple');
@@ -265,11 +277,28 @@ block footerScript
                         .click();
             });
 
+            // Mark file as free for guests
+            $('#uploadedFiles').on('click', '.freeButton', function() {
+                var $that  = $(this),
+                    fileId = $that.parents('tr').attr('data-file-id');
+                $that.attr('disabled', 'disabled');
+                $.post('/admin/file/free', {
+                    id: fileId
+                }).success(function(response) {
+                    $that.removeAttr('disabled');
+                    if (response.success) {
+                        $that
+                            .toggleClass('btn-success').toggleClass('btn-danger')
+                            .find('i').toggleClass('fa-check').toggleClass('fa-times');
+                    }
+                });
+            });
+
             // Show download URLs
             $('#uploadedFiles').on('click', '.downloadUrlButton', function() {
                 var $that    = $(this),
                     fileId   = $that.parents('tr').attr('data-file-id'),
-                    $content = $('#downloadUrlDialog').find('.modal-body');
+                    $content = $('#accountDownloadTab');
 
                 $('#downloadUrlDialog').modal('show');
 
@@ -293,14 +322,31 @@ block footerScript
                                         .addClass('form-control')
                                         .attr('readonly', 'readonly')
                                         .focus(function() {
-                                            this.select();
+                                            $(this).select();
                                         })
                                         .mouseup(function() {
                                             return false;
                                         })
-                                        .val('#{downloadUrl}/account/download/' + package.slug + '/' + fileId)
+                                        .val('#{downloadUrl}/account/download/' + package.slug + '/' + response.file._id)
                                 );
                         });
+                    }
+
+                    var $guestDownloadTab = $('#guestDownloadTab').html('');
+                    if (!response.file || !response.file.free) {
+                        $guestDownloadTab.addClass('text-center').html('The file is not free download for guests');
+                    } else {
+                        $('<input/>')
+                            .appendTo($guestDownloadTab)
+                            .addClass('form-control')
+                            .attr('readonly', 'readonly')
+                            .focus(function() {
+                                $(this).select();
+                            })
+                            .mouseup(function() {
+                                return false;
+                            })
+                            .val('#{downloadUrl}/download/' + response.file._id + '/' + response.file.name)
                     }
                 });
             });
