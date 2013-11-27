@@ -119,7 +119,8 @@ exports.signin = function(req, res) {
                 success: req.flash('success')
             },
             title: 'Sign in',
-            registerUrl: config.provider.registerUrl
+            registerUrl: config.provider.registerUrl,
+            frontEndUrl: config.url.frontEnd || req.protocol + '://' + req.get('host')
         });
     }
 };
@@ -140,11 +141,14 @@ exports.signout = function(req, res) {
  * Dashboard
  */
 exports.dashboard = function(req, res) {
+    var config = req.app.get('config');
+
     res.render('account/dashboard', {
         title: 'Dashboard',
         subscriptions: req.session.subscriptions,
         moment: moment,
-        demoUrl: req.protocol + '://' + req.get('host')
+        frontEndUrl: config.url.frontEnd || req.protocol + '://' + req.get('host'),
+        downloadUrl: config.url.download || req.protocol + '://' + req.get('host')
     });
 };
 
@@ -166,7 +170,7 @@ exports.recentDownloads = function(req, res) {
         })
         .populate({
             path: 'package',
-            select: 'year free description name slug demo_url'
+            select: 'year free description name slug demo_url type'
         })
         .exec(function(err, downloads) {
             res.json(downloads);
@@ -233,6 +237,7 @@ exports.package = function(req, res) {
                 packages: packages,
                 thumbPrefixUrl: config.thumbs.url,
                 purchaseUrl: config.provider.registerUrl,
+                downloadUrl: config.url.download || req.protocol + '://' + req.get('host'),
                 membershipIds: membershipIds,
 
                 // Criteria

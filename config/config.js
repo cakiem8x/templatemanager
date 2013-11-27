@@ -12,8 +12,9 @@ module.exports = {
     development: {
         root: rootPath,
         session: {
+            domain: '.templatemanager.dev',
             secret: 'XrQ2Vsw2tESughz71l1B80NwqxA7z499',
-            lifetime: 3600 * 1000 * 1       // 1 hour
+            lifetime: 3600 * 1000 * 1           // 1 hour
         },
         db: 'mongodb://localhost/templatemanager_dev',
         upload: {
@@ -38,6 +39,10 @@ module.exports = {
             logo: '/asset/img/logo.png',
             url: 'http://www.zootemplate.com',
             registerUrl: 'http://www.zootemplate.com/member/signup.php'
+        },
+        url: {
+            frontEnd: 'http://templatemanager.dev',
+            download: 'http://download.templatemanager.dev'
         }
     },
     test: {

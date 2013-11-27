@@ -66,7 +66,7 @@ block content
                                     ul.dropdown-menu
                                         for file in package.files
                                             li.text-left
-                                                a(href="/account/download/#{package.slug}/#{file._id}") #{file.name} (#{filesize(file.size)})
+                                                a(href="#{downloadUrl}/account/download/#{package.slug}/#{file._id}") #{file.name} (#{filesize(file.size)})
                             else
                                 a.btn.btn-danger(href="#{purchaseUrl}") Purchase
 

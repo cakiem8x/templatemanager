@@ -48,11 +48,13 @@ module.exports = function(app, config) {
         app.use(express.session({
             secret: config.session.secret,
             cookie: {
-                maxAge: new Date(Date.now() + config.session.lifetime)
+                domain: config.session.domain,
+                // maxAge: new Date(Date.now() + config.session.lifetime)
+                maxAge: config.session.lifetime
             },
             store: new mongoStore({
-                url: config.db
-                //collection : 'sessions'
+                url: config.db,
+                collection : 'session'
             })
         }));
 

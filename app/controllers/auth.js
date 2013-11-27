@@ -45,12 +45,14 @@ exports.signin = function(req, res) {
             return res.redirect('/admin');
         });
     } else {
+        var config = req.app.get('config');
         res.render('auth/signin', {
             messages: {
                 warning: req.flash('error'),
                 success: req.flash('success')
             },
-            title: 'Sign in'
+            title: 'Sign in',
+            frontEndUrl: config.url.frontEnd || req.protocol + '://' + req.get('host')
         });
     }
 };

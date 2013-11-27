@@ -19,7 +19,8 @@ var mongoose   = require('mongoose'),
  * Files management
  */
 exports.index = function(req, res) {
-    var perPage   = 10,
+    var config    = req.app.get('config'),
+        perPage   = 10,
         pageRange = 5,
         page      = req.param('page') || 1,
         q         = req.param('q') || '',
@@ -57,7 +58,7 @@ exports.index = function(req, res) {
                 req: req,
                 filesize: filesize,
                 moment: moment,
-                downloadUrl: req.protocol + '://' + req.get('host'),
+                downloadUrl: config.url.download || req.protocol + '://' + req.get('host'),
 
                 // Pagination
                 page: page,
