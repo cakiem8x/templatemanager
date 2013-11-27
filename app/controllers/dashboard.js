@@ -11,9 +11,10 @@ var mongoose = require('mongoose'),
     moment   = require('moment');
 
 exports.index = function(req, res) {
+    var config = req.app.get('config');
     res.render('dashboard/index', {
         title: 'Dashboard',
-        demoUrl: req.protocol + '://' + req.get('host')
+        frontEndUrl: config.url.frontEnd || req.protocol + '://' + req.get('host')
     });
 };
 
@@ -33,7 +34,7 @@ exports.download = function(req, res) {
         })
         .populate({
             path: 'package',
-            select: 'year free description name slug demo_url'
+            select: 'year free description name slug demo_url type'
         })
         .exec(function(err, downloads) {
             res.json(downloads);

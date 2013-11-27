@@ -24,7 +24,7 @@ block content
                                 div {{file.name}}
                                 small {{file.size}}
                             td
-                                a(href="#{demoUrl}#{{package.slug}}") {{package.name}}
+                                a {{package.name}}
                             td {{file.num_downloads}}
                             td
                                 div {{user_name}}
@@ -179,7 +179,9 @@ block footerScript
                                 .replace('{{package.name}}', download.package ? download.package.name : '-')
                                 .replace('{{user_name}}', download.user_name)
                                 .replace('{{downloaded_date}}', moment(download.downloaded_date).fromNow())
-                        ).appendTo('#recentDownloads');
+                        ).appendTo('#recentDownloads')
+                        .find('td').eq(1)
+                            .find('a').attr('href', !download.package ? '#' : ('template' == download.package.type ? '#{frontEndUrl}#' + download.package.slug : (download.package.demo_url || '#')))
                     });
                 });
             }).click();
