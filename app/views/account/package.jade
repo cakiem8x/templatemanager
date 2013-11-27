@@ -32,7 +32,10 @@ block content
                 div.row
             div.col-lg-4
                 div.tb-tmpl-item
-                    img(src="#{thumbPrefixUrl}#{package.thumbs.medium}")
+                    if (package.thumbs && package.thumbs.medium)
+                        img(src="#{thumbPrefixUrl}#{package.thumbs.medium}")
+                    else
+                        img(src="/asset/img/noimage.png")
 
                     h3
                         | #{package.name}
