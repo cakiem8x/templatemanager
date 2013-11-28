@@ -7,8 +7,11 @@ block content
     div.row
         if (!subscriptions.length)
             div.col-lg-6.col-lg-offset-3
-                div.alert.alert-warning
-                    | You haven't made any subscription or all your subscriptions are expired
+                div.alert.alert-warning.text-center
+                    | You haven't made any subscriptions or all your subscriptions are expired.
+                    | Please&nbsp;
+                    a(href="#{purchaseUrl}") upgrade your subscription
+                    | &nbsp;to download all templates and extensions.
         else
             div.col-lg-6
                 div.panel.panel-default

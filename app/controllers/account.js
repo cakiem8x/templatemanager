@@ -147,6 +147,7 @@ exports.dashboard = function(req, res) {
         title: 'Dashboard',
         subscriptions: req.session.subscriptions,
         moment: moment,
+        purchaseUrl: config.provider.registerUrl,
         frontEndUrl: config.url.frontEnd || req.protocol + '://' + req.get('host'),
         downloadUrl: config.url.download || req.protocol + '://' + req.get('host')
     });
