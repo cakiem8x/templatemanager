@@ -18,7 +18,10 @@ html(ng-app="TemplateDemo")
             script(src="/vendor/html5shiv/html5shiv.min.js")
             script(src="/vendor/respond/respond.min.js")
     body.tpl-body(ng-controller="DemoController")
-        div.navbar.navbar-default.navbar-fixed-top
+        div.tpl-toggle(tpl-toggle, target="#topNavBar")
+            a(href="javascript: void(0);")
+                i.fa.fa-bars.fa-2x
+        div#topNavBar.navbar.navbar-default.navbar-fixed-top
             div.container
                 div.navbar-header
                     button.navbar-toggle(type="button", data-toggle="collapse", data-target="#navbarCollapse")

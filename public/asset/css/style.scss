@@ -7,8 +7,9 @@
 
 // Variables
 $footerHeight: 80px;
-$navbarHeight: 59px;
-$bodyBackgroundColor: #2c3e50;
+$navbarHeight: 60px;
+$bodyBackgroundColor: #27ae60;
+$toggleBackgroundColor: #2c3e53;
 
 .tpl-body {
   background: $bodyBackgroundColor;
@@ -22,6 +23,11 @@ $bodyBackgroundColor: #2c3e50;
   .nav>li {
     /*border-left: 1px solid #e5e5e5;*/
     height: 100%;
+  }
+
+  // Override Bootstrap theme
+  .navbar-fixed-top {
+    border-bottom: none;
   }
 }
 
@@ -50,7 +56,7 @@ footer {
   }
 }
 .tpl-top-nav {
-  height: #{$navbarHeight - 1};
+  height: #{$navbarHeight};
   position: relative;
   /*.navbar-right {
     .btn-danger {
@@ -69,12 +75,23 @@ footer {
     }
   }
 }
-
 .main-content {
   margin: 15px 0;
 }
 .tpl-tab {
   z-index: 1000;
+}
+.tpl-toggle {
+  background: $toggleBackgroundColor;
+  width: 60px;
+  height: #{$navbarHeight};
+  padding: 15px 19px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  a {
+    color: #fff;
+  }
 }
 .tpl-items {
   background: #fff;
@@ -123,7 +140,7 @@ footer {
 }
 .tpl-frame-container {
   position: fixed;
-  top: #{$navbarHeight - 1};
+  top: #{$navbarHeight};
   left: 0;
   width: 100%;
   height: 100%;
@@ -206,7 +223,7 @@ footer {
     padding-right: 5px;
     font-size: 13px;
   }
-  .head-container {
+  .tpl-top-nav {
     .navbar-right {
       .btn-danger {
         padding: 10px 5px;

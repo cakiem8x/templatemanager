@@ -7,6 +7,23 @@
 
 angular
     .module('TemplateDemo', [])
+    .directive('tplToggle', function() {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                var el     = angular.element(element),
+                    target = angular.element(attrs['target']),
+                    zIndex = parseInt(target.css('z-index'));
+                if (zIndex) {
+                    el.css('z-index', zIndex + 1);
+                }
+                el.find('a').on('click', function() {
+                    target.toggle();
+                    scope.$broadcast('toggle', target.css('display') == 'none');
+                });
+            }
+        };
+    })
     .directive('tplCheckButton', function() {
         return {
             restrict: 'A',
@@ -109,13 +126,18 @@ angular
                         scope.deviceWidth  = null;
                         scope.deviceHeight = null;
                     }
-
                     el.css({
                         width: w,
                         height: h,
                         marginTop: t,
                         marginLeft: l
                     });
+                });
+
+                scope.$on('toggle', function(e, toggled) {
+                    if (scope.deviceWidth == null && scope.deviceHeight == null) {
+                        el.css('top', toggled ? 0 : paddingTop);
+                    }
                 });
 
                 angular.element($window).on('resize', function() {
