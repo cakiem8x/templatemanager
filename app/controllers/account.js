@@ -209,9 +209,9 @@ exports.package = function(req, res) {
                 membershipIds.push(subscriptions[i]._id);
             }
         }
-        if (membershipIds.length) {
-            switch (isDownloadable) {
-                case 'true':
+        switch (isDownloadable) {
+            case 'true':
+                if (membershipIds.length) {
                     criteria['$or'] = [
                         {
                             memberships: {
@@ -222,19 +222,23 @@ exports.package = function(req, res) {
                             free: true
                         }
                     ];
-                    break;
+                } else {
+                    criteria.free = true;
+                }
+                break;
 
-                case 'false':
-                    criteria.free = false;
+            case 'false':
+                if (membershipIds.length) {
                     criteria.memberships = {
                         '$nin': membershipIds
                     };
-                    break;
+                }
+                criteria.free = false;
+                break;
 
-                case null:
-                default:
-                    break;
-            }
+            case null:
+            default:
+                break;
         }
     }
 
