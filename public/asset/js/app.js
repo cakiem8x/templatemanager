@@ -93,8 +93,8 @@ angular
         $scope.currentTemplate = null;
         $scope.frameUrl        = null;
 
-        $scope.w = $(document).width();
-        $scope.h = $(document).height();
+        $scope.w = '100%';  // $(document).width();
+        $scope.h = '100%';  // $(document).height();
         $scope.t = 0;
         $scope.l = 0;
 
@@ -160,7 +160,6 @@ angular
             }
 
             var screenWidth = $(document).width(), screenHeight = $(document).height();
-
             if (width && height) {
                 // 15px is the width of scroll bar
                 $scope.w = width + 15;

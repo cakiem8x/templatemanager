@@ -12,6 +12,7 @@ html(ng-app="TemplateDemo")
         link(rel="stylesheet", href="/vendor/bootstrap-theme/css/flatly.css")
         link(rel="stylesheet", href="/vendor/font-awesome/css/font-awesome.min.css")
         link(rel="stylesheet", href="/asset/css/style.css")
+        link(rel="stylesheet", href="/asset/css/not-responsive.css")
 
         //if lt IE 9
             script(src="/vendor/html5shiv/html5shiv.min.js")
@@ -30,15 +31,15 @@ html(ng-app="TemplateDemo")
                         else
                             #{provider.name}
 
-                div#navbarCollapse.nav-collapse
+                div#navbarCollapse.nav-collapse.tpl-top-nav
                     ul.nav.navbar-nav
                         li
-                            a#templateButton(href="#", ng-click="activateTab('templates')")
+                            a#templateButton(href="javascript: void(0);", ng-click="activateTab('templates')")
                                 i.fa.fa-heart
                                 | &nbsp;Templates&nbsp;&nbsp;
                                 span.badge {{ total }}
                         li
-                            a#filterButton(href="#", ng-click="activateTab('filter')")
+                            a#filterButton(href="javascript: void(0);", ng-click="activateTab('filter')")
                                 i.fa.fa-flask
                                 | &nbsp;Filter
 
@@ -55,23 +56,23 @@ html(ng-app="TemplateDemo")
                                 li(ng-repeat="theme in currentTemplate.themes", style="background: {{ theme.color }}")
                                     a(href="#{{ currentTemplate.slug }}", ng-click="showTemplate(currentTemplate, theme)") {{ theme.name }}
 
-                        li(ng-class="{ 'disabled': !currentTemplate }")
-                            a(href="#", ng-click="resizeTo(320, 480)")
+                        li.visible-sm.visible-md.visible-lg(ng-class="{ 'disabled': !currentTemplate }")
+                            a(href="javascript: void(0);", ng-click="resizeTo(320, 480)")
                                 i.fa.fa-mobile.fa-2x
-                        li(ng-class="{ 'disabled': !currentTemplate }")
-                            a(href="#", ng-click="resizeTo(480, 320)")
+                        li.visible-sm.visible-md.visible-lg(ng-class="{ 'disabled': !currentTemplate }")
+                            a(href="javascript: void(0);", ng-click="resizeTo(480, 320)")
                                 i.fa.fa-mobile.fa-2x.fa-rotate-90
-                        li(ng-class="{ 'disabled': !currentTemplate }")
-                            a(href="#", ng-click="resizeTo(768, 1024)")
+                        li.visible-sm.visible-md.visible-lg(ng-class="{ 'disabled': !currentTemplate }")
+                            a(href="javascript: void(0);", ng-click="resizeTo(768, 1024)")
                                 i.fa.fa-tablet.fa-2x
-                        li(ng-class="{ 'disabled': !currentTemplate }")
-                            a(href="#", ng-click="resizeTo(1024, 768)")
+                        li.visible-sm.visible-md.visible-lg(ng-class="{ 'disabled': !currentTemplate }")
+                            a(href="javascript: void(0);", ng-click="resizeTo(1024, 768)")
                                 i.fa.fa-tablet.fa-2x.fa-rotate-90
-                        li(ng-class="{ 'disabled': !currentTemplate }")
-                            a(href="#", ng-click="resizeTo(1440, 900)")
+                        li.visible-md.visible-lg(ng-class="{ 'disabled': !currentTemplate }")
+                            a(href="javascript: void(0);", ng-click="resizeTo(1440, 900)")
                                 i.fa.fa-laptop.fa-2x
-                        li(ng-class="{ 'disabled': !currentTemplate }")
-                            a(href="#", ng-click="resizeTo()")
+                        li.visible-lg(ng-class="{ 'disabled': !currentTemplate }")
+                            a(href="javascript: void(0);", ng-click="resizeTo()")
                                 i.fa.fa-desktop.fa-2x
 
         // Templates
@@ -79,7 +80,7 @@ html(ng-app="TemplateDemo")
             div.tpl-items
                 p.text-center(ng-class="{ 'show': total == 0, 'hide': total > 0 }") Not found templates
                 ul.tpl-item-list(ng-class="{ 'show': total > 0, 'hide': total == 0 }")
-                    li.col-lg-4(ng-repeat="template in templates")
+                    li.col-lg-4.col-md-4.col-sm-4.col-xs-6(ng-repeat="template in templates")
                         div.text-center(style="margin-bottom: 10px;")
                             div.hide(ng-class="{ 'show': template.themes == null || template.themes.length == 0 }")
                                 a.btn.btn-default(href="#{{ template.slug }}", ng-click="showTemplate(template)") {{ template.name }}
@@ -104,17 +105,17 @@ html(ng-app="TemplateDemo")
                 div.text-center(ng-show="pagination.numPages > 1")
                     ul.pagination
                         li(ng-class="{ 'disabled': pagination.page == 1 }")
-                            a(href="#", ng-click="goPage(1)", tpl-pagination) &larr;
+                            a(href="javascript: void(0);", ng-click="goPage(1)", tpl-pagination) &larr;
                         li(ng-class="{ 'disabled': pagination.page == 1 }")
-                            a(href="#", ng-click="goPage(pagination.page - 1)", tpl-pagination) &laquo;
+                            a(href="javascript: void(0);", ng-click="goPage(pagination.page - 1)", tpl-pagination) &laquo;
 
                         li(ng-repeat="i in pagination.range", ng-class="{ 'active': i == pagination.page }", data-page="{{ i }}")
-                            a(href="#", ng-click="goPage(i)", tpl-pagination) {{ i }}
+                            a(href="javascript: void(0);", ng-click="goPage(i)", tpl-pagination) {{ i }}
 
                         li(ng-class="{ 'disabled': pagination.page == pagination.numPages }")
-                            a(href="#", ng-click="goPage(pagination.page + 1)", tpl-pagination) &raquo;
+                            a(href="javascript: void(0);", ng-click="goPage(pagination.page + 1)", tpl-pagination) &raquo;
                         li(ng-class="{ 'disabled': pagination.page == pagination.numPages }")
-                            a(href="#", ng-click="goPage(pagination.numPages)", tpl-pagination) &rarr;
+                            a(href="javascript: void(0);", ng-click="goPage(pagination.numPages)", tpl-pagination) &rarr;
 
                 div.clearfix
 
@@ -124,8 +125,8 @@ html(ng-app="TemplateDemo")
                 div.row
                     form.form-horizontal
                         div.form-group
-                            label.col-lg-3.control-label Year
-                            div.col-lg-9
+                            label.col-lg-3.col-md-3.col-sm-3.col-xs-3.control-label Year
+                            div.col-lg-9.col-md-9.col-sm-9.col-xs-9
                                 div.btn-group
                                     button.btn.btn-default.active(type="button", value="", tpl-check-button="year") All
                                     for year in years
@@ -133,8 +134,8 @@ html(ng-app="TemplateDemo")
 
                         if tags.length > 0
                             div.form-group
-                                label.col-lg-3.control-label Tag
-                                div.col-lg-9
+                                label.col-lg-3.col-md-3.col-sm-3.col-xs-3.control-label Tag
+                                div.col-lg-9.col-md-9.col-sm-9.col-xs-9
                                     ul.list-unstyled.list-inline.tpl-tag-list
                                         li
                                             a.badge(href="#", tpl-tag="") All
@@ -143,16 +144,16 @@ html(ng-app="TemplateDemo")
                                                 a(href="#", tpl-tag="#{tag}") #{tag}
 
                         div.form-group
-                            label.col-lg-3.control-label Responsive
-                            div.col-lg-9
+                            label.col-lg-3.col-md-3.col-sm-3.col-xs-3.control-label Responsive
+                            div.col-lg-9.col-md-9.col-sm-9.col-xs-9
                                 div.btn-group
                                     button.btn.btn-default.active(type="button", value="", tpl-check-button="responsive") All
                                     button.btn.btn-default(type="button", value="true", tpl-check-button="responsive") Yes
                                     button.btn.btn-default(type="button", value="false", tpl-check-button="responsive") No
 
                         div.form-group
-                            label.col-lg-3.control-label High Resolution
-                            div.col-lg-9
+                            label.col-lg-3.col-md-3.col-sm-3.col-xs-3.control-label High Resolution
+                            div.col-lg-9.col-md-9.col-sm-9.col-xs-9
                                 div.btn-group
                                     button.btn.btn-default.active(type="button", value="", tpl-check-button="high_resolution") All
                                     button.btn.btn-default(type="button", value="yes", tpl-check-button="high_resolution") Yes
@@ -161,7 +162,7 @@ html(ng-app="TemplateDemo")
                         hr
 
                         div.form-group
-                            div.col-lg-9.col-lg-offset-3
+                            div.col-lg-9.col-lg-offset-3.col-md-9.col-md-offset-3.col-sm-9.col-sm-offset-3.col-xs-9.col-xs-offset-3
                                 button.btn.btn-primary(type="button", style="margin-right: 20px;", ng-click="filter()") Filter
 
         // Frame showing template demo URL
