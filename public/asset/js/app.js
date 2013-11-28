@@ -33,8 +33,11 @@ angular
             link: function(scope, element, attrs) {
                 var el = angular.element(element);
                 el.on('click', function() {
-                    el.parents('ul').find('.badge').removeClass('badge');
-                    el.addClass('badge');
+                    el
+                        .parents('ul')
+                            .find('.badge').removeClass('badge').end()
+                            .end()
+                        .addClass('badge');
 
                     scope.filterCriteria.tag = attrs['tplTag'];
                 });
@@ -52,13 +55,15 @@ angular
             }
         };
     })
-    .directive('tplFrameLoading', function() {
+    .directive('tplFrameLoading', function($compile) {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
                 var el          = angular.element(element),
-                    loader      = el.parent().find('.tpl-loader'),
+                    loader      = angular.element('<div/>').addClass('tpl-loader hide').html('<i class="fa fa-refresh fa-spin fa-inverse fa-3x"></i>').prependTo(el.parent()),
                     srcProperty = attrs['track'];
+                $compile(loader)(scope);
+
                 el.on('load', function() {
                     loader.removeClass('show').addClass('hide');
                 });
@@ -67,6 +72,74 @@ angular
                 scope.$watch(srcProperty, function() {
                     if (scope[srcProperty]) {
                         loader.removeClass('hide').addClass('show');
+                    }
+                });
+            }
+        };
+    })
+    .directive('tplFrameResponsive', function($window) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                var el         = angular.element(element),
+                    paddingTop = el.offset().top;
+
+                scope.deviceWidth  = null;
+                scope.deviceHeight = null;
+
+                scope.$on('resizeTo', function(e, width, height) {
+                    var screenWidth  = $(document).width(),
+                        screenHeight = $(document).height() - paddingTop,
+                        w, h, t, l;
+                    if (width && height) {
+                        // 15px is the width of scroll bar
+                        w = width + 15;
+                        h = height;
+                        t = (height >= screenHeight) ? 0 : (screenHeight - height) / 2;
+                        l = (width  >= screenWidth)  ? 0 : (screenWidth  - width)  / 2;
+
+                        scope.deviceWidth  = w;
+                        scope.deviceHeight = h;
+                    } else {
+                        w = '100%';
+                        h = '100%';
+                        t = 0;
+                        l = 0;
+
+                        scope.deviceWidth  = null;
+                        scope.deviceHeight = null;
+                    }
+
+                    el.css({
+                        width: w,
+                        height: h,
+                        marginTop: t,
+                        marginLeft: l
+                    });
+                });
+
+                angular.element($window).on('resize', function() {
+                    var screenWidth  = $(document).width(),
+                        screenHeight = $(document).height() - paddingTop,
+                        w, h, t, l;
+                    if (scope.deviceWidth && scope.deviceHeight) {
+                        if (scope.deviceWidth < screenWidth) {
+                            w = scope.deviceWidth;
+                            h = scope.deviceHeight;
+                            t = (scope.deviceHeight >= screenHeight) ? 0 : (screenHeight - scope.deviceHeight) / 2;
+                            l = (screenWidth - scope.deviceWidth) / 2;
+                        } else {
+                            w = screenWidth;
+                            h = screenHeight;
+                            t = 0;
+                            l = 0;
+                        }
+                        el.css({
+                            width: w,
+                            height: h,
+                            marginTop: t,
+                            marginLeft: l
+                        });
                     }
                 });
             }
@@ -92,11 +165,6 @@ angular
         $scope.templates       = [];
         $scope.currentTemplate = null;
         $scope.frameUrl        = null;
-
-        $scope.w = '100%';  // $(document).width();
-        $scope.h = '100%';  // $(document).height();
-        $scope.t = 0;
-        $scope.l = 0;
 
         // Pagination
         $scope.pagination = {
@@ -158,20 +226,7 @@ angular
             if ($scope.currentTemplate == null) {
                 return;
             }
-
-            var screenWidth = $(document).width(), screenHeight = $(document).height();
-            if (width && height) {
-                // 15px is the width of scroll bar
-                $scope.w = width + 15;
-                $scope.h = height;
-                $scope.t = (height >= screenHeight) ? 0 : (screenHeight - height) / 2;
-                $scope.l = (width  >= screenWidth)  ? 0 : (screenWidth  - width)  / 2;
-            } else {
-                $scope.w = screenWidth;
-                $scope.h = screenHeight;
-                $scope.t = 0;
-                $scope.l = 0;
-            }
+            $scope.$broadcast('resizeTo', width, height);
         };
 
         $scope.init = function() {
