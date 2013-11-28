@@ -181,17 +181,18 @@ exports.recentDownloads = function(req, res) {
  * List packages
  */
 exports.package = function(req, res) {
-    var app       = req.app,
-        config    = app.get('config'),
+    var app    = req.app,
+        config = app.get('config'),
 
         // Criteria
-        perPage   = 9,
-        pageRange = 5,
-        page      = req.param('page') || 1,
-        q         = req.param('q') || '',
-        type      = req.param('type'),
-        year      = req.param('year'),
-        criteria  = q ? { name: new RegExp(q, 'i') } : {};
+        perPage        = 9,
+        pageRange      = 5,
+        page           = req.param('page') || 1,
+        q              = req.param('q') || '',
+        type           = req.param('type'),
+        year           = req.param('year'),
+        isDownloadable = req.param('downloadable'),
+        criteria       = q ? { name: new RegExp(q, 'i') } : {};
 
     if (type) {
         criteria.type = type;
@@ -208,11 +209,33 @@ exports.package = function(req, res) {
                 membershipIds.push(subscriptions[i]._id);
             }
         }
-//        if (membershipIds.length) {
-//            criteria.memberships = {
-//                '$in': membershipIds
-//            };
-//        }
+        if (membershipIds.length) {
+            switch (isDownloadable) {
+                case 'true':
+                    criteria['$or'] = [
+                        {
+                            memberships: {
+                                '$in': membershipIds
+                            }
+                        },
+                        {
+                            free: true
+                        }
+                    ];
+                    break;
+
+                case 'false':
+                    criteria.free = false;
+                    criteria.memberships = {
+                        '$nin': membershipIds
+                    };
+                    break;
+
+                case null:
+                default:
+                    break;
+            }
+        }
     }
 
     Package.count(criteria, function(err, total) {
@@ -243,6 +266,7 @@ exports.package = function(req, res) {
                 // Criteria
                 q: q,
                 criteria: criteria,
+                isDownloadable: isDownloadable,
 
                 // Pagination
                 page: page,

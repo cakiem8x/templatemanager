@@ -5,13 +5,13 @@
  * @author  http://twitter.com/nghuuphuoc
  */
 
-module.exports = function(template, membershipIds) {
-    if (template.free) {
+module.exports = function(package, membershipIds) {
+    if (package.free) {
         return true;
     }
 
     for (var i in membershipIds) {
-        if (template.memberships && template.memberships.indexOf(membershipIds[i]) != -1) {
+        if (package.memberships && package.memberships.indexOf(membershipIds[i]) != -1) {
             return true;
         }
     }

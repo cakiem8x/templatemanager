@@ -11,8 +11,15 @@ block content
 
             | &nbsp;
             small.btn-group
+                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, ['type'])}", class=criteria.type == null ? 'active' : '') All
                 a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'template' })}", class=criteria.type == 'template' ? 'active' : '') Templates
                 a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'extension' })}", class=criteria.type == 'extension' ? 'active' : '') Extensions
+
+            | &nbsp;
+            small.btn-group
+                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, ['downloadable'])}", class=isDownloadable == null ? 'active' : '') All
+                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, downloadable: 'true' })}", class=isDownloadable == 'true' ? 'active' : '') Downloadable
+                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, downloadable: 'false' })}", class=isDownloadable == 'false' ? 'active' : '') Purchase
 
     if total == 0
         p.text-center There is no packages
