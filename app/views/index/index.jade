@@ -98,7 +98,8 @@ html(ng-app="TemplateDemo")
                                             a(href="#{{ template.slug }}", ng-click="showTemplate(template, theme)") {{ theme.name }}
 
                         p
-                            img(ng-src="#{thumbPrefixUrl}{{ template.thumbs.medium }}")
+                            a(href="#{{ template.slug }}", ng-click="showTemplate(template)")
+                                img(ng-src="#{thumbPrefixUrl}{{ template.thumbs.medium }}")
 
                     li.clearfix
 
