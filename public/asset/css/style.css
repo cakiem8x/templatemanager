@@ -71,6 +71,10 @@ footer {
   .tpl-filter hr {
     margin-left: 15px;
     margin-right: 15px; }
+  .tpl-filter .tpl-tag-list {
+    max-height: 200px;
+    margin-right: 20px;
+    overflow: scroll; }
 
 .tpl-frame-container {
   position: fixed;
