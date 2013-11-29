@@ -40,10 +40,7 @@ block content
             div.col-lg-4
                 div.tb-tmpl-item
                     a(href="/account/package/#{package.slug}")
-                        if (package.thumbs && package.thumbs.medium)
-                            img(src="#{thumbPrefixUrl}#{package.thumbs.medium}")
-                        else
-                            img(src="/asset/img/noimage.png")
+                        img.img-responsive.img-thumbnail(src=(package.thumbs && package.thumbs.medium) ? '#{thumbPrefixUrl}' + package.thumbs.medium : '/asset/img/noimage.png')
 
                     h3
                         a(href="/account/package/#{package.slug}") #{package.name}
