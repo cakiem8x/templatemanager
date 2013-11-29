@@ -287,6 +287,45 @@ exports.package = function(req, res) {
 };
 
 /**
+ * View package details
+ */
+exports.view = function(req, res) {
+    var app           = req.app,
+        config        = app.get('config'),
+        slug          = req.param('slug'),
+        downloadable  = require('../helpers/downloadable'),
+        membershipIds = [];
+
+    // Get account subscriptions
+    if (req.session.subscriptions) {
+        var subscriptions = req.session.subscriptions;
+        for (var i in subscriptions) {
+            if (!moment(subscriptions[i].expiration, 'YYYY-MM-DD').isBefore()) {
+                membershipIds.push(subscriptions[i]._id);
+            }
+        }
+    }
+
+    Package.findOne({ slug: slug }).populate('files').exec(function(err, package) {
+        if (err || !package) {
+            return res.send('Package not found', 404);
+        }
+
+        res.render('account/view', {
+            title: package.name,
+            package: package,
+            downloadUrl: config.url.download || req.protocol + '://' + req.get('host'),
+            frontEndUrl: config.url.frontEnd || req.protocol + '://' + req.get('host'),
+            purchaseUrl: config.provider.registerUrl,
+            thumbPrefixUrl: config.thumbs.url,
+            isDownloadable: downloadable(package, membershipIds),
+
+            filesize: filesize
+        });
+    });
+};
+
+/**
  * Download file
  */
 exports.download = function(req, res) {

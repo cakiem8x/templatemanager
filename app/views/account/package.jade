@@ -39,13 +39,14 @@ block content
                 div.row
             div.col-lg-4
                 div.tb-tmpl-item
-                    if (package.thumbs && package.thumbs.medium)
-                        img(src="#{thumbPrefixUrl}#{package.thumbs.medium}")
-                    else
-                        img(src="/asset/img/noimage.png")
+                    a(href="/account/package/#{package.slug}")
+                        if (package.thumbs && package.thumbs.medium)
+                            img(src="#{thumbPrefixUrl}#{package.thumbs.medium}")
+                        else
+                            img(src="/asset/img/noimage.png")
 
                     h3
-                        | #{package.name}
+                        a(href="/account/package/#{package.slug}") #{package.name}
                         small &nbsp;/&nbsp;
                         small
                             a(href="#{url(req, { page: 1, year: package.year })}") #{package.year}

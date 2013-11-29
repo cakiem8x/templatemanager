@@ -76,6 +76,7 @@ module.exports = function(app) {
     app.post('/account/dashboard/download', authentication.requireAccountAuthentication, account.recentDownloads);
 
     app.all('/account/package', authentication.requireAccountAuthentication, account.package);
+    app.all('/account/package/:slug', authentication.requireAccountAuthentication, account.view);
     app.get('/account/download/:slug/:id', authentication.requireAccountAuthentication, account.download);
 
     // --- Guest routes ---

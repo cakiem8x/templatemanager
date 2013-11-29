@@ -1,0 +1,83 @@
+extends ../layouts/account
+
+block content
+    div.page-header
+        h2
+            a(href="/account/package") Packages
+            |  /&nbsp;
+            a(href="/account/package?year=#{package.year || new Date().getFullYear()}") #{package.year || new Date().getFullYear()}
+            |   / #{package.name}
+
+    ul.nav.nav-tabs(style="margin-top: 20px;")
+        li.active
+            a(href="#overview", data-toggle="tab") Overview
+        li
+            a(href="#changelog", data-toggle="tab") Changelog
+        li
+            a(href="#download", data-toggle="tab")
+                | Download&nbsp;
+                if (package.files && package.files.length)
+                    span.badge #{package.files.length}
+
+    div.tab-content
+        div#overview.tab-pane.active
+            div.col-lg-4.text-center
+                p
+                    a(href=package.type == 'template' ? '#{frontEndUrl}#' + package.slug : package.demo_url)
+                        img.img-responsive.img-thumbnail(src=package.thumbs && package.thumbs.medium ? '#{thumbPrefixUrl}' + package.thumbs.medium : '/asset/img/noimage.png')
+                if package.demo_url
+                    a.btn.btn-warning(href=package.type == 'template' ? '#{frontEndUrl}#' + package.slug : package.demo_url) Live Demo
+
+            div.col-lg-8
+                dl.dl-horizontal
+                    if package.responsive
+                        dt.text-info Responsive
+                        dd
+                            i.fa.fa-check
+                    dt.text-info Supported browsers
+                    dd #{package.browsers.split(',').join(', ')}
+
+                    if package.software_versions
+                        dt.text-info Compatible with
+                        dd #{package.software_versions.split(',').join(', ')}
+
+                | #{package.description}
+
+        div#changelog.tab-pane
+            if package.changelog
+                | #{package.changelog}
+            else
+                p.text-center This package doesn't have a changelog
+
+        div#download.tab-pane
+            if (!package.files || package.files.length == 0)
+                p.text-center This package does not have files to download
+            else
+                table.table
+                    thead
+                        tr
+                            th Name
+                            th Size
+                            th # Downloads
+                            th Download
+                    tbody
+                        for file in package.files
+                            tr
+                                td
+                                    p #{file.name}
+                                    if file.description
+                                        small.text-success #{file.description}
+                                td #{filesize(file.size)}
+                                td #{file.num_downloads}
+                                td
+                                    if isDownloadable
+                                        a.btn.btn-success(href="#{downloadUrl}/account/download/#{package.slug}/#{file._id}") Download
+                                    else
+                                        a.btn.btn-danger(href="#{purchaseUrl}") Purchase
+
+block footerScript
+    script(type="text/javascript", src="/vendor/marked/marked.js")
+    script(type="text/javascript").
+        $(document).ready(function() {
+            $('#changelog').html(marked($('#changelog').html()));
+        });
