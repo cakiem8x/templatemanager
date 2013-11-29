@@ -12,10 +12,13 @@ block content
                     | Please&nbsp;
                     a(href="#{purchaseUrl}") upgrade your subscription
                     | &nbsp;to download all templates and extensions.
-        else
-            div.col-lg-6
-                div.panel.panel-default
-                    div.panel-heading Your subscriptions
+    div.row
+        div.col-lg-6
+            if (subscriptions.length)
+                div.panel.panel-primary
+                    div.panel-heading
+                        i.fa.fa-dollar
+                        |  Your subscriptions
                     table.table
                         thead
                             tr
@@ -30,11 +33,10 @@ block content
                                         if (moment(subscription.expiration, 'YYYY-MM-DD').isBefore())
                                             span.badge Expired
 
-    div.row
-        div.col-lg-8
             div.panel.panel-default
                 div.panel-heading
-                    | Recent downloads
+                    i.fa.fa-download
+                    |  Recent downloads
                     a#refreshRecentDownloads(href="#")
                         i.pull-right.fa.fa-refresh
                 table.table
@@ -45,6 +47,23 @@ block content
                             th Downloaded date
                             th Up-to-date
                     tbody#recentDownloads
+                div.panel-body.text-center(style="display: none;")
+                    i.fa.fa-spin.fa-refresh
+
+        div.col-lg-6
+            div.panel.panel-info
+                div.panel-heading
+                    i.fa.fa-check
+                    |  Latest packages
+                    a#refreshLatestPackages(href="#")
+                        i.pull-right.fa.fa-refresh.fa-inverse
+                table.table
+                    thead
+                        tr
+                            th Name
+                            th Date
+                            th Live demo
+                    tbody#latestPackages
                 div.panel-body.text-center(style="display: none;")
                     i.fa.fa-spin.fa-refresh
 
@@ -62,7 +81,7 @@ block footerScript
                     limit: 5
                 }).success(function(response) {
                     var demoUrl = '#{frontEndUrl}';
-                    $('#refreshRecentDownloads').parents('.panel').find('.panel-body').toggle();
+                    $('#recentDownloads').parents('.panel').find('.panel-body').toggle();
                     $.each(response, function(index, download) {
                         var downloadUrl = '#{downloadUrl}/account/download/' + download.package.slug + '/' + download.file._id;
                         $('<tr/>')
@@ -74,6 +93,32 @@ block footerScript
                             .append(moment(download.downloaded_date).isAfter(download.file.uploaded_date)
                                     ? $('<td/>').html('<i class="fa fa-check"></i>')
                                     : $('<td/>').append($('<a/>').addClass('btn btn-success').attr('href', downloadUrl).html('Update available'))
+                            );
+                    });
+                });
+            }).click();
+
+            // Show latest packages
+            $('#refreshLatestPackages').click(function() {
+                $('#latestPackages')
+                    .find('tr').remove().end()
+                    .parents('.panel').find('.panel-body').toggle();
+                $.post('/account/dashboard/package', {
+                    limit: 5
+                }).success(function(response) {
+                    var demoUrl = '#{frontEndUrl}';
+                    $('#latestPackages').parents('.panel').find('.panel-body').toggle();
+                    $.each(response, function(index, package) {
+                        $('<tr/>')
+                            .appendTo('#latestPackages')
+                            .append(
+                                $('<td/>').append($('<a/>').attr('href', '/account/package/' + package.slug).html(package.name))
+                            )
+                            .append(
+                                $('<td/>').html(moment(package.created_date).fromNow())
+                            )
+                            .append(
+                                $('<td/>').append(package.demo_url ? $('<a/>').attr('target', '_blank').attr('href', package.type == 'template' ? demoUrl + '#' + package.slug : package.demo_url).html('Demo') : 'n/a')
                             );
                     });
                 });

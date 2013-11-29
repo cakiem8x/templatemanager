@@ -179,6 +179,22 @@ exports.recentDownloads = function(req, res) {
 };
 
 /**
+ * Show recent packages
+ */
+exports.recentPackages = function(req, res) {
+    var limit = req.param('limit') || 10;
+    Package
+        .find()
+        .sort({ created_date: -1 })
+        .skip(0)
+        .limit(limit)
+        .select('name type slug demo_url created_date')
+        .exec(function(err, packages) {
+            res.json(packages);
+        });
+};
+
+/**
  * List packages
  */
 exports.package = function(req, res) {
