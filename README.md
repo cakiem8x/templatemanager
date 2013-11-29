@@ -15,7 +15,7 @@ Other screenshots:
 The software is used to manage the templates/extensions of Joomla, Magento, Wordpress, Drupal, etc.
 If your company sell, provide these kind of templates, extensions, then this software is exactly for you.
 
-The software has been used in production at [ZooTemplate](http://demo.zootemplate.com), one of the top Joomla templates/extensions provider in the world.
+The software has been used in [production](http://demo.zootemplate.com) at [ZooTemplate](http://zootemplate.com), one of the top Joomla templates/extensions provider in the world.
 
 ## Platform
 
@@ -116,6 +116,54 @@ Check User Access     | **by-login-pass**
 Amember then generates an API key which is shown in the *Api Key* field. We will use this API key in the [Setting](#setting) section.
 
 ### Setting
+
+All the app settings are placed in the ```config/config.js``` file:
+
+```javascript
+...
+module.exports = {
+    development: {
+    },
+    test: {
+        root: rootPath
+    },
+    production: {
+        root: rootPath
+    }
+};
+```
+
+This config file allows you to define settings for different environments such as ```development```, ```test``` and ```production```.
+The settings in the ```development``` section should be used in the developing phase.
+Meanwhile the production site should use the settings in the ```production``` section.
+
+> You can indicate the environment when running the app via ```NODE_ENV``` variable.
+> By default, the app will use the ```development``` settings.
+
+Below table describes all the settings in details:
+
+Setting                | Default               | Description
+-----------------------|-----------------------|------------
+root                   |                       | The root path. Please **DO NOT** change this
+session.domain         | n/a                   | The cookie domain
+session.secret         | n/a                   | A secret string to encrypt the session data. There are a few of free online tool for generating random key, such as [RandomKeyGen](http://randomkeygen.com)
+session.lifetime       | n/a                   | The session lifetime in milliseconds
+db                     | n/a                   | The MongoDB connection string: ```mongodb://<database server>/<database name>```
+upload.dir             | n/a                   | The path to directory storing uploaded files
+upload.maxSize         | n/a                   | Maximum size of uploaded file in kB. ```1024 * 1024 * 20``` allows user to upload files up to 20 MB in size.
+thumbs.dir             | n/a                   | The directory stores the generated thumbnails of templates/extensions
+thumbs.url             | n/a                   | Prefix URL of thumbnails
+thumbs.versions.square | ```['crop', 150]```   | Define the thumbnail generation method and width of thumbnail for square size. The method can be ```crop``` or ```resize```
+thumbs.versions.small  | ```['resize', 240]``` | Thumbnail generation method and width for small size
+thumbs.versions.medium | ```['resize', 640]``` | Thumbnail generation method and width for medium size
+amember.url            | n/a                   | The URL that runs the Amember software
+amember.key            | n/a                   | The Amember API key which is generated in the [Creating Amember API key](#creating-amember-api-key) section
+provider.name          | n/a                   | Name of provider
+provider.logo          | n/a                   | Provider logo URL
+provider.url           | n/a                   | Provider URL
+provider.registerUrl   | n/a                   | The register URL
+url.frontEnd           | n/a                   | The front-end URL
+url.download           | n/a                   | The download URL. In most case, it is the same as ```url.frontEnd```
 
 ### Running
 
