@@ -23,26 +23,33 @@ The software is built on [MEAN stack](http://mean.io) which uses the following s
 
 * [M - MongoDB](http://mongodb.org)
 * [E - Express](http://expressjs.com)
-* [A - AngularJS)(http://angularjs.org)
+* [A - AngularJS](http://angularjs.org)
 * [N - NodeJS](http://nodejs.org)
 
 In the details, the software listed below must be installed on your server:
 
-* [Amember](http://www.amember.com): The membership software. Amember users can use their account name/password to sign in and download the file from our back-end
-* [MongoDB](http://mongodb.org): Database server
-* [NodeJS](http://nodejs.org): NodeJS web server
-* [Nginx](http://nginx.org): A web server. You can use other one such as [Apache HTTP server](http://httpd.apache.org)
-* [ImageMagick CLI](http://www.imagemagick.org): for generating templates/extensions thumbnails
-* [forever](https://github.com/nodejitsu/forever): for watching, running the app forever without restarting the NodeJS server when updating the source code
-* [npm](http://npmjs.org): for installing NodeJS modules
+Software                                        | Purpose
+------------------------------------------------|----------
+[Amember](http://www.amember.com)               | The membership software. Amember users can use their account name/password to sign in and download the file from our back-end
+[MongoDB](http://mongodb.org)                   | Database server
+[NodeJS](http://nodejs.org)                     | NodeJS web server
+[Nginx](http://nginx.org)                       | A web server. You can use other one such as [Apache HTTP server](http://httpd.apache.org)
+[ImageMagick](http://www.imagemagick.org)       | Generating templates/extensions thumbnails
+[forever](https://github.com/nodejitsu/forever) | Watching, running the app forever without restarting the NodeJS server when updating the source code
+[npm](http://npmjs.org)                         | Installing NodeJS modules
+
+Before going to the next step, please ensure that these software are ready. Refer to their documentation for associating installation guides.
 
 ## Installing
 
+* Download [the latest versions](https://github.com/nghuuphuoc/templatemanager/releases)
+* Unzip and copy the ```src``` directory to particular directory that you want to store the app
+
 Below is the list of steps to install the app:
 
-* [Download the latest versions](https://github.com/nghuuphuoc/templatemanager/releases)
-* Unzip and copy the ```src``` directory to particular directory that you want to store the app
-* From the destination directory, execute the command:
+### Installing NodeJS modules
+
+From the ```src``` directory, execute the command:
 
 ```bash
 $ sudo npm install
@@ -77,6 +84,36 @@ Next, index the database by commands:
 ```
 
 ### Preparing the domains
+
+### Creating Amember API key
+
+As mentioned in the [Platform](#platform) section, the app connects with Amember for verifying the account and their subscriptions.
+Amember allows third parties to do this via an official module named API.
+
+The following steps show you how to install this module:
+
+- Sign in to your Amember back-end
+- Click *Setup / Configuration* on the left
+- Click the *Plugins* tab on the right
+- Choose *api* module from the *Enabled modules* section
+- Click the *Save* button
+
+The next steps will generate an API key:
+
+- Click *Remote API Permissions* on the left
+- Click the *New Records* button
+- Type a comment in the *Comment* field
+- In the *Permissions* section, ensure the following checkboxes are ticked:
+
+Section               | Checkboxes
+----------------------|-----------
+Products              | **index**
+Product Billing Plans | **index**, **get**
+Check User Access     | **by-login-pass**
+
+- Click the *Save* button
+
+Amember then generates an API key which is shown in the *Api Key* field. We will use this API key in the [Setting](#setting) section.
 
 ### Setting
 
