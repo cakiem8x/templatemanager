@@ -17,7 +17,7 @@ block content
             a(href="#download", data-toggle="tab")
                 | Download&nbsp;
                 if (package.files && package.files.length)
-                    span.badge #{package.files.length}
+                    span.badge #{package.files.length} #{package.files.length == 1 ? 'file' : 'files'}
 
     div.tab-content
         div#overview.tab-pane.active
@@ -53,6 +53,10 @@ block content
             if (!package.files || package.files.length == 0)
                 p.text-center This package does not have files to download
             else
+                if package.num_downloads
+                    p The #{package.name} package has been downloaded #{package.num_downloads} #{package.num_downloads <= 1 ? 'time' : 'times'}
+                else
+                    p The #{package.name} package hasn't been downloaded yet. Be the first one!
                 table.table
                     thead
                         tr
