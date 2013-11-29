@@ -41,7 +41,7 @@ block content
                         dt.text-info Compatible with
                         dd #{package.software_versions.split(',').join(', ')}
 
-                | #{package.description}
+                | !{package.description.replace(/\n/g, '<br/>')}
 
         div#changelog.tab-pane
             if package.changelog
