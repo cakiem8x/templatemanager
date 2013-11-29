@@ -3,6 +3,21 @@ Template Managers
 
 Our front-end and back-end for Joomla and Magento demo templates.
 
+## Screenshots
+
+Front-end:
+
+[Front-end](docs/img/frontend.png)
+
+Administrator back-end:
+
+[Administrator back-end](docs/img/backend-admin.png)
+
+Account back-end:
+
+[Account back-end](docs/img/backend-account.png)
+
+
 ## Required
 
 * [ImageMagick CLI](http://www.imagemagick.org)
