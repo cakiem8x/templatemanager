@@ -67,6 +67,22 @@ block content
                 div.panel-body.text-center(style="display: none;")
                     i.fa.fa-spin.fa-refresh
 
+            div.panel.panel-info
+                div.panel-heading
+                    i.fa.fa-star
+                    |  Most downloaded packages
+                    a#refreshDownloadedPackages(href="#")
+                        i.pull-right.fa.fa-refresh.fa-inverse
+                table.table
+                    thead
+                        tr
+                            th Name
+                            th # Downloads
+                            th Live demo
+                    tbody#downloadedPackages
+                div.panel-body.text-center(style="display: none;")
+                    i.fa.fa-spin.fa-refresh
+
 block footerScript
     script(type="text/javascript", src="/vendor/filesize/filesize.min.js")
     script(type="text/javascript", src="/vendor/moment/moment.min.js")
@@ -103,8 +119,8 @@ block footerScript
                 $('#latestPackages')
                     .find('tr').remove().end()
                     .parents('.panel').find('.panel-body').toggle();
-                $.post('/account/dashboard/package', {
-                    limit: 5
+                $.post('/account/dashboard/package/latest', {
+                    limit: 10
                 }).success(function(response) {
                     var demoUrl = '#{frontEndUrl}';
                     $('#latestPackages').parents('.panel').find('.panel-body').toggle();
@@ -113,9 +129,37 @@ block footerScript
                             .appendTo('#latestPackages')
                             .append(
                                 $('<td/>').append($('<a/>').attr('href', '/account/package/' + package.slug).html(package.name))
+                                          .append(package.free ? $('<span/>').css('margin-left', '10px').addClass('badge').html('Free') : '')
                             )
                             .append(
                                 $('<td/>').html(moment(package.created_date).fromNow())
+                            )
+                            .append(
+                                $('<td/>').append(package.demo_url ? $('<a/>').attr('target', '_blank').attr('href', package.type == 'template' ? demoUrl + '#' + package.slug : package.demo_url).html('Demo') : 'n/a')
+                            );
+                    });
+                });
+            }).click();
+
+            // Show most downloaded packages
+            $('#refreshDownloadedPackages').click(function() {
+                $('#downloadedPackages')
+                    .find('tr').remove().end()
+                    .parents('.panel').find('.panel-body').toggle();
+                $.post('/account/dashboard/package/downloaded', {
+                    limit: 10
+                }).success(function(response) {
+                    var demoUrl = '#{frontEndUrl}';
+                    $('#downloadedPackages').parents('.panel').find('.panel-body').toggle();
+                    $.each(response, function(index, package) {
+                        $('<tr/>')
+                            .appendTo('#downloadedPackages')
+                            .append(
+                                $('<td/>').append($('<a/>').attr('href', '/account/package/' + package.slug).html(package.name))
+                                          .append(package.free ? $('<span/>').css('margin-left', '10px').addClass('badge').html('Free') : '')
+                            )
+                            .append(
+                                $('<td/>').html(package.num_downloads)
                             )
                             .append(
                                 $('<td/>').append(package.demo_url ? $('<a/>').attr('target', '_blank').attr('href', package.type == 'template' ? demoUrl + '#' + package.slug : package.demo_url).html('Demo') : 'n/a')

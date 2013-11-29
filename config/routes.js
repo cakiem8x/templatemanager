@@ -74,7 +74,8 @@ module.exports = function(app) {
 
     app.all('/account', authentication.requireAccountAuthentication, account.dashboard);
     app.post('/account/dashboard/download', authentication.requireAccountAuthentication, account.recentDownloads);
-    app.post('/account/dashboard/package', authentication.requireAccountAuthentication, account.recentPackages);
+    app.post('/account/dashboard/package/latest', authentication.requireAccountAuthentication, account.recentPackages);
+    app.post('/account/dashboard/package/downloaded', authentication.requireAccountAuthentication, account.mostDownloadedPackages);
 
     app.all('/account/package', authentication.requireAccountAuthentication, account.package);
     app.all('/account/package/:slug', authentication.requireAccountAuthentication, account.view);

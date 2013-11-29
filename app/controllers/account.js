@@ -12,9 +12,9 @@ var
     qs   = require('querystring'),
 
     mongoose   = require('mongoose'),
-    Package    = mongoose.model('package'),
     Download   = mongoose.model('download'),
     Membership = mongoose.model('membership'),
+    Package    = mongoose.model('package'),
     fs         = require('fs'),
     filesize   = require('filesize'),
     moment     = require('moment');
@@ -188,10 +188,71 @@ exports.recentPackages = function(req, res) {
         .sort({ created_date: -1 })
         .skip(0)
         .limit(limit)
-        .select('name type slug demo_url created_date')
+        .select('name type free slug demo_url created_date')
         .exec(function(err, packages) {
             res.json(packages);
         });
+};
+
+/**
+ * Show most downloaded packages
+ * TODO: Cache the most downloaded packages
+ */
+exports.mostDownloadedPackages = function(req, res) {
+    var limit = parseInt(req.param('limit') || 10);
+    Download.aggregate({
+        $match: {
+            package: {
+                $ne: null
+            }
+        }
+    }, {
+        $group: {
+            _id: '$package',
+            num_downloads: { $sum: 1 }
+        }
+    }, {
+        $sort: { num_downloads: -1 }
+    }, {
+        $limit: limit
+    }, function(err, result) {
+        if (err || result.length == 0) {
+            return res.json([]);
+        }
+        var packageIds = [], map = {};
+        for (var i in result) {
+            packageIds.push(result[i]._id);
+            map[result[i]._id] = result[i].num_downloads;
+        }
+
+        Package.find({
+            _id: {
+                $in: packageIds
+            }
+        }).select('name type free slug demo_url created_date').exec(function(err, packages) {
+            if (err || !packages || packages.length == 0) {
+                return res.json([]);
+            }
+
+            var result = [];
+            for (var i in packages) {
+                result.push({
+                    name: packages[i].name,
+                    type: packages[i].type,
+                    free: packages[i].free,
+                    slug: packages[i].slug,
+                    demo_url: packages[i].demo_url,
+                    created_date: packages[i].created_date,
+                    num_downloads: map[packages[i]._id]
+                });
+            }
+            result.sort(function(a, b) {
+                return b.num_downloads - a.num_downloads;
+            });
+
+            res.json(result);
+        });
+    });
 };
 
 /**
