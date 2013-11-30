@@ -11,6 +11,7 @@ var account    = require('../app/controllers/account'),
     file       = require('../app/controllers/file'),
     guest      = require('../app/controllers/guest'),
     index      = require('../app/controllers/index'),
+    log        = require('../app/controllers/log'),
     membership = require('../app/controllers/membership'),
     package    = require('../app/controllers/package'),
     user       = require('../app/controllers/user');
@@ -67,6 +68,9 @@ module.exports = function(app) {
     app.post('/admin/file/remove', authentication.requireAuthentication, file.remove);
     app.post('/admin/file/search', authentication.requireAuthentication, file.search);
     app.post('/admin/file/upload', authentication.requireAuthentication, file.upload);
+
+    // Download
+    app.get('/admin/log/download', authentication.requireAuthentication, log.download);
 
     // --- Account routes ---
     app.all('/account/signin', account.signin);

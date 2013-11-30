@@ -1,0 +1,87 @@
+extends ../layouts/backend
+
+block content
+    div.page-header
+        h2
+            a(href="/admin/log/download") Download history
+
+    div.row(style="margin-bottom: 20px;")
+        div.col-lg-8
+            div.btn-group
+                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, ['days'])}", class=days == null ? 'active' : '') All
+                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, days: 2 })}", class=days == 2 ? 'active' : '') Today and Yesterday
+                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, days: 7 })}", class=days == 7 ? 'active' : '') Last 7 days
+                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, days: 30 })}", class=days == 30 ? 'active' : '') Last 30 days
+        div.col-lg-4.text-right
+            form(method="GET", action="/admin/log/download")
+                div.input-group
+                    div.input-group-btn
+                        a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, ['account', 'guest'])}", class=account == null && guest == null ? 'active' : '') All
+                        a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, guest: true }, ['account'])}", class=guest == 'true' ? 'active' : '') Guests
+                    input.form-control.input-sm(type="text", name="account", placeholder="Enter the account username", value="#{account || ''}")
+
+
+    if total == 0
+        p.text-center There is no downloads
+    else
+        p Found #{total} downloads
+
+        table.table(style="margin-top: 20px;")
+            thead
+                tr
+                    th
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'user_name' })}")
+                            if ('user_name' == sortBy && 1 == sortDirection)
+                                | &uarr;&nbsp;
+                            else if ('user_name' == sortBy && -1 == sortDirection)
+                                | &darr;&nbsp;
+                            | Account username
+                    th
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'downloaded_date' })}")
+                            if ('downloaded_date' == sortBy && 1 == sortDirection)
+                                | &uarr;&nbsp;
+                            else if ('downloaded_date' == sortBy && -1 == sortDirection)
+                                | &darr;&nbsp;
+                            | Downloaded date
+                    th
+                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'ip' })}")
+                            if ('ip' == sortBy && 1 == sortDirection)
+                                | &uarr;&nbsp;
+                            else if ('ip' == sortBy && -1 == sortDirection)
+                                | &darr;&nbsp;
+                            | IP
+                    th File
+                    th Package
+            tbody
+                for download in downloads
+                    tr
+                        td
+                            if download.user_name == '@guest'
+                                a(href="#{url(req, { page: 1, guest: true }, ['account'])}") #{download.user_name}
+                            else
+                                a(href="#{url(req, { page: 1, account: download.user_name }, ['guest'])}") #{download.user_name}
+                        td #{moment(download.downloaded_date).format('YYYY-MM-DD HH:mm')}
+                        td #{download.ip}
+                        td #{download.file.name} / #{filesize(download.file.size)}
+                        td
+                            if download.package
+                                a(target="_blank", href="#{download.package.demo_url}") #{download.package.demo_url}
+                            else
+                                | -
+
+        // Pagination
+        if (numPages > 1)
+            div.text-center
+                ul.pagination
+                    li(class=page == 1 ? 'disabled' : '')
+                        a(href="#{url(req, { page: 1 })}") &larr;
+                    li(class=page == 1 ? 'disabled' : '')
+                        a(href="#{url(req, { page: parseInt(page) - 1 })}") &laquo;
+                    - for (i = startRange; i <= endRange; i++)
+                        li(class=(i == page) ? 'active' : '')
+                            a(href="#{url(req, { page: i })}") #{i}
+                    li(class=page == numPages ? 'disabled' : '')
+                        a(href="#{url(req, { page: parseInt(page) + 1 })}") &raquo;
+                    li(class=page == numPages ? 'disabled' : '')
+                        a(href="#{url(req, { page: numPages })}") &rarr;
+
