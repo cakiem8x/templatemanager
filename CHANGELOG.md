@@ -1,7 +1,7 @@
 Changelog
 =========
 
-## v1.0.0 (2013-11-29)
+## v1.0.0 (2013-12-02)
 
 Front-end
 
@@ -17,3 +17,4 @@ Back-end
 * Manage administrators
 * Amember account can sign in and download files from packages
 * Statistic the top accounts/files/packages
+* Browse download history
