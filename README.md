@@ -208,9 +208,9 @@ session.domain         | n/a                   | The cookie domain
 session.secret         | n/a                   | A secret string to encrypt the session data. There are a few of free online tool for generating random key, such as [RandomKeyGen](http://randomkeygen.com)
 session.lifetime       | n/a                   | The session lifetime in milliseconds
 db                     | n/a                   | The MongoDB connection string: ```mongodb://<database server>/<database name>```
-upload.dir             | n/a                   | The path to directory storing uploaded files. Do __NOT__ forget to set this directory writable
+upload.dir             | n/a                   | The path to directory storing uploaded files. __REMEMBER__ to set this directory writable
 upload.maxSize         | n/a                   | Maximum size of uploaded file in kB. ```1024 * 1024 * 20``` allows user to upload files up to 20 MB in size.
-thumbs.dir             | n/a                   | The directory stores the generated thumbnails of templates/extensions. Do __NOT__ forget to set this directory writable
+thumbs.dir             | n/a                   | The directory stores the generated thumbnails of templates/extensions. __REMEMBER__ to set this directory writable
 thumbs.url             | n/a                   | Prefix URL of thumbnails
 thumbs.versions.square | ```['crop', 150]```   | Define the thumbnail generation method and width of thumbnail for square size. The method can be ```crop``` or ```resize```
 thumbs.versions.small  | ```['resize', 240]``` | Thumbnail generation method and width for small size
@@ -222,7 +222,7 @@ provider.logo          | n/a                   | Provider logo URL
 provider.url           | n/a                   | Provider URL
 provider.registerUrl   | n/a                   | The register URL
 url.frontEnd           | n/a                   | The front-end URL
-url.download           | n/a                   | The download URL. In most case, it is the same as ```url.frontEnd```
+url.download           | n/a                   | The download URL. In most cases, it is the same as ```url.frontEnd```. Otherwise, if the download and front-end URLs are different but have the same root domain, such as ```download.templatemanager.dev``` and ```templatemanager.dev```, please set the ```session.domain``` to root domain (```.templatemanager.dev```)
 
 ### Running
 
