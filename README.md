@@ -144,13 +144,15 @@ upstream templatemanager {
 server {
     listen      80;
     server_name templatemanager.dev;
-    error_log   /path/to/log/templatemanager/templatemanager.dev.error.log;
+    error_log   /path/to/log/templatemanager.dev.error.log;
     access_log off;
 
     location = /favicon.ico { access_log off; log_not_found off; }
     location = /robots.txt { access_log off; log_not_found off; }
 
     location / {
+        # This might be changed based on the size of files that the administrator can upload
+        # In our production site, we allow administrators to upload templates/extensions up to 200 Mb
         client_max_body_size 200M;
 
         proxy_set_header X-Real-IP $remote_addr;
@@ -170,6 +172,7 @@ server {
 ```
 
 As you see, Nginx is used as a reverse proxy which forwards all requests (coming from port 80) to NodeJS (listening on the port 3000).
+If you change this port, please change the ```PORT``` variable before [running](#running) the app.
 
 ### Setting
 
