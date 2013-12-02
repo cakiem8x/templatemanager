@@ -14,13 +14,17 @@ var mongoose = require('mongoose'),
  * Show download history
  */
 exports.download = function(req, res) {
-    var perPage   = 20,
+    var config    = req.app.get('config'),
+        perPage   = 20,
         pageRange = 5,
         page      = req.param('page') || 1,
         sortBy    = req.param('sort') || '-downloaded_date',
         days      = req.param('days'),
         account   = req.param('account'),
         guest     = req.param('guest'),
+        ip        = req.param('ip'),
+        file      = req.param('file'),
+        package   = req.param('package'),
         criteria  = {};
 
     if (days) {
@@ -35,11 +39,19 @@ exports.download = function(req, res) {
     if (guest || guest == 'true') {
         criteria.user_name = '@guest';
     }
+    if (ip) {
+        criteria.ip = ip;
+    }
+    if (package) {
+        criteria.package = package;
+    }
+    if (file) {
+        criteria.file = file;
+    }
 
     var sortCriteria = {}, sortDirection = ('-' == sortBy.substr(0, 1)) ? -1 : 1;
     sortBy = '-' == sortBy.substr(0, 1) ? sortBy.substr(1) : sortBy;
     sortCriteria[sortBy] = sortDirection;
-
 
     Download.count(criteria, function(err, total) {
         Download
@@ -53,7 +65,7 @@ exports.download = function(req, res) {
             })
             .populate({
                 path: 'package',
-                select: 'name type demo_url free'
+                select: 'name type slug demo_url free'
             })
             .exec(function(err, downloads) {
             if (err) {
@@ -74,15 +86,15 @@ exports.download = function(req, res) {
                 req: req,
                 total: total,
                 downloads: downloads,
+                frontEndUrl: config.url.frontEnd || req.protocol + '://' + req.get('host'),
 
                 // Helper
                 filesize: filesize,
                 moment: moment,
 
                 // Criteria
-                account: account,
                 days: days,
-                guest: guest,
+                criteria: criteria,
                 sortBy: sortBy,
                 sortDirection: sortDirection,
 

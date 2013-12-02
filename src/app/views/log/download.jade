@@ -5,20 +5,32 @@ block content
         h2
             a(href="/admin/log/download") Download history
 
+            if criteria.package && total > 0
+                |  /&nbsp;
+                a(href="#{url(req, { page: 1, package: downloads[0].package._id + '' })}") #{downloads[0].package.name}
+
     div.row(style="margin-bottom: 20px;")
-        div.col-lg-8
-            div.btn-group
-                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, ['days'])}", class=days == null ? 'active' : '') All
-                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, days: 2 })}", class=days == 2 ? 'active' : '') Today and Yesterday
-                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, days: 7 })}", class=days == 7 ? 'active' : '') Last 7 days
-                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, days: 30 })}", class=days == 30 ? 'active' : '') Last 30 days
-        div.col-lg-4.text-right
-            form(method="GET", action="/admin/log/download")
+        form(method="GET", action="/admin/log/download")
+            div.col-lg-4
+                p Filter by date
+                div.btn-group
+                    a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, ['days'])}", class=days == null ? 'active' : '') All
+                    a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, days: 2 })}", class=days == 2 ? 'active' : '') Today and Yesterday
+                    a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, days: 7 })}", class=days == 7 ? 'active' : '') Last 7 days
+                    a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, days: 30 })}", class=days == 30 ? 'active' : '') Last 30 days
+            div.col-lg-4
+                p Filter by account
                 div.input-group
                     div.input-group-btn
-                        a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, ['account', 'guest'])}", class=account == null && guest == null ? 'active' : '') All
-                        a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, guest: true }, ['account'])}", class=guest == 'true' ? 'active' : '') Guests
-                    input.form-control.input-sm(type="text", name="account", placeholder="Enter the account username", value="#{account || ''}")
+                        a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, ['account', 'guest'])}", class=criteria.user_name == null ? 'active' : '') All
+                        a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, guest: true }, ['account'])}", class=criteria.user_name == '@guest' ? 'active' : '') Guests
+                    input.form-control.input-sm(type="text", name="account", placeholder="Enter the account username", value="#{criteria.user_name || ''}")
+            div.col-lg-4
+                p Filter by IP
+                div.input-group
+                    div.input-group-btn
+                        a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, ['ip'])}", class=criteria.ip == null ? 'active' : '') All
+                    input.form-control.input-sm(type="text", name="ip", placeholder="Enter the IP address", value="#{criteria.ip || ''}")
 
 
     if total == 0
@@ -61,11 +73,17 @@ block content
                             else
                                 a(href="#{url(req, { page: 1, account: download.user_name }, ['guest'])}") #{download.user_name}
                         td #{moment(download.downloaded_date).format('YYYY-MM-DD HH:mm')}
-                        td #{download.ip}
-                        td #{download.file.name} / #{filesize(download.file.size)}
+                        td
+                            a(href="#{url(req, { page: 1, ip: download.ip })}") #{download.ip}
+                        td
+                            a(href="#{url(req, { page: 1, file: download.file._id + '' })}") #{download.file.name}
+                            |  / #{filesize(download.file.size)}
                         td
                             if download.package
-                                a(target="_blank", href="#{download.package.demo_url}") #{download.package.demo_url}
+                                a(href="#{url(req, { page: 1, package: download.package._id + '' })}") #{download.package.name}
+                                if download.package.demo_url
+                                    | &nbsp;
+                                    a(target="_blank", href=download.package.type == 'template' ? '#{frontEndUrl}#' + download.package.slug : download.package.demo_url) (Demo)
                             else
                                 | -
 

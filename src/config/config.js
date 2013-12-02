@@ -12,7 +12,7 @@ module.exports = {
     development: {
         root: rootPath,
         session: {
-            // domain: '.templatemanager.dev',
+            domain: '.templatemanager.dev',
             secret: 'XrQ2Vsw2tESughz71l1B80NwqxA7z499',
             lifetime: 3600 * 1000 * 1           // 1 hour
         },
