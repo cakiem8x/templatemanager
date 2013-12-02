@@ -19,7 +19,7 @@ The software has been used in [production](http://demo.zootemplate.com) at [ZooT
 
 ## Platform
 
-The software is built on [MEAN stack](http://mean.io) which uses the following software:
+The software is built on the [MEAN stack](http://mean.io) which uses the following software:
 
 * [M - MongoDB](http://mongodb.org)
 * [E - Express](http://expressjs.com)
@@ -83,8 +83,6 @@ Next, index the database by commands:
 > db.user.ensureIndex({ username: 1 });
 ```
 
-### Preparing the domains
-
 ### Creating Amember API key
 
 As mentioned in the [Platform](#platform) section, the app connects with Amember for verifying the account and their subscriptions.
@@ -114,6 +112,64 @@ Check User Access     | **by-login-pass**
 - Click the *Save* button
 
 Amember then generates an API key which is shown in the *Api Key* field. We will use this API key in the [Setting](#setting) section.
+
+### Setting Nginx
+
+The app requires 2 domains to run:
+
+* The first one handles the main website requests including the front-end and back-end
+* The second one handles template thumbnails.
+This domain is set by the ```thumbs.url``` option (look at the [Setting](#setting) section for more info)
+
+Following is an example of Nginx configuration file which assumes that the main and thumbnail websites run on the
+```templatemanager.dev``` and ```thumbs.templatemanager.dev``` domains, respectively:
+
+```
+server {
+    listen      80;
+    server_name thumbs.templatemanager.dev;
+    error_log   /path/to/log/thumbs.templatemanager.dev.error.log;
+    access_log  off;
+
+    root        /path/to/thumbs/directory;
+    index       index.html;
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt { access_log off; log_not_found off; }
+}
+
+upstream templatemanager {
+    server 127.0.0.1:3000;
+}
+
+server {
+    listen      80;
+    server_name templatemanager.dev;
+    error_log   /path/to/log/templatemanager/templatemanager.dev.error.log;
+    access_log off;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt { access_log off; log_not_found off; }
+
+    location / {
+        client_max_body_size 200M;
+
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-NginX-Proxy true;
+
+        proxy_pass http://templatemanager/;
+        proxy_redirect off;
+        proxy_buffering off;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+```
+
+As you see, Nginx is used as a reverse proxy which forwards all requests (coming from port 80) to NodeJS (listening on the port 3000).
 
 ### Setting
 
@@ -149,9 +205,9 @@ session.domain         | n/a                   | The cookie domain
 session.secret         | n/a                   | A secret string to encrypt the session data. There are a few of free online tool for generating random key, such as [RandomKeyGen](http://randomkeygen.com)
 session.lifetime       | n/a                   | The session lifetime in milliseconds
 db                     | n/a                   | The MongoDB connection string: ```mongodb://<database server>/<database name>```
-upload.dir             | n/a                   | The path to directory storing uploaded files
+upload.dir             | n/a                   | The path to directory storing uploaded files. Do __NOT__ forget to set this directory writable
 upload.maxSize         | n/a                   | Maximum size of uploaded file in kB. ```1024 * 1024 * 20``` allows user to upload files up to 20 MB in size.
-thumbs.dir             | n/a                   | The directory stores the generated thumbnails of templates/extensions
+thumbs.dir             | n/a                   | The directory stores the generated thumbnails of templates/extensions. Do __NOT__ forget to set this directory writable
 thumbs.url             | n/a                   | Prefix URL of thumbnails
 thumbs.versions.square | ```['crop', 150]```   | Define the thumbnail generation method and width of thumbnail for square size. The method can be ```crop``` or ```resize```
 thumbs.versions.small  | ```['resize', 240]``` | Thumbnail generation method and width for small size
@@ -182,6 +238,8 @@ restart the NodeJS server whenever you update the source code):
 $ chmod 755 start.sh
 $ nohup start.sh >> /var/log/template_manager.log 2>&1 &
 ```
+
+If you change the port, which is 3000 by default, remember to change the port in [Nginx](#setting-nginx) too.
 
 ## License
 
