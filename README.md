@@ -108,7 +108,7 @@ Section               | Checkboxes
 ----------------------|-----------
 Products              | **index**
 Product Billing Plans | **index**, **get**
-Check User Access     | **by-login-pass**, **by-login**
+Check User Access     | **by-login-pass**, **by-login**, **by-email**
 
 - Click the *Save* button
 

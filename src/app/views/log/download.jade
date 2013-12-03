@@ -122,9 +122,13 @@ block footerScript
                         $.post('/admin/membership/account', {
                             account: account
                         }).success(function(response) {
-                            var memberships = [];
-                            for (var i in response.memberships) {
-                                memberships.push(response.memberships[i].name + ' (' + response.memberships[i].expiration + ')');
+                            var memberships = [response.name || account];
+                            if (response.memberships.length == 0) {
+                                memberships.push('Cannot get the account memberships');
+                            } else {
+                                for (var i in response.memberships) {
+                                    memberships.push(response.memberships[i].name + ' (' + response.memberships[i].expiration + ')');
+                                }
                             }
                             $that
                                 .tooltip('destroy')

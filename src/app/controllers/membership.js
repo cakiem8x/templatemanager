@@ -153,21 +153,24 @@ exports.account = function(req, res) {
         }
 
         if (reply) {
-            return res.json({
-                memberships: JSON.parse(reply)
-            });
+            return res.json(JSON.parse(reply));
         }
 
         // Not found membership in cache
+        var params = {
+            _key: config.amember.key
+        };
+        if (account.indexOf('@') == -1) {
+            params.login = account;
+        } else {
+            params.email = account;
+        }
+
         var apiEndpoint = url.parse(config.amember.url),
-            data        = qs.stringify({
-                _key: config.amember.key,
-                login: account
-            }),
-            options = {
+            options     = {
                 host: apiEndpoint.host,
                 port: apiEndpoint.port || 80,
-                path: (apiEndpoint.path == '/' ? '' : apiEndpoint.path) + '/api/check-access/by-login?' + data,
+                path: (apiEndpoint.path == '/' ? '' : apiEndpoint.path) + (account.indexOf('@') == -1 ? '/api/check-access/by-login?' : '/api/check-access/by-email?') + qs.stringify(params),
                 method: 'GET'
             };
         var request = http.request(options, function(response) {
@@ -204,7 +207,10 @@ exports.account = function(req, res) {
                     }
 
                     // Cache account membership
-                    redisClient.set('membership_' + account, JSON.stringify(memberships));
+                    redisClient.set('membership_' + account, JSON.stringify({
+                        name: result.name || account,
+                        memberships: memberships
+                    }));
 
                     res.json({
                         memberships: memberships
