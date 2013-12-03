@@ -1,6 +1,12 @@
 Changelog
 =========
 
+## v1.1.0
+
+Back-end
+
+* Download history: Show the account's memberships when hovering the account name
+
 ## v1.0.0 (2013-12-02)
 
 Front-end

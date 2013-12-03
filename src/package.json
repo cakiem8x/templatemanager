@@ -8,11 +8,13 @@
         "express": "3.x",
         "filesize": "2.x",
         "formidable": "latest",
+        "hiredis": "0.1.15",
         "imagemagick": "latest",
         "jade": "0.35.x",
         "mkdirp": "latest",
         "moment": "latest",
         "mongoose": "3.6.x",
+        "redis": "0.9.1",
         "socket.io": "0.9.x"
     },
     "scripts": {

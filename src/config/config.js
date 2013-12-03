@@ -43,6 +43,10 @@ module.exports = {
         url: {
             frontEnd: 'http://templatemanager.dev',
             download: 'http://download.templatemanager.dev'
+        },
+        redis: {
+            host: 'localhost',
+            port: 6379
         }
     },
     test: {

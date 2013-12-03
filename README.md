@@ -35,6 +35,7 @@ Software                                        | Purpose
 [NodeJS](http://nodejs.org)                     | NodeJS web server
 [Nginx](http://nginx.org)                       | A web server. You can use other one such as [Apache HTTP server](http://httpd.apache.org)
 [ImageMagick](http://www.imagemagick.org)       | Generating templates/extensions thumbnails
+[Redis](http://redis.io)                        | Caching storage
 [forever](https://github.com/nodejitsu/forever) | Watching, running the app forever without restarting the NodeJS server when updating the source code
 [npm](http://npmjs.org)                         | Installing NodeJS modules
 
@@ -107,7 +108,7 @@ Section               | Checkboxes
 ----------------------|-----------
 Products              | **index**
 Product Billing Plans | **index**, **get**
-Check User Access     | **by-login-pass**
+Check User Access     | **by-login-pass**, **by-login**
 
 - Click the *Save* button
 
@@ -221,6 +222,8 @@ provider.name          | n/a                   | Name of provider
 provider.logo          | n/a                   | Provider logo URL
 provider.url           | n/a                   | Provider URL
 provider.registerUrl   | n/a                   | The register URL
+redis.host             | ```localhost```       | The host of Redis server
+redis.port             | 6379                  | The port of Redis server
 url.frontEnd           | n/a                   | The front-end URL
 url.download           | n/a                   | The download URL. In most cases, it is the same as ```url.frontEnd```. Otherwise, if the download and front-end URLs are different but have the same root domain, such as ```download.templatemanager.dev``` and ```templatemanager.dev```, please set the ```session.domain``` to root domain (```.templatemanager.dev```)
 

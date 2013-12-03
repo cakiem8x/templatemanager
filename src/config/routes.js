@@ -59,6 +59,7 @@ module.exports = function(app) {
     app.post('/admin/membership/add', adminAuthorization, membership.add);
     app.post('/admin/membership/edit', adminAuthorization, membership.edit);
     app.post('/admin/membership/remove', adminAuthorization, membership.remove);
+    app.post('/admin/membership/account', adminAuthorization, membership.account);
 
     // File
     app.get('/admin/file', authentication.requireAuthentication, file.index);
@@ -70,7 +71,7 @@ module.exports = function(app) {
     app.post('/admin/file/upload', authentication.requireAuthentication, file.upload);
 
     // Download
-    app.get('/admin/log/download', authentication.requireAuthentication, log.download);
+    app.get('/admin/log/download', adminAuthorization, log.download);
 
     // --- Account routes ---
     app.all('/account/signin', account.signin);

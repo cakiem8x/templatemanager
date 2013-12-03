@@ -36,6 +36,10 @@ module.exports = {
         url: {
             frontEnd: 'http://templatemanager.dev',
             download: 'http://download.templatemanager.dev'
+        },
+        redis: {
+            host: 'localhost',
+            port: 6379
         }
     },
     test: {
@@ -75,6 +79,10 @@ module.exports = {
         url: {
             frontEnd: 'http://demo.zootemplate.com',
             download: 'http://download.zootemplate.com'
+        },
+        redis: {
+            host: 'localhost',
+            port: 6379
         }
     }
 };

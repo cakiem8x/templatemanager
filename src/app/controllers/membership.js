@@ -129,3 +129,93 @@ exports.remove = function(req, res) {
         success: true
     });
 };
+
+/**
+ * Get account membership
+ */
+exports.account = function(req, res) {
+    var account     = req.param('account'),
+        config      = req.app.get('config'),
+        redis       = require('redis'),
+        redisClient = redis.createClient(config.redis.port || 6379, config.redis.host || '127.0.0.1');
+
+    if (!account || account == '@guest') {
+        return res.json({
+            memberships: []
+        });
+    }
+
+    redisClient.get('membership_' + account, function(err, reply) {
+        if (err) {
+            return res.json({
+                memberships: []
+            });
+        }
+
+        if (reply) {
+            return res.json({
+                memberships: JSON.parse(reply)
+            });
+        }
+
+        // Not found membership in cache
+        var apiEndpoint = url.parse(config.amember.url),
+            data        = qs.stringify({
+                _key: config.amember.key,
+                login: account
+            }),
+            options = {
+                host: apiEndpoint.host,
+                port: apiEndpoint.port || 80,
+                path: (apiEndpoint.path == '/' ? '' : apiEndpoint.path) + '/api/check-access/by-login?' + data,
+                method: 'GET'
+            };
+        var request = http.request(options, function(response) {
+            response.setEncoding('utf8');
+            var body = '';
+            response.on('data', function(chunk) {
+                body += chunk;
+            });
+            response.on('end', function() {
+                var result = JSON.parse(body);
+                if (result.ok == false || !result.subscriptions || result.subscriptions.length == 0) {
+                    return res.json({
+                        memberships: []
+                    });
+                }
+
+                var subscriptions = result.subscriptions,
+                    productIds    = [];
+                for (var pid in result.subscriptions) {
+                    productIds.push(pid);
+                }
+
+                Membership.find({
+                    pid: {
+                        $in: productIds
+                    }
+                }).exec().then(function(result) {
+                    var memberships = [];
+                    for (var i in result) {
+                        memberships.push({
+                            name: result[i].title,
+                            expiration: subscriptions[result[i].pid + '']
+                        });
+                    }
+
+                    // Cache account membership
+                    redisClient.set('membership_' + account, JSON.stringify(memberships));
+
+                    res.json({
+                        memberships: memberships
+                    });
+                });
+            });
+        });
+        request.on('error', function(e) {
+            req.flash('error', e.message);
+            res.redirect('/admin');
+        });
+        request.end();
+    });
+};

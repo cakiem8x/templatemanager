@@ -1,5 +1,9 @@
 extends ../layouts/backend
 
+block head
+    style(type="text/css").
+        .tooltip-inner { max-width: 300px; }
+
 block content
     div.page-header
         h2
@@ -69,9 +73,9 @@ block content
                     tr
                         td
                             if download.user_name == '@guest'
-                                a(href="#{url(req, { page: 1, guest: true }, ['account'])}") #{download.user_name}
+                                a.accountLabel(href="#{url(req, { page: 1, guest: true }, ['account'])}") #{download.user_name}
                             else
-                                a(href="#{url(req, { page: 1, account: download.user_name }, ['guest'])}") #{download.user_name}
+                                a.accountLabel(href="#{url(req, { page: 1, account: download.user_name }, ['guest'])}") #{download.user_name}
                         td #{moment(download.downloaded_date).format('YYYY-MM-DD HH:mm')}
                         td
                             a(href="#{url(req, { page: 1, ip: download.ip })}") #{download.ip}
@@ -102,4 +106,36 @@ block content
                         a(href="#{url(req, { page: parseInt(page) + 1 })}") &raquo;
                     li(class=page == numPages ? 'disabled' : '')
                         a(href="#{url(req, { page: numPages })}") &rarr;
+
+block footerScript
+    script(type="text/javascript").
+        $(document).ready(function() {
+            $('.accountLabel').on('mouseover', function() {
+                var $that = $(this), account = $that.html();
+                if (account != '@guest') {
+                    if ($that.data('bs.tooltip') == null) {
+                        $that.tooltip({
+                            html: true,
+                            title: '<i class="fa fa-refresh fa-spin"></i> Loading membership info ...'
+                        }).tooltip('show');
+
+                        $.post('/admin/membership/account', {
+                            account: account
+                        }).success(function(response) {
+                            var memberships = [];
+                            for (var i in response.memberships) {
+                                memberships.push(response.memberships[i].name + ' (' + response.memberships[i].expiration + ')');
+                            }
+                            $that
+                                .tooltip('destroy')
+                                .tooltip({
+                                    html: true,
+                                    title: memberships.join('<br />')
+                                })
+                                .tooltip('show');
+                        });
+                    }
+                }
+            });
+        });
 
