@@ -5,6 +5,7 @@ Changelog
 
 * Download history: Show the account's memberships when hovering the account name
 * #49: In the production env, remove debug info
+* #50: Custom 404, 500 error pages
 
 ## v1.0.0 (2013-12-02)
 

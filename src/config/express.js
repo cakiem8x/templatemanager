@@ -63,6 +63,40 @@ module.exports = function(app, config) {
         app.use(flash());
 
         app.use(app.router);
+
+        // Handle 404 error
+        app.use(function(req, res, next) {
+            res.status(404);
+
+            // Respond with html page
+            if (req.accepts('html')) {
+                res.render('layouts/404', {
+                    title: 'Not found',
+                    url: req.url,
+                    frontEndUrl: config.url.frontEnd
+                });
+                return;
+            }
+
+            // Respond with json
+            if (req.accepts('json')) {
+                res.send({ error: 'Not found' });
+                return;
+            }
+
+            // default to plain-text. send()
+            res.type('txt').send('Not found');
+        });
+
+        // Handle 500 error
+        app.use(function(err, req, res, next) {
+            res.status(err.status || 500);
+            res.render('layouts/500', {
+                title: 'Error',
+                error: err,
+                frontEndUrl: config.url.frontEnd
+            });
+        });
     });
 
     app.configure('development', function() {
