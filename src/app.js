@@ -5,14 +5,17 @@
  * @author  http://twitter.com/nghuuphuoc
  */
 
-var express = require('express'),
+var
+    // Environment
+    env     = process.env.NODE_ENV || 'development',
+
+    express = require('express'),
     app     = express(),
     server  = require('http').createServer(app),
-    io      = require('socket.io').listen(server);
+    io      = require('socket.io').listen(server, { log: env == 'development' }),
 
-// Load configuration
-var env    = process.env.NODE_ENV || 'development',
-    config = require('./config/config')[env];
+    // Load configuration
+    config  = require('./config/config')[env];
 
 // Connect DB
 var mongoose = require('mongoose');

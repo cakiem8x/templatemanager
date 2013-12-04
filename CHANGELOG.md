@@ -3,9 +3,8 @@ Changelog
 
 ## v1.1.0
 
-Back-end
-
 * Download history: Show the account's memberships when hovering the account name
+* #49: In the production env, remove debug info
 
 ## v1.0.0 (2013-12-02)
 
