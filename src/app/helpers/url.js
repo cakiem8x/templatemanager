@@ -18,5 +18,13 @@ module.exports = function(req, params, excludedParams) {
             delete urlParams[excludedParams[k]];
         }
     }
+
+    // Remove empty params
+    for (k in urlParams) {
+        if (!urlParams[k]) {
+            delete urlParams[k];
+        }
+    }
+
     return '?' + qs.stringify(urlParams);
 };
