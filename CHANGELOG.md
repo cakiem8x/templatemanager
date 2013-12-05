@@ -3,6 +3,7 @@ Changelog
 
 ## v1.1.0
 
+* Require Redis to cache data (account memberships, tags)
 * Download history: Show the account's memberships when hovering the account name
 * #3: Auto-complete when adding tags
 * #49: In the production env, remove debug info

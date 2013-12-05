@@ -145,7 +145,8 @@ exports.account = function(req, res) {
         });
     }
 
-    redisClient.get('membership_' + account, function(err, reply) {
+    var cacheKey = [config.redis.namespace, 'membership', account].join(':');
+    redisClient.get(cacheKey, function(err, reply) {
         if (err) {
             return res.json({
                 memberships: []
@@ -207,7 +208,7 @@ exports.account = function(req, res) {
                     }
 
                     // Cache account membership
-                    redisClient.set('membership_' + account, JSON.stringify({
+                    redisClient.set(cacheKey, JSON.stringify({
                         name: result.name || account,
                         memberships: memberships
                     }));
