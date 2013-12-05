@@ -236,6 +236,28 @@ exports.slug = function(req, res) {
 };
 
 /**
+ * Suggest tags
+ */
+exports.tag = function(req, res) {
+    // Cache the tags
+    var config      = req.app.get('config'),
+        redis       = require('redis'),
+        prefix      = config.redis.prefix,
+        redisClient = redis.createClient(config.redis.port || 6379, config.redis.host || '127.0.0.1');
+
+    redisClient.get(prefix + '.tags', function(err, reply) {
+        if (reply) {
+            return res.json(JSON.parse(reply));
+        }
+
+        Package.collection.distinct('tags', function(err, tags) {
+            redisClient.set(prefix + '.tags', JSON.stringify(tags));
+            res.json(tags);
+        });
+    });
+};
+
+/**
  * Upload package thumbnail
  */
 exports.thumb = function(req, res) {

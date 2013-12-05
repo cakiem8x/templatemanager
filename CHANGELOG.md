@@ -4,6 +4,7 @@ Changelog
 ## v1.1.0
 
 * Download history: Show the account's memberships when hovering the account name
+* #3: Auto-complete when adding tags
 * #49: In the production env, remove debug info
 * #50: Custom 404, 500 error pages
 * #51: Nothing happen when typing the account name and clicking Enter

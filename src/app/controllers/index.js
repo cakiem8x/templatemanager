@@ -12,6 +12,7 @@ exports.index = function(req, res) {
     var app    = req.app,
         config = app.get('config');
 
+    // TODO: Cache the tags
     Package.collection.distinct('tags', function(err, tags) {
         Package.collection.distinct('year', function(err, years) {
             res.render('index/index', {

@@ -4,6 +4,8 @@ block head
     link(rel="stylesheet", href="/vendor/fileupload/css/jquery.fileupload-ui.css")
     link(rel="stylesheet", href="/vendor/inlineEditor/css/inlineEditor.min.css")
     link(rel="stylesheet", href="/vendor/bootstrap-colorpicker/css/bootstrap-colorpicker.css")
+    link(rel="stylesheet", href="/vendor/select2/css/select2.css")
+    link(rel="stylesheet", href="/vendor/select2/css/select2-bootstrap.css")
 
 block content
     div.page-header
@@ -285,6 +287,7 @@ block footerScript
     script(type="text/javascript", src="/vendor/inlineEditor/js/inlineEditor.min.js")
     script(type="text/javascript", src="/vendor/marked/marked.js")
     script(type="text/javascript", src="/vendor/moment/moment.min.js")
+    script(type="text/javascript", src="/vendor/select2/js/select2.min.js")
     script(type="text/javascript").
         $(document).ready(function() {
             // Form validator
@@ -328,6 +331,44 @@ block footerScript
                 }
             });
 
+            // Create tag auto-complete element
+            $('input[name="tags"]').select2({
+                tags: true,
+                createSearchChoice: function(term) {
+                    return {
+                        id: term, text: term
+                    };
+                },
+                initSelection: function(element, callback) {
+                    var data = [];
+                    $(element.val().split(',')).each(function() {
+                        data.push({ id: this, text: this });
+                    });
+                    callback(data);
+                },
+                ajax: {
+                    url: '/admin/package/tag',
+                    cache: true,
+                    data: function(term, page) {
+                        return {
+                            q: term
+                        };
+                    },
+                    results: function(data, page) {
+                        var results = data.map(function(item) {
+                            return {
+                                id: item,
+                                text: item
+                            };
+                        });
+                        return {
+                            results: results
+                        };
+                    }
+                },
+                tokenSeparators: [',']
+            });
+
             // Preview the changelog
             $('a[href="#changelogPreviewTab"]').click(function() {
                 $('#changelogPreview').html(marked($('textarea[name="changelog"]').val()));
@@ -353,67 +394,69 @@ block footerScript
                 });
             });
 
-            function updateProgress(fileName, progress) {
-                var $tr = $('#uploadedFiles').find('tr[data-file-name="' + fileName + '"]');
-                if ($tr) {
-                    $tr.find('.progress-bar').css('width', progress);
-                    if (progress == '100%') {
-                        $tr.find('.progress').removeClass('progress-striped');
-                    }
-                }
-            };
-
             // Uploader handler
-            $('#uploader').fileupload({
-                dataType: 'json',
-                autoUpload: true,
-                formData: {},
-                url: '/admin/file/upload',
-                start: function(e) {
-                    $('.changeButton').attr('disabled', 'disabled');
-                    $('#saveButton').attr('disabled', 'disabled');
-                },
-                done: function(e, data) {
-                    var editingRow = $('#uploader').data('editingRow');
-
-                    $.each(data.result.files, function(index, file) {
-                        var $tr        = $('#uploadedFiles').find('tr[data-file-name="' + file.name + '"]'),
-                            editingRow = $('#uploader').data('editingRow');
-                        if ($tr) {
-                            $tr.find('input[type="text"]').removeAttr('disabled');
-                            if (!editingRow) {
-                                $tr.attr('data-file-id', file._id);
-                            }
+            $('#uploader')
+                .on('updateUploadProgress', function(fileName, progress) {
+                    var $tr = $('#uploadedFiles').find('tr[data-file-name="' + fileName + '"]');
+                    if ($tr) {
+                        $tr.find('.progress-bar').css('width', progress);
+                        if (progress == '100%') {
+                            $tr.find('.progress').removeClass('progress-striped');
                         }
+                    }
+                })
+                .fileupload({
+                    dataType: 'json',
+                    autoUpload: true,
+                    formData: {},
+                    url: '/admin/file/upload',
+                    start: function(e) {
+                        $('.changeButton').attr('disabled', 'disabled');
+                        $('#saveButton').attr('disabled', 'disabled');
+                    },
+                    done: function(e, data) {
+                        var editingRow = $('#uploader').data('editingRow');
 
-                        // For small files, I cannot receive the progress via socket
-                        // because the upload is done before the socket emits event
-                        // In this case, I've to update the progress bar width
-                        $tr.find('.progress').removeClass('progress-striped hide').end().find('.progress-bar').css('width', '100%');
+                        $.each(data.result.files, function(index, file) {
+                            var $tr        = $('#uploadedFiles').find('tr[data-file-name="' + file.name + '"]'),
+                                editingRow = $('#uploader').data('editingRow');
+                            if ($tr) {
+                                $tr.find('input[type="text"]').removeAttr('disabled');
+                                if (!editingRow) {
+                                    $tr.attr('data-file-id', file._id);
+                                }
+                            }
+
+                            // For small files, I cannot receive the progress via socket
+                            // because the upload is done before the socket emits event
+                            // In this case, I've to update the progress bar width
+                            $tr.find('.progress').removeClass('progress-striped hide').end().find('.progress-bar').css('width', '100%');
+                        });
+
+                        $('#uploader').removeData('editingRow').attr('multiple', 'multiple');
+                        $('#saveButton').removeAttr('disabled');
+                        $('.changeButton').removeAttr('disabled');
+                    }
+                })
+                .on('fileuploadadd', function(e, data) {
+                    $('#uploadedFiles').parent().removeClass('hide');
+
+                    var editingRow = $('#uploader').data('editingRow');
+                    $.each(data.files, function(index, file) {
+                        var $tr = editingRow ? editingRow : $('#fileRowTemplate').clone().appendTo('#uploadedFiles').removeClass('hide').removeAttr('id');
+                        $tr
+                            .attr('data-file-name', file.name)
+                            .find('td')
+                                .eq(0).html([file.name.length > 25 ? file.name.substr(0, 25) + '...' : file.name, filesize(file.size)].join(' / '));
                     });
-
-                    $('#uploader').removeData('editingRow').attr('multiple', 'multiple');
-                    $('#saveButton').removeAttr('disabled');
-                    $('.changeButton').removeAttr('disabled');
-                }
-            }).on('fileuploadadd', function(e, data) {
-                $('#uploadedFiles').parent().removeClass('hide');
-
-                var editingRow = $('#uploader').data('editingRow');
-                $.each(data.files, function(index, file) {
-                    var $tr = editingRow ? editingRow : $('#fileRowTemplate').clone().appendTo('#uploadedFiles').removeClass('hide').removeAttr('id');
-                    $tr
-                        .attr('data-file-name', file.name)
-                        .find('td')
-                            .eq(0).html([file.name.length > 25 ? file.name.substr(0, 25) + '...' : file.name, filesize(file.size)].join(' / '));
+                })
+                .on('fileuploadprogress', function(e, data) {
+                    $(this).trigger('updateUploadProgress', [data.files[0].name, 100 * data.loaded / data.total + '%']);
                 });
-            }).on('fileuploadprogress', function(e, data) {
-                updateProgress(data.files[0].name, 100 * data.loaded / data.total + '%');
-            });
 
             var socket = io.connect();
             socket.on('uploadProgress', function(data) {
-                // updateProgress(data.filename, data.progress);
+                // $('#uploader').trigger('updateUploadProgress', [data.filename, data.progress]);
             });
 
             // Upload thumbnail
@@ -434,6 +477,10 @@ block footerScript
             });
 
             $('#saveButton').on('click', function(e) {
+                // Tags
+                var $tag = $('input[name="tags"]');
+                $tag.val($tag.select2('val').join(','));
+
                 var uploadedFiles = [], fileId = null;
                 $('#uploadedFiles').find('tr').each(function() {
                     if (fileId = $(this).attr('data-file-id')) {

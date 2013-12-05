@@ -43,6 +43,7 @@ module.exports = function(app) {
     app.all('/admin/package/add', authentication.requireAuthentication, package.add);
     app.all('/admin/package/edit/:id', authentication.requireAuthentication, package.edit);
     app.post('/admin/package/slug', authentication.requireAuthentication, package.slug);
+    app.get('/admin/package/tag', authentication.requireAuthentication, package.tag);
 
     // Upload
     app.post('/admin/thumb', authentication.requireAuthentication, package.thumb);

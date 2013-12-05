@@ -224,6 +224,7 @@ provider.url           | n/a                   | Provider URL
 provider.registerUrl   | n/a                   | The register URL
 redis.host             | ```localhost```       | The host of Redis server
 redis.port             | 6379                  | The port of Redis server
+redis.prefix           | n/a                   | Prefix for Redis keys
 url.frontEnd           | n/a                   | The front-end URL
 url.download           | n/a                   | The download URL. In most cases, it is the same as ```url.frontEnd```. Otherwise, if the download and front-end URLs are different but have the same root domain, such as ```download.templatemanager.dev``` and ```templatemanager.dev```, please set the ```session.domain``` to root domain (```.templatemanager.dev```)
 

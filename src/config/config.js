@@ -46,7 +46,8 @@ module.exports = {
         },
         redis: {
             host: 'localhost',
-            port: 6379
+            port: 6379,
+            prefix: 'templatemanager'
         }
     },
     test: {
