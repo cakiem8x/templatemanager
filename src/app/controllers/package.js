@@ -55,9 +55,9 @@ exports.index = function(req, res) {
             }
 
             res.render('package/index', {
+                title: 'Packages',
                 req: req,
                 moment: moment,
-                title: 'Packages',
                 total: total,
                 packages: packages,
 
@@ -124,7 +124,6 @@ exports.add = function(req, res) {
 
         package.save(function(err) {
             if (err) {
-                console.log(err);
                 req.flash('error', 'Could not add package');
                 return res.redirect('/admin/package/add');
             } else {
@@ -136,12 +135,12 @@ exports.add = function(req, res) {
         var config = req.app.get('config');
         Membership.find().exec().then(function(memberships) {
             res.render('package/add', {
+                title: 'Add new package',
                 messages: {
                     warning: req.flash('error'),
                     success: req.flash('success')
                 },
                 thumbPrefixUrl: config.thumbs.url,
-                title: 'Add new package',
                 year: new Date().getFullYear(),
                 memberships: memberships
             });
@@ -203,13 +202,13 @@ exports.edit = function(req, res) {
             Membership.find().exec().then(function(memberships) {
                 var config = req.app.get('config');
                 res.render('package/edit', {
+                    title: 'Edit package',
                     messages: {
                         warning: req.flash('error'),
                         success: req.flash('success')
                     },
                     thumbPrefixUrl: config.thumbs.url,
                     package: package,
-                    title: 'Edit package',
                     memberships: memberships,
 
                     // Helper
