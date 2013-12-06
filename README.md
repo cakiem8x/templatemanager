@@ -67,7 +67,7 @@ From the Mongo shell, run the commands (assume that the app will use ```template
 > db.user.insert({first_name: 'Administrator', last_name: '', email: 'admin@domain.com', hashed_password: '41d4736be7061d0dd826085dd5c5c773c4703e8a', salt: '1000412025288', username: 'administrator', role: 'root', locked: false });
 ```
 
-At this moment, you can use the administrator account with username as ```administrator```, password as ```123456``` to manage the data in the back-end.
+At this moment, you can use the administrator account with username as ```administrator```, password as ```admin``` to manage the data in the back-end.
 Of course, when the app is ready to launch, you can sign in and change the password later.
 
 Next, index the database by commands:
@@ -242,9 +242,10 @@ I also provide a shell script (```start.sh```) for running the app forever (the 
 restart the NodeJS server whenever you update the source code):
 
 ```
-$ chmod 755 start.sh
-$ nohup start.sh >> /var/log/template_manager.log 2>&1 &
+$ chmod 755 <SRC_DIRECTORY>/start.sh
+$ nohup <SRC_DIRECTORY>/start.sh >> /var/log/template_manager.log 2>&1 &
 ```
+(Replace ```<SRC_DIRECTORY>``` with the **full path** of ```src``` directory)
 
 If you change the port, which is 3000 by default, remember to change the port in [Nginx](#setting-nginx) too.
 
