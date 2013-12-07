@@ -49,14 +49,13 @@ module.exports = function(app, config) {
             secret: config.session.secret,
             cookie: {
                 domain: config.session.domain,
-                maxAge: new Date(Date.now() + config.session.lifetime)
-                // maxAge: config.session.lifetime
-            }
-            //,
-            //store: new mongoStore({
-            //    url: config.db,
-            //    collection : 'session'
-            //})
+                //expires: new Date(Date.now() + config.session.lifetime),
+                maxAge: config.session.lifetime
+            },
+            store: new mongoStore({
+                url: config.db,
+                collection : 'session'
+            })
         }));
 
         // Connect flash for flash messages
