@@ -131,6 +131,7 @@ exports.signin = function(req, res) {
 exports.signout = function(req, res) {
     if (req.session.account) {
         delete req.session.account;
+        delete req.session.subscriptions;
         res.redirect('/account/signin');
     } else {
         res.redirect('/');
