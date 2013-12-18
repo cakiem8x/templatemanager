@@ -10,6 +10,7 @@ Changelog
 * #50: Custom 404, 500 error pages
 * #51: Nothing happen when typing the account name and clicking Enter
 * #52: Clear subscriptions from session data after signing out
+* #53: On the front-end, sort the templates by publishing year, not uploaded date
 
 ## v1.0.0 (2013-12-02)
 

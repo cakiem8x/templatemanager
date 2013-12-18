@@ -75,7 +75,7 @@ exports.filter = function(req, res) {
     }
 
     Package.count(criteria, function(err, total) {
-        Package.find(criteria, { '_id': 0 }).sort({ 'created_date': -1 }).select('name slug themes demo_url description tags thumbs responsive free browsers software_versions high_resolution year').skip((page - 1) * perPage).limit(perPage).exec(function(err, templates) {
+        Package.find(criteria, { '_id': 0 }).sort({ 'year': -1, 'created_date': -1 }).select('name slug themes demo_url description tags thumbs responsive free browsers software_versions high_resolution year').skip((page - 1) * perPage).limit(perPage).exec(function(err, templates) {
             if (err) {
                 templates = [];
             }
