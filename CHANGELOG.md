@@ -1,7 +1,7 @@
 Changelog
 =========
 
-## v1.1.0
+## v1.1.0 (2013-12-19)
 
 * Require Redis to cache data (account memberships, tags)
 * #3: Auto-complete when adding tags
