@@ -242,6 +242,7 @@ I also provide a shell script (```start.sh```) for running the app forever (the 
 restart the NodeJS server whenever you update the source code):
 
 ```
+$ cd <SRC_DIRECTORY>
 $ chmod 755 <SRC_DIRECTORY>/start.sh
 $ nohup <SRC_DIRECTORY>/start.sh >> /var/log/template_manager.log 2>&1 &
 ```
