@@ -8,17 +8,17 @@
 var mongoose       = require('mongoose'),
     Schema         = mongoose.Schema,
     packageSchema  = new Schema({
-        type: { type: String, default: 'template' },
-        name: { type: String, default: '' },
-        slug: { type: String, default: '' },
+        type:     { type: String, default: 'template' },
+        name:     { type: String, default: '' },
+        slug:     { type: String, default: '' },
         demo_url: { type: String, default: '' },
         themes: [{
-            name: { type: String, default: '' },
-            color: { type: String, default: '' },
+            name:     { type: String, default: '' },
+            color:    { type: String, default: '' },
             demo_url: { type: String, default: '' }
         }],
         description: { type: String, default: '' },
-        changelog: { type: String, default: '' },
+        changelog:   { type: String, default: '' },
         tags: {
             type: [],
             get: function(tags) {
@@ -37,13 +37,13 @@ var mongoose       = require('mongoose'),
         files: [
             { type : Schema.ObjectId, ref: 'file' }
         ],
-        created_date: { type: Date, default: Date.now },
-        responsive: { type: Boolean, default: true },
-        free: { type: Boolean, default: false },
-        browsers: { type: String, default: 'IE 8,Opera,Firefox,Chrome,Safari' },
-        software_versions: { type: String, default: '' },
-        high_resolution: { type: String, default: 'n/a' },
-        year: { type: Number, default: new Date().getFullYear() },
+        created_date:      { type: Date,    default: Date.now },
+        responsive:        { type: Boolean, default: true },
+        free:              { type: Boolean, default: false },
+        browsers:          { type: String,  default: 'IE 8,Opera,Firefox,Chrome,Safari' },
+        software_versions: { type: String,  default: '' },
+        high_resolution:   { type: String,  default: 'n/a' },
+        year:              { type: Number,  default: new Date().getFullYear() },
         memberships: [
             { type : Schema.ObjectId, ref: 'membership' }
         ]
@@ -60,12 +60,15 @@ packageSchema
     });
 
 packageSchema.methods.generateSlug = function() {
-    return this.name.toString().toLowerCase()
-                    .replace(/\s+/g, '-')
-                    .replace(/[^\w\-]+/g, '')
-                    .replace(/\-\-+/g, '-')
-                    .replace(/^-+/, '')
-                    .replace(/-+$/, '');
+    return this
+                .name
+                .toString()
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^\w\-]+/g, '')
+                .replace(/\-\-+/g, '-')
+                .replace(/^-+/, '')
+                .replace(/-+$/, '');
 };
 
 packageSchema.statics.generateSlug = function(package, cb) {
