@@ -322,7 +322,7 @@ exports.package = function(req, res) {
     }
 
     Package.count(criteria, function(err, total) {
-        Package.find(criteria).skip((page - 1) * perPage).limit(perPage).sort({ created_date: -1 }).populate('files').exec(function(err, packages) {
+        Package.find(criteria).skip((page - 1) * perPage).limit(perPage).sort({ 'year': -1, 'created_date': -1 }).populate('files').exec(function(err, packages) {
             if (err) {
                 packages = [];
             }
