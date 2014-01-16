@@ -84,22 +84,26 @@ html(ng-app="TemplateDemo")
                 p.text-center(ng-class="{ 'show': total == 0, 'hide': total > 0 }") Not found templates
                 ul.tpl-item-list(ng-class="{ 'show': total > 0, 'hide': total == 0 }")
                     li.col-lg-4.col-md-4.col-sm-4.col-xs-6(ng-repeat="template in templates")
-                        div.text-center(style="margin-bottom: 10px;")
-                            div.hide(ng-class="{ 'show': template.themes == null || template.themes.length == 0 }")
-                                a.btn.btn-default(href="#{{ template.slug }}", ng-click="showTemplate(template)") {{ template.name }}
+                        div.tpl-item
+                            div.tpl-item-thumb
+                                a(href="#{{ template.slug }}", ng-click="showTemplate(template)")
+                                    img.img-responsive(ng-src="#{thumbPrefixUrl}{{ template.thumbs.medium }}")
 
-                            div.hide(ng-class="{ 'show': template.themes && template.themes.length > 0 }")
-                                div.btn-group
-                                    button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown")
-                                        | {{ template.name }} &nbsp;
-                                        span.caret
-                                    ul.dropdown-menu.text-left
-                                        li(ng-repeat="theme in template.themes", style="background: {{ theme.color }}")
-                                            a(href="#{{ template.slug }}", ng-click="showTemplate(template, theme)") {{ theme.name }}
-
-                        p
-                            a(href="#{{ template.slug }}", ng-click="showTemplate(template)")
-                                img(ng-src="#{thumbPrefixUrl}{{ template.thumbs.medium }}")
+                            div.tpl-item-meta
+                                div
+                                    div.pull-left
+                                        h2
+                                            a(href="#{{ template.slug }}", ng-click="showTemplate(template)") {{ template.name }}
+                                    div.pull-right.text-right
+                                        i.fa.fa-clock-o
+                                        |  {{ template.updated_date }}
+                                div.clearfix
+                                div
+                                    div.pull-left
+                                        small.label.label-danger(ng-repeat="software in template.software_versions") {{ software }}
+                                    div.pull-right.text-right
+                                        i.fa.fa-download.fa-inverse
+                                        |  {{ template.num_downloads }}
 
                     li.clearfix
 
@@ -175,9 +179,11 @@ html(ng-app="TemplateDemo")
 
         //if lt IE 9
             script(src="/vendor/jquery/jquery-1.10.2.min.js")
+
         //[if gte IE 9]><!
         script(src="/vendor/jquery/jquery-2.0.3.min.js")
         //<![endif]
+
         script(src="/vendor/bootstrap/js/bootstrap.min.js")
         script(src="/vendor/angularjs/angular.min.js")
         script(src="/asset/js/app.js")

@@ -189,6 +189,7 @@ exports.edit = function(req, res) {
             package.free              = req.body.free || false;
             package.memberships       = req.body.memberships;
             package.year              = req.body.year || new Date().getFullYear();
+            package.updated_date      = new Date();
 
             package.save(function(err) {
                 if (err) {

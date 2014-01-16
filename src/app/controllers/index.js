@@ -5,7 +5,8 @@
  * @author  http://twitter.com/nghuuphuoc
  */
 
-var mongoose = require('mongoose'),
+var moment   = require('moment'),
+    mongoose = require('mongoose'),
     Package  = mongoose.model('package');
 
 exports.index = function(req, res) {
@@ -75,30 +76,47 @@ exports.filter = function(req, res) {
     }
 
     Package.count(criteria, function(err, total) {
-        Package.find(criteria, { '_id': 0 }).sort({ 'year': -1, 'created_date': -1 }).select('name slug themes demo_url description tags thumbs responsive free browsers software_versions high_resolution year').skip((page - 1) * perPage).limit(perPage).exec(function(err, templates) {
-            if (err) {
-                templates = [];
-            }
+        Package
+            .find(criteria, { '_id': 0 })
+            .sort({ 'year': -1, 'created_date': -1 })
+            .skip((page - 1) * perPage)
+            .limit(perPage)
+            .populate('files')
+            .exec(function(err, packages) {
+                var templates = [];
+                for (var i in packages) {
+                    templates.push({
+                        name:              packages[i].name,
+                        slug:              packages[i].slug,
+                        themes:            packages[i].themes,
+                        demo_url:          packages[i].demo_url,
+                        thumbs:            packages[i].thumbs,
+                        updated_date:      packages[i].updated_date ? moment(packages[i].updated_date).format('YYYY/MM/DD') : moment(packages[i].created_date).format('YYYY/MM/DD'),
+                        software_versions: packages[i].software_versions ? packages[i].software_versions.split(',') : [],
+                        year:              packages[i].year,
+                        num_downloads:     packages[i].num_downloads
+                    });
+                }
 
-            var numPages   = Math.ceil(total / perPage),
-                startRange = (page == 1) ? 1 : pageRange * Math.floor((page - 1) / pageRange) + 1,
-                endRange   = startRange + pageRange;
+                var numPages   = Math.ceil(total / perPage),
+                    startRange = (page == 1) ? 1 : pageRange * Math.floor((page - 1) / pageRange) + 1,
+                    endRange   = startRange + pageRange;
 
-            if (endRange > numPages) {
-                endRange = numPages;
-            }
+                if (endRange > numPages) {
+                    endRange = numPages;
+                }
 
-            res.json({
-                total: total,
-                templates: templates,
-                thumbPrefixUrl: config.thumbs.url,
+                res.json({
+                    total: total,
+                    templates: templates,
+                    thumbPrefixUrl: config.thumbs.url,
 
-                // Pagination
-                page: page,
-                numPages: numPages,
-                startRange: startRange,
-                endRange: endRange
-            });
+                    // Pagination
+                    page: page,
+                    numPages: numPages,
+                    startRange: startRange,
+                    endRange: endRange
+                });
         });
     });
 };

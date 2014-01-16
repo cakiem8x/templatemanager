@@ -3,18 +3,19 @@ Changelog
 
 ## v1.1.1
 
-* Improved #55: In account back-end, show the newest packages first
+* (#55) In account back-end, show the newest packages first
+* (#56) Show more template info in the front-end
 
 ## v1.1.0 (2013-12-19)
 
 * Require Redis to cache data (account memberships, tags)
-* Added #3: Auto-complete when adding tags
-* Added #50: Custom 404, 500 error pages
-* Improved #46: Show the account's memberships when hovering the account name
-* Improved #49: In the production env, remove debug info
-* Improved #53: On the front-end, sort the templates by publishing year, not uploaded date
-* Fixed #51: Nothing happen when typing the account name and clicking Enter
-* Fixed #52: Clear subscriptions from session data after signing out
+* (#3) Auto-complete when adding tags
+* (#46) Show the account's memberships when hovering the account name
+* (#49) In the production env, remove debug info
+* (#50) Custom 404, 500 error pages
+* (#51) Nothing happen when typing the account name and clicking Enter
+* (#52) Clear subscriptions from session data after signing out
+* (#53) On the front-end, sort the templates by publishing year, not uploaded date
 
 ## v1.0.0 (2013-12-02)
 

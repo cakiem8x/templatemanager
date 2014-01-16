@@ -38,6 +38,7 @@ var mongoose       = require('mongoose'),
             { type : Schema.ObjectId, ref: 'file' }
         ],
         created_date:      { type: Date,    default: Date.now },
+        updated_date:      { type: Date },
         responsive:        { type: Boolean, default: true },
         free:              { type: Boolean, default: false },
         browsers:          { type: String,  default: 'IE 8,Opera,Firefox,Chrome,Safari' },
@@ -52,6 +53,10 @@ var mongoose       = require('mongoose'),
 packageSchema
     .virtual('num_downloads')
     .get(function() {
+        if (!this.files) {
+            return 0;
+        }
+
         var numDownloads = 0, numFiles = this.files.length;
         for (var i = 0; i < numFiles; i++) {
             numDownloads += this.files[i].num_downloads;
