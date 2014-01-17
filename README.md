@@ -17,6 +17,26 @@ If your company sell, provide these kind of templates, extensions, then this sof
 
 The software has been used in [production](http://demo.zootemplate.com) at [ZooTemplate](http://zootemplate.com), one of the top Joomla templates/extensions provider in the world.
 
+## Features
+
+**Front-end**
+
+* Responsive front-end
+* View the demo in various device sizes including mobile, tablet, laptop, desktop
+* Provide multiple template filters such as year, tag, responsive, etc.
+
+**Back-end**
+
+* Manage packages including templates and extensions
+* Manage files. You can reuse files between packages
+* Manage memberships taken from Amember
+* Manage administrators
+* Amember account can sign in and download files from packages
+* Statistic the top accounts/files/packages
+* Browse download history
+
+![Account back-end](docs/img/backend-account.png)
+
 ## Platform
 
 The software is built on the [MEAN stack](http://mean.io) which uses the following software:
@@ -250,8 +270,34 @@ $ nohup <SRC_DIRECTORY>/start.sh >> /var/log/template_manager.log 2>&1 &
 
 If you change the port, which is 3000 by default, remember to change the port in [Nginx](#setting-nginx) too.
 
+## Author
+
+This software is written by Nguyen Huu Phuoc, aka @nghuuphuoc
+
+* [http://twitter.com/nghuuphuoc](http://twitter.com/nghuuphuoc)
+* [http://github.com/nghuuphuoc](http://github.com/nghuuphuoc)
+
 ## License
 
-Copyright (c) 2013 Nguyen Huu Phuoc
+```
+The MIT License (MIT)
 
-Licensed under the MIT license
+Copyright (c) 2013 - 2014 Nguyen Huu Phuoc
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
