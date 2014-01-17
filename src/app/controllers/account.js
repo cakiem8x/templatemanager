@@ -453,14 +453,14 @@ exports.download = function(req, res) {
                     ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
                     browser: req.headers['user-agent']
                 });
-                download.save();
+                download.save(function() {
+                    res.setHeader('Content-Description', 'Download file');
+                    res.setHeader('Content-Type', 'application/octet-stream');
+                    res.setHeader('Content-Disposition', 'attachment; filename=' + file.name);
 
-                res.setHeader('Content-Description', 'Download file');
-                res.setHeader('Content-Type', 'application/octet-stream');
-                res.setHeader('Content-Disposition', 'attachment; filename=' + file.name);
-
-                var stream = fs.createReadStream(file.path);
-                stream.pipe(res);
+                    var stream = fs.createReadStream(file.path);
+                    stream.pipe(res);
+                });
             }
         });
     });
