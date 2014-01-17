@@ -5,6 +5,7 @@ Changelog
 
 * (#55) In account back-end, show the newest packages first
 * (#56) Show more template info in the front-end
+* (#57) Cannot choose other template while loading a template
 * (#58) Hide the Templates/Filter tabs when clicking the Toggle/Device icons
 
 ## v1.1.0 (2013-12-19)
