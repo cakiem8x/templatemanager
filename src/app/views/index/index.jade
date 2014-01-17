@@ -17,10 +17,14 @@ html(ng-app="TemplateDemo")
         //if lt IE 9
             script(src="/vendor/html5shiv/html5shiv.min.js")
             script(src="/vendor/respond/respond.min.js")
+
     body.tpl-body(ng-controller="DemoController")
+        // Toggle button
         div.tpl-toggle(tpl-toggle, target="#topNavBar")
-            a(href="javascript: void(0);")
+            a(href="javascript: void(0);", ng-click="activateTab(null)")
                 i.fa.fa-bars.fa-2x
+
+        // Main navbar
         div#topNavBar.navbar.navbar-default.navbar-fixed-top
             div.container
                 div.navbar-header

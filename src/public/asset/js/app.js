@@ -248,6 +248,7 @@ angular
             if ($scope.currentTemplate == null) {
                 return;
             }
+            $scope.activeTab = null;
             $scope.$broadcast('resizeTo', width, height);
         };
 
