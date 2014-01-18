@@ -83,7 +83,7 @@ block content
                                 a.accountLabel(href="#{url(req, { page: 1, account: download.user_name }, ['guest'])}") #{download.user_name}
                         td #{moment(download.downloaded_date).format('YYYY-MM-DD HH:mm')}
                         td
-                            a(href="#{url(req, { page: 1, ip: download.ip })}") #{download.ip}
+                            a.downloadIP(href="#{url(req, { page: 1, ip: download.ip })}", data-placement="bottom", data-html="true", data-title="Browse Agent:<br />" + download.browser) #{download.ip}
                         td
                             a(href="#{url(req, { page: 1, file: download.file._id + '' })}") #{download.file.name}
                             |  / #{filesize(download.file.size)}
@@ -115,6 +115,8 @@ block content
 block footerScript
     script(type="text/javascript").
         $(document).ready(function() {
+            $('.downloadIP').tooltip();
+
             $('.accountLabel').on('mouseover', function() {
                 var $that = $(this), account = $that.html();
                 if (account != '@guest') {

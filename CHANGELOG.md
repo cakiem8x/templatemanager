@@ -1,6 +1,10 @@
 Changelog
 =========
 
+## v1.1.2
+
+* (#60) Show the download's browser agent
+
 ## v1.1.1 (2014-01-17)
 
 * (#55) In account back-end, show the newest packages first
