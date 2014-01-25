@@ -1,0 +1,76 @@
+extends ../layouts/backend
+
+block head
+    link(rel="stylesheet", href="/vendor/codemirror/lib/codemirror.css")
+
+block heading
+    h1 Configure Menu
+        small  Set the menu for account's backend
+
+block content
+    include ../partial/flash
+
+    form(action="/admin/menu", method="post")
+        div.form-group
+            small.help-block You can set the menu items by using Markdown format as following
+            small.help-block
+                ul.list-unstyled
+                    li * [Menu label](URL)
+                        ul.list-unstyled(style="padding-left: 20px;")
+                            li - [Sub menu label](URL)
+                            li - [Sub menu label](URL)
+                    li * [Menu label](URL)
+
+        div.form-group
+            ul.nav.nav-tabs
+                li.active
+                    a(href="#menuTab", data-toggle="tab") Menu Items
+                li
+                    a(href="#previewTab", data-toggle="tab") Preview
+
+            div.tab-content
+                div#menuTab.tab-pane.active(style="height: 400px;")
+                    div(style="border: 1px solid #e5e5e5;")
+                        textarea#editor.form-control(name="menu", style="height: 390px;") #{menu}
+
+                div#previewTab.tab-pane(style="height: 400px;")
+                    div#menuPreview
+
+        div.form-group
+            textarea#html.hide(name="html")
+            button#saveButton.btn.btn-primary.btn-lg(type="submit") Save
+
+block footerScript
+    script(type="text/javascript", src="/vendor/codemirror/lib/codemirror.js")
+    script(type="text/javascript", src="/vendor/codemirror/mode/markdown/markdown.js")
+    script(type="text/javascript", src="/vendor/bootstrapvalidator/js/bootstrapValidator.min.js")
+    script(type="text/javascript", src="/vendor/marked/marked.js")
+    script(type="text/javascript").
+        $(document).ready(function() {
+            // Markdown editor
+            var editor = CodeMirror.fromTextArea($('#editor').get(0), {
+                mode: 'markdown',
+                lineNumbers: false,
+                matchBrackets: true,
+                lineWrapping: true,
+                theme: 'default'
+            });
+            editor.setSize('100%', $('#editor').height());
+
+            // Preview menu
+            $('a[href="#previewTab"]').on('click', function() {
+                var menuItems = editor.getDoc().getValue();
+                $('#menuPreview')
+                    .html(marked(menuItems))
+                    .find('ul:first-child')
+                        .addClass('nav navbar-nav')
+                        .find('ul')
+                            .addClass('dropdown-menu')
+                            .prev()
+                                .addClass('dropdown-toggle')
+                                .attr('data-toggle', 'dropdown')
+                                .attr('data-target', '#')
+                                .append('&nbsp;<b class="caret"></b>');
+            });
+        });
+
