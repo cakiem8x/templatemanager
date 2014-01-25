@@ -1,78 +1,89 @@
 extends ../layouts/backend
 
+block heading
+    h1 Dashboard
+
 block content
-    div.page-header
-        h2 Hello, #{sessionUser.username}
+    ul.nav.nav-tabs
+        li.active
+            a(href="#activityTab", data-toggle="tab") Activities
+        li
+            a(href="#statsTab", data-toggle="tab") Statistic
 
-    div.row
-        div.col-lg-6
-            div.panel.panel-default
-                div.panel-heading
-                    | Recent downloads
-                    a#refreshRecentDownloads(href="#")
-                        i.pull-right.fa.fa-refresh
-                table.table
-                    thead
-                        tr
-                            th File
-                            th Package
-                            th # Downloads
-                            th By
-                    tbody#recentDownloads
-                        tr#recentDownloadRow.hide
-                            td
-                                div {{file.name}}
-                                small {{file.size}}
-                            td
-                                a {{package.name}}
-                            td {{file.num_downloads}}
-                            td
-                                div {{user_name}}
-                                small ({{downloaded_date}})
-                div.panel-body.text-center(style="display: none;")
-                    i.fa.fa-spin.fa-refresh
+    div.tab-content
+        // Activities tab
+        div#activityTab.tab-pane.active
+            div.row
+                div.col-lg-6
+                    div.panel.panel-default
+                        div.panel-heading
+                            | Recent downloads
+                            a#refreshRecentDownloads(href="#")
+                                i.pull-right.fa.fa-refresh
+                        table.table
+                            thead
+                                tr
+                                    th File
+                                    th Package
+                                    th # Downloads
+                                    th By
+                            tbody#recentDownloads
+                                tr#recentDownloadRow.hide
+                                    td
+                                        div {{file.name}}
+                                        small {{file.size}}
+                                    td
+                                        a {{package.name}}
+                                    td {{file.num_downloads}}
+                                    td
+                                        div {{user_name}}
+                                        small ({{downloaded_date}})
+                        div.panel-body.text-center(style="display: none;")
+                            i.fa.fa-spin.fa-refresh
 
-    section
-        div.page-header
-            h3
-                | Top files&nbsp;
-                small which have been downloaded most
-        div.row
-            div.col-lg-4
-                div.panel.panel-default
-                    div.panel-heading Today and Yesterday
-                    div.topFiles(data-days="2")
+        // Stats tab
+        div#statsTab.tab-pane
+            section
+                div.page-header
+                    h3
+                        | Top files&nbsp;
+                        small which have been downloaded most
+                div.row
+                    div.col-lg-4
+                        div.panel.panel-default
+                            div.panel-heading Today and Yesterday
+                            div.topFiles(data-days="2")
 
-            div.col-lg-4
-                div.panel.panel-default
-                    div.panel-heading Last 7 days
-                    div.topFiles(data-days="7")
+                    div.col-lg-4
+                        div.panel.panel-default
+                            div.panel-heading Last 7 days
+                            div.topFiles(data-days="7")
 
-            div.col-lg-4
-                div.panel.panel-default
-                    div.panel-heading Last 30 days
-                    div.topFiles(data-days="30")
+                    div.col-lg-4
+                        div.panel.panel-default
+                            div.panel-heading Last 30 days
+                            div.topFiles(data-days="30")
 
-    section
-        div.page-header
-            h3
-                | Top accounts&nbsp;
-                small who have downloaded most
-        div.row
-            div.col-lg-4
-                div.panel.panel-default
-                    div.panel-heading Today and Yesterday
-                    div.topAccounts(data-days="2")
+            section
+                div.page-header
+                    h3
+                        | Top accounts&nbsp;
+                        small who have downloaded most
+                div.row
+                    div.col-lg-4
+                        div.panel.panel-default
+                            div.panel-heading Today and Yesterday
+                            div.topAccounts(data-days="2")
 
-            div.col-lg-4
-                div.panel.panel-default
-                    div.panel-heading Last 7 days
-                    div.topAccounts(data-days="7")
+                    div.col-lg-4
+                        div.panel.panel-default
+                            div.panel-heading Last 7 days
+                            div.topAccounts(data-days="7")
 
-            div.col-lg-4
-                div.panel.panel-default
-                    div.panel-heading Last 30 days
-                    div.topAccounts(data-days="30")
+                    div.col-lg-4
+                        div.panel.panel-default
+                            div.panel-heading Last 30 days
+                            div.topAccounts(data-days="30")
 
 block footerScript
     script(type="text/javascript", src="/vendor/filesize/filesize.min.js")

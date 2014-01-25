@@ -8,7 +8,8 @@ html
         title #{title}
 
         link(rel="icon", type="image/x-icon", href="/favicon.ico")
-        link(rel="stylesheet", href="/vendor/bootstrap-theme/css/flatly.css")
+        link(rel="stylesheet", href="/vendor/bootstrap/css/bootstrap.min.css")
+        link(rel="stylesheet", href="/vendor/bootstrap/css/bootstrap-theme.min.css")
         link(rel="stylesheet", href="/vendor/font-awesome/css/font-awesome.min.css")
 
         //if lt IE 9
@@ -28,7 +29,8 @@ html
                             span.icon-bar
                             span.icon-bar
                             span.icon-bar
-                        a.navbar-brand(href="/admin") Dashboard
+                        a.navbar-brand(href="/admin")
+                            i.fa.fa-dashboard
 
                     div#navbar-collapse.collapse.navbar-collapse
                         ul.nav.navbar-nav
@@ -49,26 +51,34 @@ html
                                         li
                                             a(href="/admin/log/download") Download History
 
-                        ul.nav.navbar-nav.navbar-right
-                            li.dropdown
-                                a.dropdown-toggle(href="#", data-toggle="dropdown")
-                                    | Hello #{sessionUser.username} &nbsp;
-                                    b.caret
-                                ul.dropdown-menu
-                                    li
-                                        a(href="/admin/password") Change password
-                                    li.divider
-                                    li
-                                        a(href="#{frontEndUrl}") Visit demo website
-                                    li
-                                        a(href="/admin/signout") Sign out
-            .container
-                .main
-                    block content
+                        // Right nav
+                        ul.t-right-nav.nav.navbar-nav.navbar-right
+                            li
+                                a(href="/admin/password", data-toggle="tooltip", data-container="body", data-placement="bottom", data-title="Change password")
+                                    i.fa.fa-key
+                            li
+                                a(href="#{frontEndUrl}", data-toggle="tooltip", data-container="body", data-placement="bottom", data-title="Visit demo website")
+                                    i.fa.fa-home
+                            li
+                                a(href="#{frontEndUrl}", data-toggle="tooltip", data-container="body", data-placement="bottom", data-title="Sign out")
+                                    i.fa.fa-sign-out
+
+                        p.navbar-text.navbar-right
+                            strong #{sessionUser.username}
+
+
+
+            .main
+                .t-heading
+                    .container
+                        block heading
+                .t-content
+                    .container
+                        block content
             .push
 
-        footer
-            .container
+        .container
+            footer
                 | &copy; #{new Date().getFullYear()} &nbsp;
                 a(href="#{provider.url}") #{provider.name}
 
@@ -84,6 +94,15 @@ html
 
         script(type="text/javascript").
             $(document).ready(function() {
+                // Init tooltips
+                $('[data-toggle="tooltip"]').tooltip();
+
+                // Init tabs
+                $('.nav-tabs a').click(function(e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
+
                 io.connect().emit('userName', '#{sessionUser.username}');
             });
 

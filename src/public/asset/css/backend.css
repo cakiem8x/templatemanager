@@ -4,6 +4,31 @@
  * @link    http://github.com/nghuuphuoc/templatemanager
  * @author  http://twitter.com/nghuuphuoc
  */
+.navbar-brand, .navbar-nav > li > a {
+  padding-top: 10px;
+  padding-bottom: 10px; }
+
+.navbar-text {
+  margin-top: 10px;
+  margin-bottom: 10px; }
+
+.navbar {
+  min-height: 40px; }
+
+.t-right-nav {
+  padding-left: 8px; }
+  .t-right-nav li > a {
+    padding-left: 8px;
+    padding-right: 8px; }
+
+.t-heading {
+  border-bottom: 1px solid #e5e5e5;
+  height: 80px;
+  line-height: 80px; }
+
+.t-content {
+  padding-top: 20px; }
+
 .page-header {
   margin-top: 20px; }
 
@@ -20,16 +45,15 @@ html, body {
   margin: 0 auto -80px auto; }
 
 .main {
-  padding-top: 80px; }
+  padding-top: 40px; }
 
 .push {
   height: 80px; }
 
 footer {
-  border-top: 1px solid #c0c0c0;
-  height: 79px; }
-  footer .container {
-    padding-top: 8px; }
+  border-top: 1px solid #d5d5d5;
+  height: 80px;
+  padding-top: 10px; }
 
 .main-content {
   margin: 15px 0; }

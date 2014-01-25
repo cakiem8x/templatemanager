@@ -6,7 +6,25 @@
  */
 
 // Variables
+$navHeight: 40px;
 $footerHeight: 80px;
+
+// Override Bootstrap
+.navbar-brand, .navbar-nav > li > a { padding-top: 10px; padding-bottom: 10px; }
+.navbar-text { margin-top: 10px; margin-bottom: 10px; }
+.navbar { min-height: $navHeight; }
+.t-right-nav {
+  padding-left: 8px;
+  li > a { padding-left: 8px; padding-right: 8px; }
+}
+.t-heading {
+  border-bottom: 1px solid #e5e5e5;
+  height: 80px;
+  line-height: 80px;
+}
+.t-content {
+  padding-top: 20px;
+}
 
 .page-header {
   margin-top: 20px;
@@ -26,18 +44,15 @@ html, body {
   margin: 0 auto -#{$footerHeight} auto;
 }
 .main {
-  padding-top: $footerHeight;
+  padding-top: $navHeight;
 }
 .push {
   height: $footerHeight;
 }
 footer {
-  border-top: 1px solid #c0c0c0;
-  height: $footerHeight - 1;
-
-  .container {
-    padding-top: 8px;
-  }
+  border-top: 1px solid #d5d5d5;
+  height: $footerHeight;
+  padding-top: 10px;
 }
 
 .main-content {
