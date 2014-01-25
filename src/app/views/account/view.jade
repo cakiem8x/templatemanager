@@ -1,13 +1,14 @@
 extends ../layouts/account
 
-block content
-    div.page-header
-        h2
-            a(href="/account/package") Packages
-            |  /&nbsp;
+block heading
+    h1
+        a(href="/account/package") Packages
+        small
+            |  &rarr;&nbsp;
             a(href="/account/package?year=#{package.year || new Date().getFullYear()}") #{package.year || new Date().getFullYear()}
-            |   / #{package.name}
+            |   &rarr; #{package.name}
 
+block content
     ul.nav.nav-tabs(style="margin-top: 20px;")
         li.active
             a(href="#overview", data-toggle="tab") Overview
@@ -26,7 +27,7 @@ block content
                     a(href=package.type == 'template' ? '#{frontEndUrl}#' + package.slug : package.demo_url)
                         img.img-responsive.img-thumbnail(src=package.thumbs && package.thumbs.medium ? '#{thumbPrefixUrl}' + package.thumbs.medium : '/asset/img/noimage.png')
                 if package.demo_url
-                    a.btn.btn-warning(href=package.type == 'template' ? '#{frontEndUrl}#' + package.slug : package.demo_url) Live Demo
+                    a.btn.btn-info.btn-lg(href=package.type == 'template' ? '#{frontEndUrl}#' + package.slug : package.demo_url) Live Demo
 
             div.col-lg-8
                 dl.dl-horizontal
@@ -39,7 +40,9 @@ block content
 
                     if package.software_versions
                         dt.text-info Compatible with
-                        dd #{package.software_versions.split(',').join(', ')}
+                        dd
+                            for software in package.software_versions.split(',')
+                                span.label.label-success(style="margin: 0 5px;") #{software}
 
                 | !{package.description.replace(/\n/g, '<br/>')}
 
@@ -75,7 +78,7 @@ block content
                                 td #{file.num_downloads}
                                 td
                                     if isDownloadable
-                                        a.btn.btn-success(href="#{downloadUrl}/account/download/#{package.slug}/#{file._id}") Download
+                                        a.btn.btn-info(href="#{downloadUrl}/account/download/#{package.slug}/#{file._id}") Download
                                     else
                                         a.btn.btn-danger(href="#{purchaseUrl}") Purchase
 

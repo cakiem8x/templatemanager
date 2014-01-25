@@ -1,9 +1,9 @@
 extends ../layouts/account
 
-block content
-    div.page-header
-        h2 Hello, #{account}
+block heading
+    h1 Dashboard
 
+block content
     div.row
         if (!subscriptions.length)
             div.col-lg-6.col-lg-offset-3

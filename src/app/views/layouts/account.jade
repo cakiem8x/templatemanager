@@ -8,7 +8,8 @@ html
         title #{title}
 
         link(rel="icon", type="image/x-icon", href="/favicon.ico")
-        link(rel="stylesheet", href="/vendor/bootstrap-theme/css/flatly.css")
+        link(rel="stylesheet", href="/vendor/bootstrap/css/bootstrap.min.css")
+        link(rel="stylesheet", href="/vendor/bootstrap/css/bootstrap-theme.min.css")
         link(rel="stylesheet", href="/vendor/font-awesome/css/font-awesome.min.css")
 
         //if lt IE 9
@@ -28,26 +29,33 @@ html
                             span.icon-bar
                             span.icon-bar
                             span.icon-bar
-                        a.navbar-brand(href="/account") Dashboard
+                        a.navbar-brand(href="/account")
+                            i.fa.fa-dashboard
 
                     div#navbar-collapse.collapse.navbar-collapse
                         ul.nav.navbar-nav
                             li
                                 a(href="/account/package") Packages
 
-                        ul.nav.navbar-nav.navbar-right
-                            li.dropdown
-                                a.dropdown-toggle(href="#", data-toggle="dropdown")
-                                    | Hello #{account} &nbsp;
-                                    b.caret
-                                ul.dropdown-menu
-                                    li
-                                        a(href="#{frontEndUrl}") Visit demo website
-                                    li
-                                        a(href="/account/signout") Sign out
-            .container
-                .main
-                    block content
+                        // Right nav
+                        ul.t-right-nav.nav.navbar-nav.navbar-right
+                            li
+                                a(href="#{frontEndUrl}", data-toggle="tooltip", data-container="body", data-placement="bottom", data-title="Visit demo website")
+                                    i.fa.fa-home
+                            li
+                                a(href="/account/signout", data-toggle="tooltip", data-container="body", data-placement="bottom", data-title="Sign out")
+                                    i.fa.fa-sign-out
+
+                        p.navbar-text.navbar-right
+                            strong #{account}
+
+            .main
+                .t-heading
+                    .container
+                        block heading
+                .t-content
+                    .container
+                        block content
             .push
 
         footer
@@ -67,6 +75,9 @@ html
 
         script(type="text/javascript").
             $(document).ready(function() {
+                // Init tooltips
+                $('[data-toggle="tooltip"]').tooltip();
+
                 io.connect().emit('account', '#{account}');
             });
 

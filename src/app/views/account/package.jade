@@ -1,42 +1,44 @@
 extends ../layouts/account
 
-block content
-    div.page-header
-        h2
-            a(href="/account/package") Packages
+block heading
+    h2
+        a(href="/account/package") Packages
 
-            if criteria.year
-                &nbsp;/&nbsp;
+        if criteria.year
+            small
+                |  &rarr;&nbsp;
                 a(href="/account/package?year=#{criteria.year}") #{criteria.year}
 
-            | &nbsp;
-            small.btn-group
-                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, ['type'])}", class=criteria.type == null ? 'active' : '') All
-                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'template' })}", class=criteria.type == 'template' ? 'active' : '') Templates
-                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'extension' })}", class=criteria.type == 'extension' ? 'active' : '') Extensions
+        | &nbsp;
+        small.btn-group
+            a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, ['type'])}", class=criteria.type == null ? 'active' : '') All
+            a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'template' })}", class=criteria.type == 'template' ? 'active' : '') Templates
+            a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'extension' })}", class=criteria.type == 'extension' ? 'active' : '') Extensions
 
-            | &nbsp;
-            small.btn-group
-                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, ['downloadable'])}", class=isDownloadable == null ? 'active' : '') All
-                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, downloadable: 'true' })}", class=isDownloadable == 'true' ? 'active' : '') Downloadable
-                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, downloadable: 'false' })}", class=isDownloadable == 'false' ? 'active' : '') Purchase
+        | &nbsp;
+        small.btn-group
+            a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, ['downloadable'])}", class=isDownloadable == null ? 'active' : '') All
+            a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, downloadable: 'true' })}", class=isDownloadable == 'true' ? 'active' : '') Downloadable
+            a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, downloadable: 'false' })}", class=isDownloadable == 'false' ? 'active' : '') Purchase
 
+        div.pull-right.col-lg-4
+            form.form-inline(method="get", action="/account/package")
+                div.input-group
+                    input.form-control(type="text", name="q", value="#{q}")
+                    span.input-group-btn
+                        button.btn.btn-success(type="submit")
+                            i.fa.fa-search
+
+block content
     if total == 0
         p.text-center There is no packages
     else
-        div.row(style="margin-bottom: 20px;")
-            div.col-lg-8 Found #{total} packages
-            div.col-lg-4.pull-right
-                form.form-inline(method="get", action="/account/package")
-                    div.input-group
-                        input.form-control(type="text", name="q", value="#{q}")
-                        span.input-group-btn
-                            button.btn.btn-default(type="submit")
-                                i.fa.fa-search
+        p Found #{total} packages
 
         - each package, index in packages
             if (index % 3 == 0)
                 div.row
+
             div.col-lg-4
                 div.tb-tmpl-item
                     a(href="/account/package/#{package.slug}")
@@ -50,24 +52,26 @@ block content
 
                     if package.description
                         p #{package.description.substr(0, 200)}...
+                    if package.software_versions
+                        small.help-block
+                            i.fa.fa-heart
+                            for software in package.software_versions.split(',')
+                                span.label.label-success(style="margin: 0 5px;") #{software}
+                    if package.browsers
+                        small.help-block
+                            i.fa.fa-check
+                            for browser in package.browsers.split(',')
+                                span.label.label-info(style="margin: 0 5px;") #{browser}
                     if package.responsive
                         small.help-block
                             i.fa.fa-mobile.fa-2x
                             | &nbsp; Responsive
-                    if package.browsers
-                        small.help-block
-                            i.fa.fa-check
-                            | &nbsp; #{package.browsers.split(',').join(', ')}
-                    if package.software_versions
-                        small.help-block
-                            i.fa.fa-heart
-                            | &nbsp; #{package.software_versions.split(',').join(', ')}
 
                     if package.files.length > 0
                         div.text-center
                             if downloadable(package, membershipIds)
                                 div.btn-group
-                                    button.btn.btn-success.dropdown-toggle(type="button", data-toggle="dropdown")
+                                    button.btn.btn-info.dropdown-toggle(type="button", data-toggle="dropdown")
                                         | Download &nbsp;
                                         span.caret
 

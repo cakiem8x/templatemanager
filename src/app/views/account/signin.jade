@@ -3,7 +3,7 @@ extends ../layouts/default
 block content
     div.col-lg-8.col-lg-offset-2
         div.page-header
-            h2 Account area
+            h2 Account Area
 
         p
             | You can&nbsp;
@@ -14,7 +14,7 @@ block content
 
     div.col-lg-4.col-lg-offset-4
 
-        div.panel.panel-default
+        div.panel.panel-info
             div.panel-heading
                 h3.panel-title Sign in
             div.panel-body
@@ -24,9 +24,9 @@ block content
                     div.form-group
                         input.form-control(type="password", name="password", placeholder="Password")
                     div.form-group
-                        button.btn.btn-primary(type="submit") Sign in
-                        span.form-control-static(style="margin: 0 10px;") &mdash; or &mdash;
-                        a.btn.btn-default(href="#{frontEndUrl}") Visit demo website
+                        button.btn.btn-primary(type="submit") Sign In
+                        span.form-control-static(style="margin: 0 10px;") &mdash; OR &mdash;
+                        a.btn.btn-info(href="#{frontEndUrl}") Visit Demo
 
 
 block footerScript
