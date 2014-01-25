@@ -1,11 +1,11 @@
 /**
  * inlineEditor
- * 
- * A jQuery plugin that creates an inline editor. Styling with Bootstrap 3 
- * 
+ *
+ * A jQuery plugin that creates an inline editor. Styling with Bootstrap 3
+ *
  * @link        http://github.com/nghuuphuoc/inlineEditor
- * @author      http://twitter.com/nghuuphuoc 
- * @copyright   (c) 2013 Nguyen Huu Phuoc 
+ * @author      http://twitter.com/nghuuphuoc
+ * @copyright   (c) 2013 Nguyen Huu Phuoc
  * @license     MIT
  */
 
@@ -29,13 +29,14 @@
 
         _init: function() {
             var prefixClass      = this.options.prefixClass,
-                $editorWrapper   = this.$element.wrap($('<div/>').addClass(prefixClass + 'wrapper')).parent(),
-                $editorContainer = $('<div/>').addClass(prefixClass + 'container form-inline').appendTo($editorWrapper).hide(),
+                $editorWrapper   = this.$element.addClass(prefixClass + 'editable').css('cursor', 'pointer').wrap($('<div/>').addClass(prefixClass + 'wrapper')).parent(),
+                $editorContainer = $('<div/>').addClass(prefixClass + 'container form-inline').appendTo($editorWrapper),
                 $input           = $('<input/>').addClass(prefixClass + 'input form-control').appendTo($editorContainer),
-                $saveButton      = $('<button/>').addClass(prefixClass + 'save btn btn-success').attr('type', 'button').html('<i class="fa fa-check"></i>').appendTo($editorContainer),
-                $cancelButton    = $('<button/>').addClass(prefixClass + 'cancel btn btn-default').attr('type', 'button').html('<i class="fa fa-times"></i>').appendTo($editorContainer);
+                $saveButton      = $('<button/>').attr('type', 'button').addClass(prefixClass + 'save btn btn-link').attr('type', 'button').html('<i class="fa fa-check"></i>').appendTo($editorContainer),
+                $cancelButton    = $('<button/>').attr('type', 'button').addClass(prefixClass + 'cancel btn btn-link').attr('type', 'button').html('<i class="fa fa-times"></i>').appendTo($editorContainer);
 
-            var inputWidth = $editorContainer.width() - $saveButton.outerWidth() - $cancelButton.outerWidth() - parseInt($input.css('padding-left')) - parseInt($input.css('padding-right'));
+            var inputWidth = $editorWrapper.width() - $saveButton.outerWidth(true) - $cancelButton.outerWidth(true) - 10;
+            $editorContainer.hide();
             $input.addClass('form-control').css('width', inputWidth + 'px');
 
             var that = this;
@@ -49,12 +50,12 @@
                     method: that.options.method,
                     data: data
                 }).success(function(response) {
-                    if ('true' == response.success || true == response.success) {
-                        that.$element.html(newValue);
-                    }
-                    $saveButton.removeAttr('disabled').find('i').removeClass('fa-spin fa-refresh').addClass('fa-check');
-                    $cancelButton.click();
-                });
+                        if ('true' == response.success || true == response.success) {
+                            that.$element.html(newValue);
+                        }
+                        $saveButton.removeAttr('disabled').find('i').removeClass('fa-spin fa-refresh').addClass('fa-check');
+                        $cancelButton.click();
+                    });
             });
 
             // Cancel handler
