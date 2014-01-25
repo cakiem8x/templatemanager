@@ -1,22 +1,25 @@
 extends ../layouts/backend
 
+block heading
+    h1
+        a(href="/admin/package") Packages
+
+        if criteria.year
+            | &nbsp;/&nbsp;
+            a(href="/admin/package?year=#{criteria.year}") #{criteria.year}
+
+        | &nbsp;
+
+        small.btn-group
+            a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'template' })}", class=criteria.type == 'template' ? 'active' : '') Templates
+            a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'extension' })}", class=criteria.type == 'extension' ? 'active' : '') Extensions
+
+        span.pull-right
+            a.btn.btn-info(href="/admin/package/add")
+                i.fa.fa-plus
+                |  Add new package
+
 block content
-    div.page-header
-        h2
-            a(href="/admin/package") Packages
-
-            if criteria.year
-                &nbsp;/&nbsp;
-                a(href="/admin/package?year=#{criteria.year}") #{criteria.year}
-
-            | &nbsp;
-            small.btn-group
-                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'template' })}", class=criteria.type == 'template' ? 'active' : '') Templates
-                a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'extension' })}", class=criteria.type == 'extension' ? 'active' : '') Extensions
-
-            span.pull-right
-                a.btn.btn-default(href="/admin/package/add") Add new package
-
     if total == 0
         p.text-center There is no packages
     else
@@ -27,7 +30,7 @@ block content
                     div.input-group
                         input.form-control(type="text", name="q", value="#{q}")
                         span.input-group-btn
-                            button.btn.btn-default(type="submit")
+                            button.btn.btn-success(type="submit")
                                 i.fa.fa-search
 
         table.table(style="margin-top: 20px;")
@@ -84,7 +87,8 @@ block content
                             span.badge #{package.num_downloads}
                         td
                             div.btn-group
-                                a.btn.btn-default(href="/admin/package/edit/#{package._id}") Edit
+                                a.btn.btn-info(href="/admin/package/edit/#{package._id}")
+                                    i.fa.fa-edit
 
         // Pagination
         if (numPages > 1)

@@ -6,15 +6,14 @@ block head
     link(rel="stylesheet", href="/vendor/select2/css/select2.css")
     link(rel="stylesheet", href="/vendor/select2/css/select2-bootstrap.css")
 
+block heading
+    h1
+        a(href="/admin/package") Packages
+        small  &rarr; Add new package
+        span.pull-right
+            button#saveButton.btn.btn-primary.btn-lg(type="button") Save
+
 block content
-    div.page-header
-        h2
-            a(href="/admin/package") Packages
-            |  / Add new package
-
-            span.pull-right
-                button#saveButton.btn.btn-primary(type="button") Save
-
     include ../partial/flash
 
     ul.nav.nav-tabs
@@ -63,9 +62,9 @@ block content
                             div.col-lg-6
                                 input.form-control(type="text", name="theme.demo_url[]", placeholder="Style URL")
                             div.col-lg-1
-                                button.btn.btn-default.removeThemeButton(type="button")
+                                button.btn.btn-warning.removeThemeButton(type="button")
                                     i.fa.fa-times
-                        button.btn.btn-default#addThemeButton(type="button")
+                        button.btn.btn-info#addThemeButton(type="button")
                             i.fa.fa-plus
 
                 div.form-group
@@ -132,7 +131,7 @@ block content
                 div.form-group
                     label.control-label.col-lg-2 Thumbnail
                     div.col-lg-10
-                        div.btn.btn-default.fileinput-button
+                        div.btn.btn-info.fileinput-button
                             span Upload thumbnail
                             input#thumbnailUploader(type="file", name="thumbnail", data-url="/admin/thumb")
                         div(style="margin-top: 20px;")
@@ -158,6 +157,17 @@ block content
                         div#changelogPreview
 
             div#files.tab-pane
+                div.row.text-center(style="margin-bottom: 20px;")
+                    div.col-lg-6.col-lg-offset-3
+                        div.col-lg-5
+                            div.btn.btn-info.fileinput-button(data-toggle="tooltip", data-placement="bottom", data-title="You can choose many files at the same time")
+                                i.fa.fa-upload
+                                span  Upload new files
+                                input#uploader(type="file", name="files[]", data-url="/admin/file/upload", multiple)
+                        div.col-lg-2.text-center.form-control-static &mdash; Or &mdash;
+                        div.col-lg-5
+                            button#chooseFileButton.btn.btn-info(type="button") Choose existing files
+
                 table.table.hide
                     thead
                         tr
@@ -177,19 +187,8 @@ block content
                                 div.btn-group
                                     button.btn.btn-danger.removeButton(type="button", title="Remove")
                                         i.fa.fa-times
-                                    button.btn.btn-default.changeButton(type="button", title="Upload")
+                                    button.btn.btn-info.changeButton(type="button", title="Upload")
                                         i.fa.fa-upload
-
-                div.text-center
-                    div.col-lg-6.col-lg-offset-3
-                        div.col-lg-5
-                            div.btn.btn-default.fileinput-button
-                                span Upload new files
-                                input#uploader(type="file", name="files[]", data-url="/admin/file/upload", multiple)
-                            p You can choose many files at the same time
-                        div.col-lg-2.text-center.form-control-static &mdash; Or &mdash;
-                        div.col-lg-5
-                            button#chooseFileButton.btn.btn-danger(type="button") Choose existing files
 
             div#memberships.tab-pane
                 p Indicate the accounts who can download the files
@@ -212,7 +211,7 @@ block content
                                 a(href="/admin/memberships") Memberships page
                         else
                             p.form-control-static
-                                button#checkMembershipButton.btn.btn-default(type="button", data-checked="false") Check all
+                                button#checkMembershipButton.btn.btn-info(type="button", data-checked="false") Check all
                             for membership in memberships
                                 div.checkbox
                                     label
@@ -231,7 +230,7 @@ block content
                     div You can add the file to package again if you want
                 div.modal-footer
                     button.btn.btn-danger.yesButton Yes
-                    button.btn.btn-default(data-dismiss="modal") No
+                    button.btn.btn-info(data-dismiss="modal") No
 
     // Choose existing file dialog
     div#chooseFileDialog.modal.fade.in
@@ -244,7 +243,7 @@ block content
                             div.input-group
                                 input#searchFileText.form-control(type="text", placeholder="File name or description")
                                 span.input-group-btn
-                                    button#searchFileButton.btn.btn-default(type="button")
+                                    button#searchFileButton.btn.btn-success(type="button")
                                         i.fa.fa-search
                     div.clearfix
                 table.table

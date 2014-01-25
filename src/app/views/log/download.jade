@@ -4,15 +4,15 @@ block head
     style(type="text/css").
         .tooltip-inner { max-width: 300px; }
 
-block content
-    div.page-header
-        h2
-            a(href="/admin/log/download") Download history
-
-            if criteria.package && total > 0
-                |  /&nbsp;
+block heading
+    h1
+        a(href="/admin/log/download") Download History
+        if criteria.package && total > 0
+            small
+                |  &rarr;&nbsp;
                 a(href="#{url(req, { page: 1, package: downloads[0].package._id + '' })}") #{downloads[0].package.name}
 
+block content
     div.row(style="margin-bottom: 20px;")
         form(method="get", action="/admin/log/download")
             div.col-lg-4
@@ -73,6 +73,7 @@ block content
                             | IP
                     th File
                     th Package
+                    th Demo
             tbody
                 for download in downloads
                     tr
@@ -90,9 +91,11 @@ block content
                         td
                             if download.package
                                 a(href="#{url(req, { page: 1, package: download.package._id + '' })}") #{download.package.name}
-                                if download.package.demo_url
-                                    | &nbsp;
-                                    a(target="_blank", href=download.package.type == 'template' ? '#{frontEndUrl}#' + download.package.slug : download.package.demo_url) (Demo)
+                            else
+                                | -
+                        td
+                            if download.package && download.package.demo_url
+                                a.btn.btn-info.btn-sm(target="_blank", href=download.package.type == 'template' ? '#{frontEndUrl}#' + download.package.slug : download.package.demo_url) Demo
                             else
                                 | -
 
@@ -141,6 +144,7 @@ block footerScript
                                 .tooltip('destroy')
                                 .tooltip({
                                     html: true,
+                                    placement: 'bottom',
                                     title: memberships.join('<br />')
                                 })
                                 .tooltip('show');

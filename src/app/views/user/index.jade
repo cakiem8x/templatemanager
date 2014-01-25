@@ -1,13 +1,14 @@
 extends ../layouts/backend
 
+block heading
+    h1
+        a(href="/admin/user") Administrators
+        span.pull-right
+            a.btn.btn-info(href="/admin/user/add")
+                i.fa.fa-plus
+                |  Add new administrator
+
 block content
-    div.page-header
-        h2
-            a(href="/admin/user") Administrators
-
-            span.pull-right
-                a.btn.btn-default(href="/admin/user/add") Add new administrator
-
     if total == 0
         p.text-center There is no administrator
     else
@@ -18,7 +19,7 @@ block content
                     div.input-group
                         input.form-control(type="text", name="q", value="#{q}")
                         span.input-group-btn
-                            button.btn.btn-default(type="submit")
+                            button.btn.btn-info(type="submit")
                                 i.fa.fa-search
 
         table.table(style="margin-top: 20px;")
@@ -38,9 +39,9 @@ block content
                         td #{user.role}
                         td
                             div.btn-group
-                                a.btn.btn-default(href="/admin/user/edit/#{user._id}") Edit
+                                a.btn.btn-info(href="/admin/user/edit/#{user._id}") Edit
                                 if (user.username != currentUser)
-                                    button.btn.btn-warning.lockButton(data-user="#{user._id}", data-locked="#{user.locked}")
+                                    button.btn.btn-danger.lockButton(data-user="#{user._id}", data-locked="#{user.locked}")
                                         = user.locked ? 'Unlock' : 'Lock'
 
         // Pagination

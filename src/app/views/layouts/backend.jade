@@ -43,13 +43,8 @@ html
                                     a(href="/admin/membership") Memberships
                                 li
                                     a(href="/admin/user") Administrators
-                                li.dropdown
-                                    a.dropdown-toggle(href="javascript: void(0);", data-toggle="dropdown")
-                                        | Log&nbsp;
-                                        b.caret
-                                    ul.dropdown-menu
-                                        li
-                                            a(href="/admin/log/download") Download History
+                                li
+                                    a(href="/admin/log/download") Download History
 
                         // Right nav
                         ul.t-right-nav.nav.navbar-nav.navbar-right
@@ -96,12 +91,6 @@ html
             $(document).ready(function() {
                 // Init tooltips
                 $('[data-toggle="tooltip"]').tooltip();
-
-                // Init tabs
-                $('.nav-tabs a').click(function(e) {
-                    e.preventDefault();
-                    $(this).tab('show');
-                });
 
                 io.connect().emit('userName', '#{sessionUser.username}');
             });

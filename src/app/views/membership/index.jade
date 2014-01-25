@@ -1,9 +1,9 @@
 extends ../layouts/backend
 
-block content
-    div.page-header
-        h2 Memberships
+block heading
+    h1 Memberships
 
+block content
     table.table
         thead
             tr
@@ -25,7 +25,9 @@ block content
                         each product, pid in products
                             option(value="#{JSON.stringify(product)}", disabled=product.disabled || memberships[pid], data-pid="#{pid}") #{product.title} (#{pid})
                 td
-                    button.btn.btn-default#addButton(disabled=products.length == 0) Add
+                    button#addButton.btn.btn-info(disabled=products.length == 0)
+                        i.fa.fa-plus
+                        |  Add
             tr#newRowTemplate.hide
                 td
                 td
@@ -33,7 +35,7 @@ block content
                 td
                 td
                     div.btn-group
-                        button.btn.btn-default.editButton Edit
+                        button.btn.btn-info.editButton Edit
                         button.btn.btn-danger.removeButton Remove
             tr#editRowTemplate.hide
                 td
@@ -46,7 +48,7 @@ block content
                 td
                     div.btn-group
                         button.btn.btn-success.saveButton Save
-                        button.btn.btn-default.cancelButton Cancel
+                        button.btn.btn-warning.cancelButton Cancel
 
             - each membership, pid in memberships
                 tr(data-id="#{membership._id}")
@@ -60,7 +62,7 @@ block content
                             | This product has been removed from Amember
                     td
                         div.btn-group
-                            button.btn.btn-default.editButton Edit
+                            button.btn.btn-info.editButton Edit
                             button.btn.btn-danger.removeButton Remove
 
 

@@ -1,11 +1,11 @@
 extends ../layouts/backend
 
-block content
-    div.page-header
-        h2
-            a(href="/admin/user") Administrators
-            |  / Add new administrator
+block heading
+    h1
+        a(href="/admin/user") Administrators
+        small  &rarr; Add new administrator
 
+block content
     div.col-lg-8.col-lg-offset-2
         include ../partial/flash
 
@@ -44,11 +44,9 @@ block content
                        option(value="admin") Administrator
                        option(value="root") Root
 
-            hr
-
             div.form-group
                 div.col-lg-9.col-lg-offset-3
-                    button#saveButton.btn.btn-primary(type="submit") Add
+                    button#saveButton.btn.btn-primary.btn-lg(type="submit") Add
 
 block footerScript
     script(type="text/javascript", src="/vendor/bootstrapvalidator/js/bootstrapValidator.min.js")

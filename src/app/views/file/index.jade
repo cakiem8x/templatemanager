@@ -2,18 +2,17 @@ extends ../layouts/backend
 
 block head
     link(rel="stylesheet", href="/vendor/fileupload/css/jquery.fileupload-ui.css")
-    link(rel="stylesheet", href="/vendor/inlineEditor/css/inlineEditor.min.css")
+
+block heading
+    h1
+        a(href="/admin/file") Files
+        span.pull-right
+            div.btn.btn-info.btn-lg.fileinput-button(data-toggle="tooltip", data-placement="bottom", data-title="You can choose many files at the same time")
+                i.fa.fa-upload
+                span  Upload new files
+                input#uploader(type="file", name="files[]", data-url="/admin/file/upload", multiple)
 
 block content
-    div.page-header
-        h2
-            a(href="/admin/file") Files
-
-            span.pull-right
-                div.btn.btn-default.fileinput-button
-                    span Upload new files
-                    input#uploader(type="file", name="files[]", data-url="/admin/file/upload", multiple)
-
     if total == 0
         p.text-center There is no files
     else
@@ -24,7 +23,7 @@ block content
                     div.input-group
                         input.form-control(type="text", name="q", value="#{q}")
                         span.input-group-btn
-                            button.btn.btn-default(type="submit")
+                            button.btn.btn-success(type="submit")
                                 i.fa.fa-search
 
         table.table(style="margin-top: 20px;")
@@ -67,19 +66,19 @@ block content
                         p.text-info.editableDesc Click to edit
                         div.progress.progress-striped.active(style="margin: 10px 0;")
                             div.progress-bar.progress-bar-success(style="width: 0%;")
-                        a.btn.btn-success.btn-xs.downloadUrlButton Show download URLs
                     td
                     td
-                        span.fileNumDownloads 0
+                        button.btn.btn-success.downloadUrlButton(type="button")
+                            span.fileNumDownloads 0
                     td
-                        button.btn.btn-danger.freeButton(type="button")
+                        button.btn.btn-info.freeButton(type="button")
                             i.fa.fa-times
                     td
                     td
                         div.btn-group
                             button.btn.btn-danger.removeButton(type="button", title="Remove")
                                 i.fa.fa-times
-                            button.btn.btn-default.changeButton(type="button", title="Upload")
+                            button.btn.btn-info.changeButton(type="button", title="Upload")
                                 i.fa.fa-upload
                 for file in files
                     tr(data-file-id="#{file._id}", data-file-name="#{file.name}")
@@ -88,19 +87,19 @@ block content
                             p.text-info.editableDesc #{file.description || 'Click to edit'}
                             div.progress.progress-striped.active.hide(style="margin: 10px 0;")
                                 div.progress-bar.progress-bar-success(style="width: 0%;")
-                            a.btn.btn-warning.btn-xs.downloadUrlButton Show download URLs
                         td #{filesize(file.size)}
                         td
-                            span.fileNumDownloads(class=file.num_downloads == 0 ? '' : 'badge') #{file.num_downloads}
+                            button.btn.btn-success.downloadUrlButton(type="button")
+                                span.fileNumDownloads #{file.num_downloads}
                         td
-                            button.btn.freeButton(type="button", class=file.free ? 'btn-success' : 'btn-danger')
-                                i.fa(class=file.free ? 'fa-check' : 'fa-times')
+                            button.btn.freeButton(type="button", class=file.free ? 'btn-info' : 'btn-default')
+                                = file.free ? 'Yes' : 'No'
                         td #{moment(file.uploaded_date).format('YYYY-MM-DD HH:mm:ss')}
                         td
                             div.btn-group
                                 button.btn.btn-danger.removeButton(type="button", title="Remove")
                                     i.fa.fa-times
-                                button.btn.btn-default.changeButton(type="button", title="Upload")
+                                button.btn.btn-info.changeButton(type="button", title="Upload")
                                     i.fa.fa-upload
 
         // Pagination
@@ -131,7 +130,7 @@ block content
                     div.text-danger This action cannot be undone.
                 div.modal-footer
                     button.btn.btn-danger.yesButton Yes
-                    button.btn.btn-default(data-dismiss="modal") No
+                    button.btn.btn-info(data-dismiss="modal") No
 
     div#downloadUrlDialog.modal.fade.in
         div.modal-dialog
@@ -147,7 +146,7 @@ block content
                         div#guestDownloadTab.tab-pane
 
                 div.modal-footer
-                    button.btn.btn-default(data-dismiss="modal") Close
+                    button.btn.btn-info(data-dismiss="modal") Close
 
 block footerScript
     script(type="text/javascript", src="/vendor/fileupload/js/vendor/jquery.ui.widget.js")
@@ -155,7 +154,7 @@ block footerScript
     script(type="text/javascript", src="/vendor/fileupload/js/jquery.fileupload.js")
     script(type="text/javascript", src="/vendor/fileupload/js/jquery.fileupload-process.js")
     script(type="text/javascript", src="/vendor/filesize/filesize.min.js")
-    script(type="text/javascript", src="/vendor/inlineEditor/js/inlineEditor.min.js")
+    script(type="text/javascript", src="/vendor/inlineEditor/inlineEditor.min.js")
     script(type="text/javascript", src="/vendor/moment/moment.min.js")
     script(type="text/javascript").
         $(document).ready(function() {
@@ -288,8 +287,8 @@ block footerScript
                     $that.removeAttr('disabled');
                     if (response.success) {
                         $that
-                            .toggleClass('btn-success').toggleClass('btn-danger')
-                            .find('i').toggleClass('fa-check').toggleClass('fa-times');
+                            .toggleClass('btn-info').toggleClass('btn-default')
+                            .html('Yes' == $that.html() ? 'No' : 'Yes');
                     }
                 });
             });
