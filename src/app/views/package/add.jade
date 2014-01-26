@@ -110,11 +110,16 @@ block content
                 div.form-group
                     label.control-label.col-lg-2 High resolution
                     div.col-lg-6
-                        div.btn-group
-                            button.btn.btn-default.highResolutionButton(type="button", value="yes") Yes
-                            button.btn.btn-default.highResolutionButton(type="button", value="no") No
-                            button.btn.btn-default.highResolutionButton.active(type="button", value="n/a") N/A
-                        input(type="hidden", name="high_resolution", value="n/a")
+                        div.btn-group(data-toggle="buttons")
+                            label.btn.btn-default
+                                input(type="radio", name="high_resolution", value="yes")
+                                | Yes
+                            label.btn.btn-default
+                                input(type="radio", name="high_resolution", value="no")
+                                | No
+                            label.btn.btn-default.active
+                                input(type="radio", name="high_resolution", value="n/a", checked=true)
+                                | N/A
 
                 div.form-group
                     label.control-label.col-lg-2 Year
@@ -632,13 +637,6 @@ block footerScript
                 } else {
                     $(this).addClass('active').prepend($('<i/>').addClass('fa fa-check'));
                 }
-            });
-
-            // Update high resolution option
-            $('.highResolutionButton').on('click', function() {
-                $(this).parent().find('button').removeClass('active');
-                $(this).addClass('active');
-                $('input[name="high_resolution"]').val($(this).val());
             });
 
             // Manage themes

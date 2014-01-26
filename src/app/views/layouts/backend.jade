@@ -93,6 +93,7 @@ html
             $(document).ready(function() {
                 // Init tooltips
                 $('[data-toggle="tooltip"]').tooltip();
+                $('[data-toggle="buttons"]').button();
 
                 io.connect().emit('userName', '#{sessionUser.username}');
             });

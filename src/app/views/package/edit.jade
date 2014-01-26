@@ -113,11 +113,16 @@ block content
                 div.form-group
                     label.control-label.col-lg-2 High resolution
                     div.col-lg-6
-                        div.btn-group
-                            button.btn.btn-default.highResolutionButton(type="button", value="yes") Yes
-                            button.btn.btn-default.highResolutionButton(type="button", value="no") No
-                            button.btn.btn-default.highResolutionButton(type="button", value="n/a") N/A
-                        input(type="hidden", name="high_resolution", value="#{package.high_resolution || 'n/a'}")
+                        div.btn-group(data-toggle="buttons")
+                            label.btn.btn-default(class=package.high_resolution == 'yes' ? 'active' : '')
+                                input(type="radio", name="high_resolution", value="yes", checked=package.high_resolution == 'yes')
+                                | Yes
+                            label.btn.btn-default(class=package.high_resolution == 'no' ? 'active' : '')
+                                input(type="radio", name="high_resolution", value="no", checked=package.high_resolution == 'no')
+                                | No
+                            label.btn.btn-default(class=package.high_resolution == 'n/a' ? 'active' : '')
+                                input(type="radio", name="high_resolution", value="n/a", checked=package.high_resolution == 'n/a')
+                                | N/A
 
                 div.form-group
                     label.control-label.col-lg-2 Year
@@ -667,17 +672,6 @@ block footerScript
                 } else {
                     $(this).addClass('active').prepend($('<i/>').addClass('fa fa-check'));
                 }
-            });
-
-            // Update high resolution option
-            $('.highResolutionButton[value="#{package.high_resolution}"]').addClass('active');
-            $('.highResolutionButton').on('click', function() {
-                $(this)
-                    .parent()
-                        .find('button').removeClass('active').end()
-                        .end()
-                    .addClass('active');
-                $('input[name="high_resolution"]').val($(this).val());
             });
 
             // Manage themes
