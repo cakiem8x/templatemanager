@@ -4,6 +4,7 @@ Changelog
 ## v1.1.2
 
 * Use default Bootstrap theme
+* Some UI improvements
 * [#60: Show the download's browser agent](https://github.com/nghuuphuoc/templatemanager/issues/60)
 * [#66: Upgrade to Bootstrap v3.0.3](https://github.com/nghuuphuoc/templatemanager/issues/66)
 * [#67: Set the custom menu for account's backend](https://github.com/nghuuphuoc/templatemanager/issues/67)
@@ -29,13 +30,13 @@ Changelog
 
 ## v1.0.0 (2013-12-02)
 
-Front-end
+**Front-end**
 
 * Responsive front-end
 * View the demo in various device sizes including mobile, tablet, laptop, desktop
 * Provide multiple template filters such as year, tag, responsive, etc.
 
-Back-end
+**Back-end**
 
 * Manage packages including templates and extensions
 * Manage files

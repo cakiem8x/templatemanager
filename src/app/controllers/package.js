@@ -112,6 +112,7 @@ exports.add = function(req, res) {
             high_resolution: req.body.high_resolution,
             thumbs: JSON.parse(req.body.thumbs || '[]'),
             files: JSON.parse(req.body.uploaded_files || '[]'),
+            include_downloads: req.body.include_downloads || [],
             responsive: req.body.responsive || false,
             free: req.body.free || false,
             memberships: req.body.memberships || [],
@@ -185,6 +186,7 @@ exports.edit = function(req, res) {
             package.high_resolution   = req.body.high_resolution;
             package.thumbs            = JSON.parse(req.body.thumbs || '[]');
             package.files             = JSON.parse(req.body.uploaded_files || '[]');
+            package.include_downloads = req.body.include_downloads || [];
             package.responsive        = req.body.responsive || false;
             package.free              = req.body.free || false;
             package.memberships       = req.body.memberships;

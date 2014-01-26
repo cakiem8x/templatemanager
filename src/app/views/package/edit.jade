@@ -177,8 +177,10 @@ block content
                     thead
                         tr
                             th File name / Size
-                            th(style="width: 35%") Description
+                            th(style="width: 30%") Description
                             th(style="width: 25%") Progress
+                            th(style="width: 150px;")
+                                span(data-toggle="tooltip", data-title="Include the number of file downloads in the total number of package downloads") Include Downloads
                             th Actions
                     tbody#uploadedFiles
                         tr#fileRowTemplate.hide
@@ -188,6 +190,10 @@ block content
                             td
                                 div.progress.progress-striped.active
                                     div.progress-bar.progress-bar-success(style="width: 0%;")
+                            td
+                                div.checkbox
+                                    label
+                                        input(type="checkbox", name="include_downloads[]")
                             td
                                 div.btn-group
                                     button.btn.btn-danger.removeButton(type="button", title="Remove")
@@ -202,6 +208,11 @@ block content
                                 td
                                     div.progress.progress-striped.active.hide
                                         div.progress-bar.progress-bar-success(style="width: 0%;")
+                                td
+                                    div.checkbox
+                                        label
+                                            input(type="checkbox", name="include_downloads[]", value="#{file._id}", checked=package.include_downloads && package.include_downloads.indexOf(file._id) != -1)
+                                            | #{file.num_downloads}
                                 td
                                     div.btn-group
                                         button.btn.btn-danger.removeButton(type="button", title="Remove")
@@ -420,7 +431,10 @@ block footerScript
                             var $tr        = $('#uploadedFiles').find('tr[data-file-name="' + file.name + '"]'),
                                 editingRow = $('#uploader').data('editingRow');
                             if ($tr) {
-                                $tr.find('input[type="text"]').removeAttr('disabled');
+                                $tr
+                                    .find('input[type="text"]').removeAttr('disabled').end()
+                                    .find('input[name="include_downloads[]"]').val(file._id).prop('checked', true)
+                                        .after(0);
                                 if (!editingRow) {
                                     $tr.attr('data-file-id', file._id);
                                 }
@@ -582,6 +596,11 @@ block footerScript
                                                         .end()
                                                     .eq(2)
                                                         .find('.progress').addClass('hide').end()
+                                                        .end()
+                                                    .eq(3)
+                                                        .find('input[name="include_downloads[]"]').val(file._id)
+                                                            .after(file.num_downloads)
+                                                            .end()
                                                         .end()
                                                 .parents('table').removeClass('hide');
                                         }).wrap($('<td/>')).parent()

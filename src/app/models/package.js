@@ -37,6 +37,9 @@ var mongoose       = require('mongoose'),
         files: [
             { type : Schema.ObjectId, ref: 'file' }
         ],
+        include_downloads: [
+            { type : Schema.ObjectId, ref: 'file' }
+        ],
         created_date:      { type: Date,    default: Date.now },
         updated_date:      { type: Date },
         responsive:        { type: Boolean, default: true },
@@ -53,13 +56,15 @@ var mongoose       = require('mongoose'),
 packageSchema
     .virtual('num_downloads')
     .get(function() {
-        if (!this.files) {
+        if (!this.files || !this.include_downloads) {
             return 0;
         }
 
         var numDownloads = 0, numFiles = this.files.length;
         for (var i = 0; i < numFiles; i++) {
-            numDownloads += this.files[i].num_downloads;
+            if (this.include_downloads.indexOf(this.files[i]._id) != -1) {
+                numDownloads += this.files[i].num_downloads;
+            }
         }
         return numDownloads;
     });
