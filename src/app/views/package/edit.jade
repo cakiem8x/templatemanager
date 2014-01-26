@@ -200,7 +200,7 @@ block content
                             tr(data-file-id="#{file._id}", data-file-name="#{file.name}")
                                 td #{file.name.length > 25 ? file.name.substr(0, 25) + '...' : file.name} / #{filesize(file.size)}
                                 td
-                                    span.editableDesc #{file.description}
+                                    span.editableDesc #{file.description || 'Click to edit'}
                                 td
                                     div.progress.progress-striped.active.hide
                                         div.progress-bar.progress-bar-success(style="width: 0%;")
