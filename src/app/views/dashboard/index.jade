@@ -43,47 +43,41 @@ block content
 
         // Stats tab
         div#statsTab.tab-pane
-            section
-                div.page-header
-                    h3
-                        | Top files&nbsp;
-                        small which have been downloaded most
-                div.row
-                    div.col-lg-4
-                        div.panel.panel-default
-                            div.panel-heading Today and Yesterday
-                            div.topFiles(data-days="2")
+            div.row
+                div.col-lg-6
+                    div.page-header
+                        h3
+                            | Top files&nbsp;
+                            small which have been downloaded most
+                    div.panel.panel-primary
+                        div.panel-heading Today and Yesterday
+                        div.topFiles(data-days="2")
 
-                    div.col-lg-4
-                        div.panel.panel-default
-                            div.panel-heading Last 7 days
-                            div.topFiles(data-days="7")
+                    div.panel.panel-success
+                        div.panel-heading Last 7 days
+                        div.topFiles(data-days="7")
 
-                    div.col-lg-4
-                        div.panel.panel-default
-                            div.panel-heading Last 30 days
-                            div.topFiles(data-days="30")
+                    div.panel.panel-info
+                        div.panel-heading Last 30 days
+                        div.topFiles(data-days="30")
 
-            section
-                div.page-header
-                    h3
-                        | Top accounts&nbsp;
-                        small who have downloaded most
-                div.row
-                    div.col-lg-4
-                        div.panel.panel-default
-                            div.panel-heading Today and Yesterday
-                            div.topAccounts(data-days="2")
+                div.col-lg-6
+                    div.page-header
+                        h3
+                            | Top accounts&nbsp;
+                            small who have downloaded most
 
-                    div.col-lg-4
-                        div.panel.panel-default
-                            div.panel-heading Last 7 days
-                            div.topAccounts(data-days="7")
+                    div.panel.panel-primary
+                        div.panel-heading Today and Yesterday
+                        div.topAccounts(data-days="2")
 
-                    div.col-lg-4
-                        div.panel.panel-default
-                            div.panel-heading Last 30 days
-                            div.topAccounts(data-days="30")
+                    div.panel.panel-success
+                        div.panel-heading Last 7 days
+                        div.topAccounts(data-days="7")
+
+                    div.panel.panel-info
+                        div.panel-heading Last 30 days
+                        div.topAccounts(data-days="30")
 
 block footerScript
     script(type="text/javascript", src="/vendor/filesize/filesize.min.js")
