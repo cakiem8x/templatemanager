@@ -6,6 +6,7 @@ Changelog
 * Use default Bootstrap theme
 * Some UI improvements
 * [#60: Show the download's browser agent](https://github.com/nghuuphuoc/templatemanager/issues/60)
+* [#64: Add "Include downloads" option for each package file](https://github.com/nghuuphuoc/templatemanager/issues/64)
 * [#66: Upgrade to Bootstrap v3.0.3](https://github.com/nghuuphuoc/templatemanager/issues/66)
 * [#67: Set the custom menu for account's backend](https://github.com/nghuuphuoc/templatemanager/issues/67)
 
