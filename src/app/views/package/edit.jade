@@ -100,29 +100,20 @@ block content
                 div.form-group
                     label.control-label.col-lg-2 Supported browsers
                     div.col-lg-8
-                        div.btn-group
-                            button.btn.btn-default.browserButton(type="button", value="IE 8") IE 8
-                            button.btn.btn-default.browserButton(type="button", value="IE 9") IE 9
-                            button.btn.btn-default.browserButton(type="button", value="IE 10") IE 10
-                            button.btn.btn-default.browserButton(type="button", value="Chrome") Chrome
-                            button.btn.btn-default.browserButton(type="button", value="Firefox") Firefox
-                            button.btn.btn-default.browserButton(type="button", value="Safari") Safari
-                            button.btn.btn-default.browserButton(type="button", value="Opera") Opera
-                        input(type="hidden", name="browsers", value="#{package.browsers}")
+                        div.btn-group(data-toggle="buttons")
+                            for browser in ['IE 8', 'IE 9', 'IE 10', 'Chrome', 'Firefox', 'Safari', 'Opera']
+                                label.btn.btn-default(class=browsers.indexOf(browser) != -1 ? 'active' : '')
+                                    input(type="checkbox", name="browsers[]", value="#{browser}", checked=browsers.indexOf(browser) != -1)
+                                    | #{browser}
 
                 div.form-group
                     label.control-label.col-lg-2 High resolution
                     div.col-lg-6
                         div.btn-group(data-toggle="buttons")
-                            label.btn.btn-default(class=package.high_resolution == 'yes' ? 'active' : '')
-                                input(type="radio", name="high_resolution", value="yes", checked=package.high_resolution == 'yes')
-                                | Yes
-                            label.btn.btn-default(class=package.high_resolution == 'no' ? 'active' : '')
-                                input(type="radio", name="high_resolution", value="no", checked=package.high_resolution == 'no')
-                                | No
-                            label.btn.btn-default(class=package.high_resolution == 'n/a' ? 'active' : '')
-                                input(type="radio", name="high_resolution", value="n/a", checked=package.high_resolution == 'n/a')
-                                | N/A
+                            for hr in ['Yes', 'No', 'N/A']
+                                label.btn.btn-default(class=package.high_resolution == hr.toLowerCase() ? 'active' : '')
+                                    input(type="radio", name="high_resolution", value=hr.toLowerCase(), checked=package.high_resolution == hr.toLowerCase())
+                                    | #{hr}
 
                 div.form-group
                     label.control-label.col-lg-2 Year
@@ -507,13 +498,6 @@ block footerScript
                 });
                 $('input[name="uploaded_files"]').val(JSON.stringify(uploadedFiles));
 
-                // Supported browsers
-                var browsers = [];
-                $('.browserButton.active').each(function() {
-                    browsers.push($(this).val());
-                });
-                $('input[name="browsers"]').val(browsers.join(','));
-
                 $('#editPackageForm').submit();
             });
 
@@ -661,18 +645,6 @@ block footerScript
                 .click(function() {
                     $(this).trigger('searchFiles', 1);
                 });
-
-            // Update supported browsers option
-            $.each("#{package.browsers || ''}".split(','), function(index, browser) {
-                $('.browserButton[value="' + browser + '"]').addClass('active').prepend($('<i/>').addClass('fa fa-check'));
-            });
-            $('.browserButton').on('click', function() {
-                if ($(this).hasClass('active')) {
-                    $(this).removeClass('active').find('i').remove();
-                } else {
-                    $(this).addClass('active').prepend($('<i/>').addClass('fa fa-check'));
-                }
-            });
 
             // Manage themes
             $('#addThemeButton').on('click', function() {

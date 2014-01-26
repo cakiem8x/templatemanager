@@ -86,40 +86,20 @@ block content
                 div.form-group
                     label.control-label.col-lg-2 Supported browsers
                     div.col-lg-8
-                        div.btn-group
-                            button.btn.btn-default.browserButton.active(type="button", value="IE 8")
-                                i.fa.fa-check
-                                | IE 8
-
-                            button.btn.btn-default.browserButton(type="button", value="IE 9") IE 9
-                            button.btn.btn-default.browserButton(type="button", value="IE 10") IE 10
-                            button.btn.btn-default.browserButton.active(type="button", value="Chrome")
-                                i.fa.fa-check
-                                | Chrome
-                            button.btn.btn-default.browserButton.active(type="button", value="Firefox")
-                                i.fa.fa-check
-                                | Firefox
-                            button.btn.btn-default.browserButton.active(type="button", value="Safari")
-                                i.fa.fa-check
-                                | Safari
-                            button.btn.btn-default.browserButton.active(type="button", value="Opera")
-                                i.fa.fa-check
-                                | Opera
-                        input(type="hidden", name="browsers", value="IE 8,Chrome,Firefox,Safari,Opera")
+                        div.btn-group(data-toggle="buttons")
+                            for browser in ['IE 8', 'IE 9', 'IE 10', 'Chrome', 'Firefox', 'Safari', 'Opera']
+                                label.btn.btn-default.active
+                                    input(type="checkbox", name="browsers[]", value="#{browser}", checked=true)
+                                    | #{browser}
 
                 div.form-group
                     label.control-label.col-lg-2 High resolution
                     div.col-lg-6
                         div.btn-group(data-toggle="buttons")
-                            label.btn.btn-default
-                                input(type="radio", name="high_resolution", value="yes")
-                                | Yes
-                            label.btn.btn-default
-                                input(type="radio", name="high_resolution", value="no")
-                                | No
-                            label.btn.btn-default.active
-                                input(type="radio", name="high_resolution", value="n/a", checked=true)
-                                | N/A
+                            for hr in ['Yes', 'No', 'N/A']
+                                label.btn.btn-default
+                                    input(type="radio", name="high_resolution", value=hr.toLowerCase())
+                                    | #{hr}
 
                 div.form-group
                     label.control-label.col-lg-2 Year
@@ -475,13 +455,6 @@ block footerScript
                 });
                 $('input[name="uploaded_files"]').val(JSON.stringify(uploadedFiles));
 
-                // Supported browsers
-                var browsers = [];
-                $('.browserButton.active').each(function() {
-                    browsers.push($(this).val());
-                });
-                $('input[name="browsers"]').val(browsers.join(','));
-
                 $('#addPackageForm').submit();
             });
 
@@ -629,15 +602,6 @@ block footerScript
                 .click(function() {
                     $(this).trigger('searchFiles', 1);
                 });
-
-            // Update supported browsers option
-            $('.browserButton').on('click', function() {
-                if ($(this).hasClass('active')) {
-                    $(this).removeClass('active').find('i').remove();
-                } else {
-                    $(this).addClass('active').prepend($('<i/>').addClass('fa fa-check'));
-                }
-            });
 
             // Manage themes
             $('#addThemeButton').on('click', function() {

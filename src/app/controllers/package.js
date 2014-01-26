@@ -120,7 +120,7 @@ exports.add = function(req, res) {
         });
 
         if (req.body.browsers) {
-            package.browsers = req.body.browsers;
+            package.browsers = req.body.browsers.join(',');
         }
 
         package.save(function(err) {
@@ -182,7 +182,7 @@ exports.edit = function(req, res) {
             package.changelog         = req.body.changelog;
             package.tags              = req.body.tags;
             package.software_versions = req.body.software_versions;
-            package.browsers          = req.body.browsers;
+            package.browsers          = (req.body.browsers || []).join(',');
             package.high_resolution   = req.body.high_resolution;
             package.thumbs            = JSON.parse(req.body.thumbs || '[]');
             package.files             = JSON.parse(req.body.uploaded_files || '[]');
@@ -213,6 +213,7 @@ exports.edit = function(req, res) {
                     thumbPrefixUrl: config.thumbs.url,
                     package: package,
                     memberships: memberships,
+                    browsers: package.browsers ? package.browsers.split(',') : [],
 
                     // Helper
                     filesize: filesize
