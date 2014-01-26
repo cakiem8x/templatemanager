@@ -33,11 +33,11 @@ block content
     if total == 0
         p.text-center There is no packages
     else
-        p Found #{total} packages
+        p(style="margin-bottom: 20px;") Found #{total} packages
 
         - each package, index in packages
             if (index % 3 == 0)
-                div.row
+                | <div class="row">
 
             div.col-lg-4
                 div.tb-tmpl-item
@@ -81,6 +81,11 @@ block content
                                                 a(href="#{downloadUrl}/account/download/#{package.slug}/#{file._id}") #{file.name} (#{filesize(file.size)})
                             else
                                 a.btn.btn-danger(href="#{purchaseUrl}") Purchase
+
+            if (index % 3 == 2 || index == packages.length - 1)
+                | </div>
+            if (index % 3 == 2 && index < packages.length - 1)
+                hr(style="padding: 10px 0;")
 
         div.clearfix
 

@@ -4,84 +4,102 @@ block heading
     h1 Dashboard
 
 block content
-    div.row
-        if (!subscriptions.length)
-            div.col-lg-6.col-lg-offset-3
-                div.alert.alert-warning.text-center
-                    | You haven't made any subscriptions or all your subscriptions are expired.
-                    | Please&nbsp;
-                    a(href="#{purchaseUrl}") upgrade your subscription
-                    | &nbsp;to download all templates and extensions.
-    div.row
-        div.col-lg-6
-            if (subscriptions.length)
-                div.panel.panel-primary
-                    div.panel-heading
-                        i.fa.fa-dollar
-                        |  Your subscriptions
-                    table.table
-                        thead
-                            tr
-                                th Title
-                                th Expiration
-                        tbody
-                            for subscription in subscriptions
+    ul.nav.nav-tabs
+        li.active
+            a(href="#subscriptionTab", data-toggle="tab") Subscription
+        li
+            a(href="#activiyTab", data-toggle="tab") Activities
+        li
+            a(href="#statsTab", data-toggle="tab") Statistic
+
+    div.tab-content
+        // Subscription tab
+        div#subscriptionTab.tab-pane.active
+            div.row
+                div.col-lg-6.col-lg-offset-3
+                    if (!subscriptions.length)
+                        div.alert.alert-warning.text-center
+                            | You haven't made any subscriptions or all your subscriptions are expired.
+                            | Please&nbsp;
+                            a(href="#{purchaseUrl}") upgrade your subscription
+                            | &nbsp;to download all templates and extensions.
+                    else
+                        div.panel.panel-primary
+                            div.panel-heading
+                                i.fa.fa-dollar
+                                |  Your subscriptions
+                            table.table
+                                thead
+                                    tr
+                                        th Title
+                                        th Expiration
+                                tbody
+                                    for subscription in subscriptions
+                                        tr
+                                            td #{subscription.title}
+                                            td
+                                                | #{subscription.expiration}&nbsp;
+                                                if (moment(subscription.expiration, 'YYYY-MM-DD').isBefore())
+                                                    span.badge Expired
+
+        // Activities tab
+        div#activiyTab.tab-pane
+            div.row
+                div.col-lg-6
+                    div.panel.panel-info
+                        div.panel-heading
+                            i.fa.fa-download
+                            |  Recent downloads
+                            a#refreshRecentDownloads(href="#")
+                                i.pull-right.fa.fa-refresh
+                        table.table
+                            thead
                                 tr
-                                    td #{subscription.title}
-                                    td
-                                        | #{subscription.expiration}&nbsp;
-                                        if (moment(subscription.expiration, 'YYYY-MM-DD').isBefore())
-                                            span.badge Expired
+                                    th File
+                                    th Package
+                                    th Downloaded date
+                                    th Up-to-date
+                            tbody#recentDownloads
+                        div.panel-body.text-center(style="display: none;")
+                            i.fa.fa-spin.fa-refresh
 
-            div.panel.panel-default
-                div.panel-heading
-                    i.fa.fa-download
-                    |  Recent downloads
-                    a#refreshRecentDownloads(href="#")
-                        i.pull-right.fa.fa-refresh
-                table.table
-                    thead
-                        tr
-                            th File
-                            th Package
-                            th Downloaded date
-                            th Up-to-date
-                    tbody#recentDownloads
-                div.panel-body.text-center(style="display: none;")
-                    i.fa.fa-spin.fa-refresh
 
-        div.col-lg-6
-            div.panel.panel-info
-                div.panel-heading
-                    i.fa.fa-check
-                    |  Latest packages
-                    a#refreshLatestPackages(href="#")
-                        i.pull-right.fa.fa-refresh.fa-inverse
-                table.table
-                    thead
-                        tr
-                            th Name
-                            th Date
-                            th Live demo
-                    tbody#latestPackages
-                div.panel-body.text-center(style="display: none;")
-                    i.fa.fa-spin.fa-refresh
+        // Statistic tab
+        div#statsTab.tab-pane
+            div.row
+                div.col-lg-6
+                    div.panel.panel-info
+                        div.panel-heading
+                            i.fa.fa-check
+                            |  Latest packages
+                            a#refreshLatestPackages(href="#")
+                                i.pull-right.fa.fa-refresh
+                        table.table
+                            thead
+                                tr
+                                    th Name
+                                    th Date
+                                    th Live demo
+                            tbody#latestPackages
+                        div.panel-body.text-center(style="display: none;")
+                            i.fa.fa-spin.fa-refresh
 
-            div.panel.panel-info
-                div.panel-heading
-                    i.fa.fa-star
-                    |  Most downloaded packages
-                    a#refreshDownloadedPackages(href="#")
-                        i.pull-right.fa.fa-refresh.fa-inverse
-                table.table
-                    thead
-                        tr
-                            th Name
-                            th # Downloads
-                            th Live demo
-                    tbody#downloadedPackages
-                div.panel-body.text-center(style="display: none;")
-                    i.fa.fa-spin.fa-refresh
+                div.col-lg-6
+                    div.panel.panel-info
+                        div.panel-heading
+                            i.fa.fa-star
+                            |  Most downloaded packages
+                            a#refreshDownloadedPackages(href="#")
+                                i.pull-right.fa.fa-refresh
+                        table.table
+                            thead
+                                tr
+                                    th Name
+                                    th # Downloads
+                                    th Live demo
+                            tbody#downloadedPackages
+                        div.panel-body.text-center(style="display: none;")
+                            i.fa.fa-spin.fa-refresh
 
 block footerScript
     script(type="text/javascript", src="/vendor/filesize/filesize.min.js")

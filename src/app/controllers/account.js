@@ -398,7 +398,8 @@ exports.view = function(req, res) {
             thumbPrefixUrl: config.thumbs.url,
             isDownloadable: downloadable(package, membershipIds),
 
-            filesize: filesize
+            filesize: filesize,
+            moment: moment
         });
     });
 };
