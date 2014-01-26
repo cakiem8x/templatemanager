@@ -126,6 +126,7 @@ block footerScript
                     if ($that.data('bs.tooltip') == null) {
                         $that.tooltip({
                             html: true,
+                            placement: 'bottom',
                             title: '<i class="fa fa-refresh fa-spin"></i> Loading membership info ...'
                         }).tooltip('show');
 
