@@ -1,7 +1,7 @@
 Changelog
 =========
 
-## v1.1.2
+## v1.1.2 (2014-01-26)
 
 * Use default Bootstrap theme
 * Some UI improvements
