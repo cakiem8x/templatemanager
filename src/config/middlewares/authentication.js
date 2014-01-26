@@ -42,7 +42,7 @@ exports.requireAccountAuthentication = function(req, res, next) {
 };
 
 exports.user = {
-    hasAuthorization: function (req, res, next) {
+    hasAuthorization: function(req, res, next) {
         // Only allow root to manage administrators
         if (!req.session || !req.session.user || 'root' != req.session.user.role) {
             req.flash('error', 'You are not allowed to access this page');

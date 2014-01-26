@@ -3,6 +3,7 @@ Changelog
 
 ## v1.1.2
 
+* Use default Bootstrap theme
 * (#60) Show the download's browser agent
 
 ## v1.1.1 (2014-01-17)

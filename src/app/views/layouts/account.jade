@@ -24,7 +24,7 @@ html
             div.navbar.navbar-default.navbar-fixed-top
                 div.container
                     div.navbar-header
-                        button.navbar-toggle(type="button", data-toggle="collapse", data-target="#navbar-collapse")
+                        button.navbar-toggle(type="button", data-toggle="collapse", data-target="#navbar")
                             span.sr-only Toggle navigation
                             span.icon-bar
                             span.icon-bar
@@ -32,10 +32,12 @@ html
                         a.navbar-brand(href="/account")
                             i.fa.fa-dashboard
 
-                    div#navbar-collapse.collapse.navbar-collapse
+                    div#navbar.collapse.navbar-collapse
                         ul.nav.navbar-nav
                             li
                                 a(href="/account/package") Packages
+                        if accountMenu
+                            != accountMenu
 
                         // Right nav
                         ul.t-right-nav.nav.navbar-nav.navbar-right
@@ -77,6 +79,19 @@ html
             $(document).ready(function() {
                 // Init tooltips
                 $('[data-toggle="tooltip"]').tooltip();
+
+                // Init account menu
+                $('#navbar')
+                    .find('ul:not(.navbar-nav)')
+                        .eq(0)
+                        .addClass('nav navbar-nav')
+                        .find('ul')
+                            .addClass('dropdown-menu')
+                            .prev()
+                                .addClass('dropdown-toggle')
+                                .attr('data-toggle', 'dropdown')
+                                .attr('data-target', '#')
+                                .append('&nbsp;<b class="caret"></b>');
 
                 io.connect().emit('account', '#{account}');
             });
