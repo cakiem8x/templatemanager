@@ -458,7 +458,9 @@ exports.download = function(req, res) {
                             package: package._id,
                             file: id,
                             user_name: req.session.account,
-                            ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+                            // 'x-forwarded-for' header may return multiple IP addresses in
+                            // the format: client IP, proxy 1 IP, proxy 2 IP
+                            ip: (req.headers['x-forwarded-for'] || '').split(',')[0] || req.connection.remoteAddress,
                             browser: req.headers['user-agent']
                         }).save();
                     })
