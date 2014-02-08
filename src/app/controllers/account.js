@@ -447,21 +447,22 @@ exports.download = function(req, res) {
         file.last_download = new Date();
         file.save(function(err) {
             if (!err) {
-                var download = new Download({
-                    package: package._id,
-                    file: id,
-                    user_name: req.session.account,
-                    ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
-                    browser: req.headers['user-agent']
-                });
-                download.save(function() {
-                    res.setHeader('Content-Description', 'Download file');
-                    res.setHeader('Content-Type', 'application/octet-stream');
-                    res.setHeader('Content-Disposition', 'attachment; filename=' + file.name);
+                res.setHeader('Content-Description', 'Download file');
+                res.setHeader('Content-Type', 'application/octet-stream');
+                res.setHeader('Content-Disposition', 'attachment; filename=' + file.name);
 
-                    var stream = fs.createReadStream(file.path);
-                    stream.pipe(res);
-                });
+                fs
+                    .createReadStream(file.path)
+                    .on('end', function() {
+                        new Download({
+                            package: package._id,
+                            file: id,
+                            user_name: req.session.account,
+                            ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+                            browser: req.headers['user-agent']
+                        }).save();
+                    })
+                    .pipe(res);
             }
         });
     });
