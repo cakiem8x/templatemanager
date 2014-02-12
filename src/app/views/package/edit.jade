@@ -120,16 +120,20 @@ block content
                                     | #{hr}
 
                 div.form-group
+                    label.control-label.col-lg-2 Responsive
+                    div.col-lg-10
+                        div.btn-group(data-toggle="buttons")
+                            label.btn.btn-default(class=package.responsive ? 'active' : '')
+                                input(type="radio", name="responsive", value="1", checked=package.responsive)
+                                | Yes
+                            label.btn.btn-default(class=!package.responsive ? 'active' : '')
+                                input(type="radio", name="responsive", value="0", checked=!package.responsive)
+                                | No
+
+                div.form-group
                     label.control-label.col-lg-2 Year
                     div.col-lg-2
                         input.form-control(type="text", name="year", value="#{package.year}")
-
-                div.form-group
-                    div.col-lg-10.col-lg-offset-2
-                        div.checkbox
-                            label
-                                input(type="checkbox", name="responsive", value="1", checked=package.responsive)
-                                | Support responsive
 
                 div.form-group
                     label.control-label.col-lg-2 Thumbnail
