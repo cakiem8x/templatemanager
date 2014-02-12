@@ -44,13 +44,6 @@ block content
                                 | &darr;&nbsp;
                             | Name
                     th
-                        a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'slug' })}")
-                            if ('slug' == sortBy && 1 == sortDirection)
-                                | &uarr;&nbsp;
-                            else if ('slug' == sortBy && -1 == sortDirection)
-                                | &darr;&nbsp;
-                            | Slug
-                    th
                         a(href="#{url(req, { sort: (1 == sortDirection ? '-' : '') + 'url' })}")
                             if ('url' == sortBy && 1 == sortDirection)
                                 | &uarr;&nbsp;
@@ -77,14 +70,13 @@ block content
                 for package in packages
                     tr
                         td #{package.name}
-                        td #{package.slug}
                         td
                             a(target="_blank", href="#{package.demo_url}") #{package.demo_url}
                         td
                             a(href="#{url(req, { page: 1, year: package.year })}") #{package.year}
                         td #{moment(package.created_date).format('YYYY-MM-DD HH:mm')}
                         td
-                            span.badge #{package.num_downloads}
+                            a(href="/admin/log/download?package=#{package._id}") #{package.num_downloads}
                         td
                             div.btn-group
                                 a.btn.btn-info(href="/admin/package/edit/#{package._id}")
