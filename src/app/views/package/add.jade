@@ -32,9 +32,13 @@ block content
                 div.form-group
                     label.control-label.col-lg-2 Type
                     div.col-lg-3
-                        select.form-control(name="type")
-                            option(value="template") Template
-                            option(value="extension") Extension
+                        div.btn-group(data-toggle="buttons")
+                            label.btn.btn-default.active
+                                input(type="radio", name="type", value="template", checked=true)
+                                | Template
+                            label.btn.btn-default
+                                input(type="radio", name="type", value="extension")
+                                | Extension
 
                 div.form-group
                     label.control-label.col-lg-2 Name
