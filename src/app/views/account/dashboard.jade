@@ -153,7 +153,7 @@ block footerScript
                                 $('<td/>').html(moment(package.created_date).fromNow())
                             )
                             .append(
-                                $('<td/>').append(package.demo_url ? $('<a/>').attr('target', '_blank').attr('href', package.type == 'template' ? demoUrl + '#' + package.slug : package.demo_url).html('Demo') : 'n/a')
+                                $('<td/>').append(package.demo_url ? $('<a/>').attr('target', '_blank').addClass('btn btn-info').attr('href', package.type == 'template' ? demoUrl + '#' + package.slug : package.demo_url).html('Demo') : 'n/a')
                             );
                     });
                 });
@@ -180,7 +180,7 @@ block footerScript
                                 $('<td/>').html(package.num_downloads)
                             )
                             .append(
-                                $('<td/>').append(package.demo_url ? $('<a/>').attr('target', '_blank').attr('href', package.type == 'template' ? demoUrl + '#' + package.slug : package.demo_url).html('Demo') : 'n/a')
+                                $('<td/>').append(package.demo_url ? $('<a/>').attr('target', '_blank').addClass('btn btn-info').attr('href', package.type == 'template' ? demoUrl + '#' + package.slug : package.demo_url).html('Demo') : 'n/a')
                             );
                     });
                 });

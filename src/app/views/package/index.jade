@@ -5,8 +5,9 @@ block heading
         a(href="/admin/package") Packages
 
         if criteria.year
-            | &nbsp;/&nbsp;
-            a(href="/admin/package?year=#{criteria.year}") #{criteria.year}
+            small
+                |  &rarr;&nbsp;
+                a(href="/admin/package?year=#{criteria.year}") #{criteria.year}
 
         | &nbsp;
 

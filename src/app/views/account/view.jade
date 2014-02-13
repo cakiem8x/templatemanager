@@ -72,7 +72,7 @@ block content
                     p The #{package.name} package has been downloaded #{package.num_downloads} #{package.num_downloads <= 1 ? 'time' : 'times'}
                 else
                     p The #{package.name} package hasn't been downloaded yet. Be the first one!
-                table.table
+                table.table.table-hover
                     thead
                         tr
                             th Name
@@ -91,7 +91,7 @@ block content
                                     span.badge #{file.num_downloads}
                                 td
                                     if isDownloadable
-                                        a.btn.btn-info(href="#{downloadUrl}/account/download/#{package.slug}/#{file._id}") Download
+                                        a.btn.btn-success(href="#{downloadUrl}/account/download/#{package.slug}/#{file._id}") Download
                                     else
                                         a.btn.btn-danger(href="#{purchaseUrl}") Purchase
 
