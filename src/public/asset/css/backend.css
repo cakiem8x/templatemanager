@@ -71,3 +71,6 @@ footer {
   margin-bottom: 30px; }
   .tb-tmpl-item h3 {
     text-align: center; }
+
+.editableDesc {
+  cursor: pointer; }
