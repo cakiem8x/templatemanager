@@ -5,10 +5,11 @@ Changelog
 
 * [#70: Upgrade Bootstrap to 3.1.0](https://github.com/nghuuphuoc/templatemanager/issues/70)
 * [#72: Get the user's IP address correctly](https://github.com/nghuuphuoc/templatemanager/issues/72)
-* Use Button component for package type selection, Responsive option
-* Package listing page: Link to download log page
-* Fix 'chanelog' typo
-* URL helper: Does not append URI if there is no params
+* [#73: Use Button component for package type selection, Responsive option](https://github.com/nghuuphuoc/templatemanager/issues/73)
+* [#74: Package listing page: Link to download log page](https://github.com/nghuuphuoc/templatemanager/issues/74)
+* [#75: Fix 'chanelog' typo](https://github.com/nghuuphuoc/templatemanager/issues/75)
+* [#76: URL helper: Does not append URI if there is no params](https://github.com/nghuuphuoc/templatemanager/issues/76)
+* [#77: Upgrade jQuery to 1.11.0 and 2.1.0](https://github.com/nghuuphuoc/templatemanager/issues/77)
 
 ## v1.1.2 (2014-01-26)
 
