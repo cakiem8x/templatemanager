@@ -7,6 +7,7 @@ Changelog
 * [#72: Get the user's IP address correctly](https://github.com/nghuuphuoc/templatemanager/issues/72)
 * Use Button component for package type selection, Responsive option
 * Package listing page: Link to download log page
+* Fix 'chanelog' typo
 
 ## v1.1.2 (2014-01-26)
 
