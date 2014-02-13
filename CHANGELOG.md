@@ -1,7 +1,7 @@
 Changelog
 =========
 
-## v1.1.3
+## v1.1.3 (2014-02-13)
 
 * [#70: Upgrade Bootstrap to 3.1.0](https://github.com/nghuuphuoc/templatemanager/issues/70)
 * [#72: Get the user's IP address correctly](https://github.com/nghuuphuoc/templatemanager/issues/72)
