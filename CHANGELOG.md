@@ -8,6 +8,7 @@ Changelog
 * Use Button component for package type selection, Responsive option
 * Package listing page: Link to download log page
 * Fix 'chanelog' typo
+* URL helper: Does not append URI if there is no params
 
 ## v1.1.2 (2014-01-26)
 
