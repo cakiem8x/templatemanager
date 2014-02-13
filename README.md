@@ -95,6 +95,7 @@ Next, index the database by commands:
 ```bash
 > db.download.ensureIndex({ user_name: 1, downloaded_date: 1 });
 > db.file.ensureIndex({ last_download: 1, num_downloads: 1 });
+> db.option.ensureIndex({ key: 1 });
 > db.package.ensureIndex({ type: 1 });
 > db.package.ensureIndex({ created_date: 1 });
 > db.package.ensureIndex({ slug: 1 });
@@ -225,7 +226,7 @@ Below table describes all the settings in details:
 Setting                | Default               | Description
 -----------------------|-----------------------|------------
 root                   |                       | The root path. Please **DO NOT** change this
-session.domain         | n/a                   | The cookie domain
+session.domain         | n/a                   | The cookie domain. Leave it empty if you run the app under ```localhost:<port>```
 session.secret         | n/a                   | A secret string to encrypt the session data. There are a few of free online tool for generating random key, such as [RandomKeyGen](http://randomkeygen.com)
 session.lifetime       | n/a                   | The session lifetime in milliseconds
 db                     | n/a                   | The MongoDB connection string: ```mongodb://<database server>/<database name>```
