@@ -5,7 +5,7 @@ Changelog
 
 Not released yet
 
-
+* [#78](https://github.com/nghuuphuoc/templatemanager/issues/78): Fix "You is not allowed ..." typo
 * [#80](https://github.com/nghuuphuoc/templatemanager/issues/80): Add Publish/Ubpublish function for package.
 The ```package``` collection now has a new field named ```publish```:
 

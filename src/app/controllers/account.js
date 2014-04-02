@@ -443,7 +443,7 @@ exports.download = function(req, res) {
             }
         }
         if (!downloadable) {
-            return res.send('You is not allowed to download the file', 403);
+            return res.send('You are not allowed to download the file', 403);
         }
 
         file.num_downloads++;
