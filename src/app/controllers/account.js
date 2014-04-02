@@ -185,7 +185,7 @@ exports.recentDownloads = function(req, res) {
 exports.recentPackages = function(req, res) {
     var limit = req.param('limit') || 10;
     Package
-        .find()
+        .find({ publish: true })
         .sort({ created_date: -1 })
         .skip(0)
         .limit(limit)
@@ -229,7 +229,8 @@ exports.mostDownloadedPackages = function(req, res) {
         Package.find({
             _id: {
                 $in: packageIds
-            }
+            },
+            publish: true
         }).select('name type free slug demo_url created_date').exec(function(err, packages) {
             if (err || !packages || packages.length == 0) {
                 return res.json([]);
@@ -413,7 +414,7 @@ exports.view = function(req, res) {
 exports.download = function(req, res) {
     var slug = req.param('slug'),
         id   = req.param('id');
-    Package.findOne({ slug: slug }).populate('files').exec(function(err, package) {
+    Package.findOne({ slug: slug, publish: true }).populate('files').exec(function(err, package) {
         if (err || !package || package.files.length == 0) {
             return res.send('Not found', 404);
         }
