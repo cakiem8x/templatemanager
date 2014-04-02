@@ -279,6 +279,9 @@ exports.package = function(req, res) {
     if (year) {
         criteria.year = year;
     }
+
+    criteria.publish = true;
+
     // Get account subscriptions
     var membershipIds = [];
     if (req.session.subscriptions) {
@@ -384,7 +387,7 @@ exports.view = function(req, res) {
         }
     }
 
-    Package.findOne({ slug: slug }).populate('files').exec(function(err, package) {
+    Package.findOne({ slug: slug, publish: true }).populate('files').exec(function(err, package) {
         if (err || !package) {
             return res.send('Package not found', 404);
         }

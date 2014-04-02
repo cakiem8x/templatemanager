@@ -12,8 +12,16 @@ block heading
         | &nbsp;
 
         small.btn-group
+            a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, [ 'type' ])}", class=criteria.type == null ? 'active' : '') All
             a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'template' })}", class=criteria.type == 'template' ? 'active' : '') Templates
             a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, type: 'extension' })}", class=criteria.type == 'extension' ? 'active' : '') Extensions
+
+        | &nbsp;
+
+        small.btn-group
+            a.btn.btn-sm.btn-default(href="#{url(req, { page: 1 }, [ 'publish' ])}", class=criteria.publish == null ? 'active' : '') All
+            a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, publish: 'true' })}", class=criteria.publish == 'true' ? 'active' : '') Published
+            a.btn.btn-sm.btn-default(href="#{url(req, { page: 1, publish: 'false' })}", class=criteria.publish == 'false' ? 'active' : '') Not Published Yet
 
         span.pull-right
             a.btn.btn-info(href="/admin/package/add")
@@ -80,8 +88,9 @@ block content
                             a(href="/admin/log/download?package=#{package._id}") #{package.num_downloads}
                         td
                             div.btn-group
-                                a.btn.btn-info(href="/admin/package/edit/#{package._id}")
-                                    i.fa.fa-edit
+                                a.btn.btn-info(href="/admin/package/edit/#{package._id}") Edit
+                                button.btn.publishButton(data-package="#{package._id}", data-publish="#{package.publish}", class=package.publish ? "btn-danger": "btn-success")
+                                    = package.publish ? 'Unpublish' : 'Publish'
 
         // Pagination
         if (numPages > 1)
@@ -98,3 +107,24 @@ block content
                         a(href="#{url(req, { page: parseInt(page) + 1 })}") &raquo;
                     li(class=page == numPages ? 'disabled' : '')
                         a(href="#{url(req, { page: numPages })}") &rarr;
+
+block footerScript
+    script(type="text/javascript").
+        $(document).ready(function() {
+            $('.publishButton').on('click', function() {
+                var $that = $(this), publish = $that.attr('data-publish'), id = $that.attr('data-package');
+                $that.attr('disabled', 'disabled');
+                $.post('/admin/package/publish', {
+                    id: id
+                }).success(function(response) {
+                    $that.removeAttr('disabled');
+                    if (response.success) {
+                        $that
+                            .html('true' == publish ? 'Publish' : 'Unpublish')
+                            .attr('data-publish', 'true' == publish ? 'false' : 'true')
+                            .removeClass('btn-danger btn-success')
+                            .addClass('true' == publish ? 'btn-success' : 'btn-danger');
+                    }
+                });
+            });
+        });

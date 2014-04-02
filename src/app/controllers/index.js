@@ -59,7 +59,8 @@ exports.filter = function(req, res) {
         responsive     = req.param('responsive'),
         highResolution = req.param('high_resolution'),
         criteria       = {
-            type: 'template'
+            type: 'template',
+            publish: true
         };
 
     if (year) {

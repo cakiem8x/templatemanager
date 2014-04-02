@@ -96,9 +96,10 @@ Next, index the database by commands:
 > db.download.ensureIndex({ user_name: 1, downloaded_date: 1 });
 > db.file.ensureIndex({ last_download: 1, num_downloads: 1 });
 > db.option.ensureIndex({ key: 1 });
-> db.package.ensureIndex({ type: 1 });
 > db.package.ensureIndex({ created_date: 1 });
+> db.package.ensureIndex({ publish: 1 });
 > db.package.ensureIndex({ slug: 1 });
+> db.package.ensureIndex({ type: 1 });
 > db.package.ensureIndex({ year: 1 });
 > db.package.ensureIndex({ tag: 1, responsive: 1, high_resolution: 1 });
 > db.user.ensureIndex({ email: 1 });

@@ -26,6 +26,7 @@ exports.index = function(req, res) {
         q         = req.param('q') || '',
         year      = req.param('year'),
         type      = req.param('type'),
+        publish   = req.param('publish'),
         sortBy    = req.param('sort') || '-created_date',
         criteria  = q ? { name: new RegExp(q, 'i') } : {};
 
@@ -34,6 +35,9 @@ exports.index = function(req, res) {
     }
     if (year) {
         criteria.year = year;
+    }
+    if (publish != null) {
+        criteria.publish = publish;
     }
     var sortCriteria = {}, sortDirection = ('-' == sortBy.substr(0, 1)) ? -1 : 1;
 
@@ -220,6 +224,21 @@ exports.edit = function(req, res) {
                 });
             });
         }
+    });
+};
+
+/**
+ * Publish/unpublish a package
+ */
+exports.publish = function(req, res) {
+    var id = req.body.id;
+    Package.findOne({ _id: id }, function(err, package) {
+        package.publish = !package.publish;
+        package.save(function(err) {
+            return res.json({
+                success: !err
+            });
+        });
     });
 };
 

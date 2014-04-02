@@ -44,6 +44,7 @@ module.exports = function(app) {
     app.get('/admin/package',          authentication.requireAuthentication, packageCtrl.index);
     app.all('/admin/package/add',      authentication.requireAuthentication, packageCtrl.add);
     app.all('/admin/package/edit/:id', authentication.requireAuthentication, packageCtrl.edit);
+    app.post('/admin/package/publish', authentication.requireAuthentication, packageCtrl.publish);
     app.post('/admin/package/slug',    authentication.requireAuthentication, packageCtrl.slug);
     app.get('/admin/package/tag',      authentication.requireAuthentication, packageCtrl.tag);
 

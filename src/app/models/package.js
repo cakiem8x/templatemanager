@@ -50,7 +50,8 @@ var mongoose       = require('mongoose'),
         year:              { type: Number,  default: new Date().getFullYear() },
         memberships: [
             { type : Schema.ObjectId, ref: 'membership' }
-        ]
+        ],
+        publish:            { type: Boolean, default: true }
     });
 
 packageSchema
