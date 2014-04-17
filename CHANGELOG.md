@@ -17,6 +17,7 @@ The ```package``` collection now has a new field named ```publish```:
 
 * [#81](https://github.com/nghuuphuoc/templatemanager/issues/81): Upgrade Bootstrap to 3.1.1
 * [#82](https://github.com/nghuuphuoc/templatemanager/issues/82): Activate tab based on URL hash
+* [#83](https://github.com/nghuuphuoc/templatemanager/issues/83): Fix issue that jQuery is not found in the front-end
 
 ## v1.1.3 (2014-02-13)
 
